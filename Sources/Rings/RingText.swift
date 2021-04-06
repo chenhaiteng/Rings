@@ -2,24 +2,24 @@ import SwiftUI
 import CoreGraphicsExtension
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-extension CGAngle {
+public extension CGAngle {
     func toAngle(offset radians: CGFloat = 0.0) -> Angle {
         Angle(radians: Double(self.radians + radians))
     }
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-struct RingText : View {
-    var radius: Double
-    var textSize: CGFloat
-    var textColor: Color
-    var textUpsideDown: Bool
-    var textReversed: Bool
+public struct RingText : View {
+    public var radius: Double
+    public var textSize: CGFloat
+    public var textColor: Color
+    public var textUpsideDown: Bool
+    public var textReversed: Bool
     private var stringTable: [(offset: Int, element:String)]
     private var textPoints: [CGPolarPoint]
     
     
-    @inlinable init(radius: Double, words: [String], textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false) {
+    init(radius: Double, words: [String], textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false) {
         self.radius = radius
         self.textColor = color
         self.textSize = textSize
@@ -42,11 +42,11 @@ struct RingText : View {
         })
     }
     
-    @inlinable init(radius: Double, text: String, textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false) {
+    init(radius: Double, text: String, textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false) {
         self.init(radius: radius, words: [text], textSize: textSize, color: color, upsideDown: upsideDown, reversed: reversed)
     }
     
-    var body: some View {
+    public var body: some View {
         GeometryReader { geo in
             ZStack {
                 ForEach(stringTable, id: \.self.offset) { (offset, element) in
