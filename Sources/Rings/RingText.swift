@@ -18,8 +18,7 @@ public struct RingText : View {
     private var stringTable: [(offset: Int, element:String)]
     private var textPoints: [CGPolarPoint]
     
-    
-    public init(radius: Double, words: [String], textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false) {
+    public init(radius: Double, words: [String], textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
         self.radius = radius
         self.textColor = color
         self.textSize = textSize
@@ -36,14 +35,14 @@ public struct RingText : View {
         
         self.stringTable = characters
         let gap = (textReversed ? -2.0 : 2.0)*Double.pi/Double(stringTable.count)
-        let beginOffset = 0.0
+        let beginOffset = Double(begin.radians)
         textPoints = self.stringTable.map({ (offset: Int, element: String) -> CGPolarPoint in
             return CGPolarPoint(radius: radius, angle: CGAngle( beginOffset + gap * Double(offset)))
         })
     }
     
-    public init(radius: Double, text: String, textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false) {
-        self.init(radius: radius, words: [text], textSize: textSize, color: color, upsideDown: upsideDown, reversed: reversed)
+    public init(radius: Double, text: String, textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
+        self.init(radius: radius, words: [text], textSize: textSize, color: color, upsideDown: upsideDown, reversed: reversed, begin: begin)
     }
     
     public var body: some View {
@@ -68,8 +67,8 @@ struct RingText_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             ZStack {
-                RingText(radius: 20.0, text: "1234567890",textSize: 16.0, color: .red, upsideDown: false)
-                RingText(radius: 50.0, text: "12345678901234",textSize: 20.0, color: .blue, upsideDown: true, reversed: true)
+                RingText(radius: 20.0, text: "1234567890",textSize: 16.0, color: .red, upsideDown: false, begin: -CGAngle.pi/2)
+                RingText(radius: 50.0, text: "1234567890",textSize: 20.0, color: .blue, upsideDown: true, reversed: true)
                 RingText(radius: 90.0, text: "0987654321",textSize: 32.0, color: .green)
             }
             ZStack {
