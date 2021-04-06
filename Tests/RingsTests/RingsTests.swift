@@ -1,15 +1,16 @@
 import XCTest
 @testable import Rings
+@testable import CoreGraphicsExtension
 
-final class RingsTests: XCTestCase {
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(Rings().text, "Hello, World!")
+final class RingTextTests: XCTestCase {
+    func testCGAngleExt() {
+        let zeroAngle = CGAngle.zero.toAngle()
+        let rightAngle = CGAngle.degrees(90.0).toAngle()
+        XCTAssertEqual(zeroAngle.degrees, 0)
+        XCTAssertEqual(rightAngle.degrees, 90)
     }
 
     static var allTests = [
-        ("testExample", testExample),
+        ("testCGAngleExt", testCGAngleExt),
     ]
 }
