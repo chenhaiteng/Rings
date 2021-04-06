@@ -10,16 +10,16 @@ public extension CGAngle {
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct RingText : View {
-    public var radius: Double
-    public var textSize: CGFloat
-    public var textColor: Color
-    public var textUpsideDown: Bool
-    public var textReversed: Bool
+    var radius: Double
+    var textSize: CGFloat
+    var textColor: Color
+    var textUpsideDown: Bool
+    var textReversed: Bool
     private var stringTable: [(offset: Int, element:String)]
     private var textPoints: [CGPolarPoint]
     
     
-    init(radius: Double, words: [String], textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false) {
+    public init(radius: Double, words: [String], textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false) {
         self.radius = radius
         self.textColor = color
         self.textSize = textSize
@@ -42,7 +42,7 @@ public struct RingText : View {
         })
     }
     
-    init(radius: Double, text: String, textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false) {
+    public init(radius: Double, text: String, textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false) {
         self.init(radius: radius, words: [text], textSize: textSize, color: color, upsideDown: upsideDown, reversed: reversed)
     }
     
