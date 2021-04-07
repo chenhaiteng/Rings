@@ -18,7 +18,7 @@ public struct RingText : View {
     private var stringTable: [(offset: Int, element:String)]
     private var textPoints: [CGPolarPoint]
     
-    public init(radius: Double, words: [String], textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
+    public init(radius: Double, words: [String], textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil) {
         self.radius = radius
         self.textColor = color
         self.textSize = textSize
@@ -34,11 +34,18 @@ public struct RingText : View {
         }
         
         self.stringTable = characters
-        let gap = (textReversed ? -2.0 : 2.0)*Double.pi/Double(stringTable.count)
         let beginOffset = Double(begin.radians)
-        textPoints = self.stringTable.map({ (offset: Int, element: String) -> CGPolarPoint in
-            return CGPolarPoint(radius: radius, angle: CGAngle( beginOffset + gap * Double(offset)))
-        })
+        if let endOffset = end?.radians, let range = (endOffset - begin.radians) as? CGFloat, range > 0 {
+            let gap = (textReversed ? -1.0 : 1.0)*Double(range)/Double(stringTable.count-1)
+            textPoints = self.stringTable.map({ (offset: Int, element: String) -> CGPolarPoint in
+                return CGPolarPoint(radius: radius, angle: CGAngle( beginOffset + gap * Double(offset)))
+            })
+        } else {
+            let gap = (textReversed ? -2.0 : 2.0)*Double.pi/Double(stringTable.count)
+            textPoints = self.stringTable.map({ (offset: Int, element: String) -> CGPolarPoint in
+                return CGPolarPoint(radius: radius, angle: CGAngle( beginOffset + gap * Double(offset)))
+            })
+        }
     }
     
     public init(radius: Double, text: String, textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
@@ -75,6 +82,9 @@ struct RingText_Previews: PreviewProvider {
                 RingText(radius: 40.0, words: ["123", "456", "789"])
                 RingText(radius: 80, words: ["1234567890"])
             }
-        }
+            ZStack {
+                RingText(radius: 80.0, words: ["123456789"], textSize: 16.0, color: .red, upsideDown: false, reversed: false, begin: CGAngle.degrees(-180), end: CGAngle.zero)
+            }
+        }.background(Color.black)
     }
 }
