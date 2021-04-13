@@ -39,6 +39,8 @@ public struct RingText : View {
     var char_spacing: Double
     var beginRadians: Double
     var endRadians: Double
+    
+    private var originwords: [String]
     private var stringTable: [(offset: Int, element:String)]
     private var textPoints: [CGPolarPoint] = []
     
@@ -48,6 +50,7 @@ public struct RingText : View {
         self.textSize = textSize
         self.textUpsideDown = upsideDown
         self.textReversed = reversed
+        self.originwords = words
         
         stringTable = _createStringTable(origin: words, reversed: reversed)
         
@@ -80,7 +83,7 @@ public struct RingText : View {
                     let pt = self.textPoints[offset].cgpoint
                     let textPt = CGPoint(x: pt.x, y: pt.y)
                     Text(element)
-                        .rotationEffect(self.textPoints[offset].cgangle.toAngle(offset: CGFloat.pi/2) +   Angle.degrees(textUpsideDown  ? 180 : 0))
+                        .rotationEffect(self.textPoints[offset].cgangle.toAngle(offset: CGFloat.pi/2) + Angle.degrees(textUpsideDown ? 180 : 0))
                         .offset(x: textPt.x, y: textPt.y)
                         .font(.system(size: textSize)).foregroundColor(textColor)
                     
@@ -90,21 +93,112 @@ public struct RingText : View {
     }
 }
 
+func _setProperty<T>(content: T, _ setBlock:(_ newContent: inout T) -> T) -> T {
+    var temp = content
+    return setBlock(&temp)
+}
+
+extension RingText {
+    func setProperty(_ setBlock: (_ text: inout Self) -> Void) -> Self {
+        let result = _setProperty(content: self) { (tmp :inout Self) in
+            setBlock(&tmp)
+            return tmp
+        }
+        return result
+    }
+    
+    public func textColor(_ color: Color) -> Self {
+        setProperty { tmp in
+            tmp.textColor = color
+        }
+    }
+    
+    public func charSpacing(_ spacing: Double) -> Self {
+        setProperty { tmp in
+            tmp.char_spacing = spacing
+            tmp.textPoints = tmp._createTextPoints()
+        }
+    }
+    
+    public func begin(degrees: Double) -> Self {
+        return begin(radians: Double(CGAngle.degrees(degrees)))
+    }
+    
+    public func begin(radians: Double) -> Self {
+        setProperty { tmp in
+            tmp.beginRadians = radians
+            
+            tmp.char_spacing = (tmp.endRadians - tmp.beginRadians)/Double(tmp.stringTable.count-1)
+            
+            tmp.textPoints = tmp._createTextPoints()
+        }
+    }
+    
+    public func end(degrees: Double) -> Self {
+        return end(radians: Double(CGAngle.degrees(degrees)))
+    }
+    
+    public func end(radians: Double) -> Self {
+        setProperty { tmp in
+            tmp.endRadians = radians
+            tmp.char_spacing = (tmp.endRadians - tmp.beginRadians)/Double(tmp.stringTable.count-1)
+            tmp.textPoints = tmp._createTextPoints()
+        }
+    }
+    
+    public func upsideDown(_ yes: Bool) -> Self {
+        setProperty { tmp in
+            tmp.textUpsideDown = yes
+        }
+    }
+    
+    public func reverse(_ yes: Bool) -> Self {
+        setProperty { tmp in
+            tmp.textReversed = yes
+            tmp.stringTable = _createStringTable(origin: tmp.originwords, reversed: tmp.textReversed)
+            tmp.textPoints = tmp._createTextPoints()
+        }
+    }
+}
+
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 struct RingText_Previews: PreviewProvider {
     static var previews: some View {
-        VStack {
+        RingTextPreviewWrapper()
+    }
+}
+
+struct RingTextPreviewWrapper: View {
+    @State var spacing: Double = 0.3
+    @State var begin: Double = 0.0
+    @State var end: Double = 360.0
+    @State var upside_down: Bool = false
+    @State var reverse_text: Bool = false
+    var body: some View {
+        HStack {
             ZStack {
                 RingText(radius: 20.0, text: "1234567890",textSize: 16.0, color: .red, upsideDown: false, begin: -CGAngle.pi/2)
                 RingText(radius: 50.0, text: "1234567890",textSize: 20.0, color: .blue, upsideDown: true, reversed: true)
                 RingText(radius: 90.0, text: "0987654321",textSize: 32.0, color: .green)
             }
             ZStack {
-                RingText(radius: 40.0, words: ["123", "456", "789"])
+                RingText(radius: 40.0, words: ["a23", "b56", "c89"], reversed: true)
                 RingText(radius: 80, words: ["1234567890"])
             }
             ZStack {
                 RingText(radius: 80.0, words: ["123456789"], textSize: 16.0, color: .red, upsideDown: false, reversed: false, begin: CGAngle.degrees(-180), end: CGAngle.zero)
+                RingText(radius: 40.0, words: ["12345", "67890"]).charSpacing(spacing).begin(degrees: begin)
+                    .end(degrees: end)
+                    .upsideDown(upside_down)
+                    .reverse(reverse_text)
+                
+            }
+            VStack {
+                Slider(value: $spacing, in: 0.0...1.0)
+                Slider(value: $begin, in: 0.0...360.0)
+                Slider(value: $end, in: 0.0...360.0)
+                Toggle("Upside Down", isOn: $upside_down)
+                Toggle("Reverse Text", isOn: $reverse_text)
             }
         }.background(Color.black)
     }
