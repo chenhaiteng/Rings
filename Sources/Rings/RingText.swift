@@ -39,6 +39,8 @@ public struct RingText : View {
     var char_spacing: Double
     var beginRadians: Double
     var endRadians: Double
+    
+    private var originwords: [String]
     private var stringTable: [(offset: Int, element:String)]
     private var textPoints: [CGPolarPoint] = []
     
@@ -48,6 +50,7 @@ public struct RingText : View {
         self.textSize = textSize
         self.textUpsideDown = upsideDown
         self.textReversed = reversed
+        self.originwords = words
         
         stringTable = _createStringTable(origin: words, reversed: reversed)
         
@@ -86,6 +89,74 @@ public struct RingText : View {
                     
                 }
             }.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+        }
+    }
+}
+
+func _setProperty<T>(content: T, _ setBlock:(_ newContent: inout T) -> T) -> T {
+    var temp = content
+    return setBlock(&temp)
+}
+
+extension RingText {
+    func setProperty(_ setBlock: (_ text: inout Self) -> Void) -> Self {
+        let result = _setProperty(content: self) { (tmp :inout Self) in
+            setBlock(&tmp)
+            return tmp
+        }
+        return result
+    }
+    
+    public func textColor(_ color: Color) -> Self {
+        setProperty { tmp in
+            tmp.textColor = color
+        }
+    }
+    
+    public func charSpacing(_ spacing: Double) -> Self {
+        setProperty { tmp in
+            tmp.char_spacing = spacing
+            tmp.textPoints = tmp._createTextPoints()
+        }
+    }
+    
+    public func begin(degrees: Double) -> Self {
+        return begin(radians: Double(CGAngle.degrees(degrees)))
+    }
+    
+    public func begin(radians: Double) -> Self {
+        setProperty { tmp in
+            tmp.beginRadians = radians
+            
+            tmp.char_spacing = (tmp.endRadians - tmp.beginRadians)/Double(tmp.stringTable.count-1)
+            
+            tmp.textPoints = tmp._createTextPoints()
+        }
+    }
+    
+    public func end(degrees: Double) -> Self {
+        return end(radians: Double(CGAngle.degrees(degrees)))
+    }
+    
+    public func end(radians: Double) -> Self {
+        setProperty { tmp in
+            tmp.endRadians = radians
+            tmp.char_spacing = (tmp.endRadians - tmp.beginRadians)/Double(tmp.stringTable.count-1)
+            tmp.textPoints = tmp._createTextPoints()
+        }
+    }
+    
+    public func upsideDown(_ yes: Bool) -> Self {
+        setProperty { tmp in
+            tmp.textUpsideDown = yes
+        }
+    }
+    
+    public func reverse(_ yes: Bool) -> Self {
+        setProperty { tmp in
+            tmp.textReversed = yes
+            tmp.stringTable = _createStringTable(origin: tmp.originwords, reversed: tmp.textReversed)
+            tmp.textPoints = tmp._createTextPoints()
         }
     }
 }
