@@ -187,7 +187,7 @@ struct RingTextPreviewWrapper: View {
             VStack {
                 ZStack {
                     RingText(radius: 40.0, text: "1234567890", color: .blue, upsideDown: true, reversed: true).font(Font.custom("Apple Chancery", size: 16.0)).begin(degrees: begin_0)
-                    RingText(radius: 80.0, text: "0987654321", color: .green).font(.system(size: font_size))
+                    RingText(radius: 80.0, text: "0987654321", color: .green).font(.system(size: CGFloat(font_size)))
                 }
                 Text("begin degrees: \(begin_0)")
                 Slider(value: $begin_0, in: 0.0...360)
