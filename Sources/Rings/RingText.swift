@@ -126,8 +126,9 @@ extension RingText {
     
     public func begin(radians: Double) -> Self {
         setProperty { tmp in
+            let range = tmp.endRadians - tmp.beginRadians
             tmp.beginRadians = radians
-            
+            tmp.endRadians = radians + range
             tmp.char_spacing = (tmp.endRadians - tmp.beginRadians)/Double(tmp.stringTable.count-1)
             
             tmp.textPoints = tmp._createTextPoints()
