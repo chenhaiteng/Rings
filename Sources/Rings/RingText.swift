@@ -31,7 +31,6 @@ private func _createStringTable(origin: [String], reversed:Bool = false) -> [(In
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct RingText : View {
     var radius: Double
-    var textSize: CGFloat
     var textColor: Color
     var textUpsideDown: Bool
     var textReversed: Bool
@@ -40,14 +39,15 @@ public struct RingText : View {
     var beginRadians: Double
     var endRadians: Double
     
+    private var font = Font.system(size: 20.0)
+    
     private var originwords: [String]
     private var stringTable: [(offset: Int, element:String)]
     private var textPoints: [CGPolarPoint] = []
     
-    public init(radius: Double, words: [String], textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil) {
+    public init(radius: Double, words: [String], color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil) {
         self.radius = radius
         self.textColor = color
-        self.textSize = textSize
         self.textUpsideDown = upsideDown
         self.textReversed = reversed
         self.originwords = words
@@ -66,8 +66,8 @@ public struct RingText : View {
         textPoints = _createTextPoints()
     }
     
-    public init(radius: Double, text: String, textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
-        self.init(radius: radius, words: [text], textSize: textSize, color: color, upsideDown: upsideDown, reversed: reversed, begin: begin)
+    public init(radius: Double, text: String, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
+        self.init(radius: radius, words: [text], color: color, upsideDown: upsideDown, reversed: reversed, begin: begin)
     }
     
     private func _createTextPoints() -> [CGPolarPoint] {
@@ -85,8 +85,8 @@ public struct RingText : View {
                     Text(element)
                         .rotationEffect(self.textPoints[offset].cgangle.toAngle(offset: CGFloat.pi/2) + Angle.degrees(textUpsideDown ? 180 : 0))
                         .offset(x: textPt.x, y: textPt.y)
-                        .font(.system(size: textSize)).foregroundColor(textColor)
-                    
+                        .font(font)
+                        .foregroundColor(textColor)
                 }
             }.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
         }
@@ -159,6 +159,12 @@ extension RingText {
             tmp.textPoints = tmp._createTextPoints()
         }
     }
+    
+    public func font(_ f: Font) -> Self {
+        setProperty { tmp in
+            tmp.font = f
+        }
+    }
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -174,31 +180,48 @@ struct RingTextPreviewWrapper: View {
     @State var end: Double = 360.0
     @State var upside_down: Bool = false
     @State var reverse_text: Bool = false
+    @State var begin_0: Double = 0.0
+    @State var font_size: Double = 20.0
     var body: some View {
         HStack {
-            ZStack {
-                RingText(radius: 20.0, text: "1234567890",textSize: 16.0, color: .red, upsideDown: false, begin: -CGAngle.pi/2)
-                RingText(radius: 50.0, text: "1234567890",textSize: 20.0, color: .blue, upsideDown: true, reversed: true)
-                RingText(radius: 90.0, text: "0987654321",textSize: 32.0, color: .green)
+            VStack {
+                ZStack {
+                    RingText(radius: 40.0, text: "1234567890", color: .blue, upsideDown: true, reversed: true).font(Font.custom("Apple Chancery", size: 16.0)).begin(degrees: begin_0)
+                    RingText(radius: 80.0, text: "0987654321", color: .green).font(.system(size: CGFloat(font_size)))
+                }
+                Text("begin degrees: \(begin_0)")
+                Slider(value: $begin_0, in: 0.0...360)
+                Text("font size: \(font_size)")
+                Slider(value: $font_size, in: 10.0...40.0, step: 1)
             }
             ZStack {
                 RingText(radius: 40.0, words: ["a23", "b56", "c89"], reversed: true)
                 RingText(radius: 80, words: ["1234567890"])
             }
-            ZStack {
-                RingText(radius: 80.0, words: ["123456789"], textSize: 16.0, color: .red, upsideDown: false, reversed: false, begin: CGAngle.degrees(-180), end: CGAngle.zero)
-                RingText(radius: 40.0, words: ["12345", "67890"]).charSpacing(spacing).begin(degrees: begin)
-                    .end(degrees: end)
-                    .upsideDown(upside_down)
-                    .reverse(reverse_text)
-                
-            }
             VStack {
-                Slider(value: $spacing, in: 0.0...1.0)
-                Slider(value: $begin, in: 0.0...360.0)
-                Slider(value: $end, in: 0.0...360.0)
-                Toggle("Upside Down", isOn: $upside_down)
-                Toggle("Reverse Text", isOn: $reverse_text)
+                ZStack {
+                    
+                    RingText(radius: 60.0, words: ["12345", "67890"]).begin(degrees: begin)
+                        .end(degrees: end)
+                        .upsideDown(upside_down)
+                        .reverse(reverse_text)
+                        .textColor(.red)
+                    RingText(radius: 40.0, words: ["1234567890"]).charSpacing(spacing)
+                        .upsideDown(upside_down)
+                        .reverse(reverse_text)
+                        .textColor(.blue)
+                    
+                }
+                VStack(alignment: .leading) {
+                    Text("char spacing : \(spacing)")
+                    Slider(value: $spacing, in: 0.0...1.0)
+                    Text("begin degrees: \(begin)")
+                    Slider(value: $begin, in: 0.0...360.0)
+                    Text("end degrees: \(end)")
+                    Slider(value: $end, in: 0.0...360.0)
+                    Toggle("Upside Down", isOn: $upside_down)
+                    Toggle("Reverse Text", isOn: $reverse_text)
+                }
             }
         }.background(Color.black)
     }
