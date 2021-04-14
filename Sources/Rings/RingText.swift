@@ -31,7 +31,6 @@ private func _createStringTable(origin: [String], reversed:Bool = false) -> [(In
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct RingText : View {
     var radius: Double
-    var textSize: CGFloat
     var textColor: Color
     var textUpsideDown: Bool
     var textReversed: Bool
@@ -40,14 +39,15 @@ public struct RingText : View {
     var beginRadians: Double
     var endRadians: Double
     
+    private var font = Font.system(size: 20.0)
+    
     private var originwords: [String]
     private var stringTable: [(offset: Int, element:String)]
     private var textPoints: [CGPolarPoint] = []
     
-    public init(radius: Double, words: [String], textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil) {
+    public init(radius: Double, words: [String], color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil) {
         self.radius = radius
         self.textColor = color
-        self.textSize = textSize
         self.textUpsideDown = upsideDown
         self.textReversed = reversed
         self.originwords = words
@@ -66,8 +66,8 @@ public struct RingText : View {
         textPoints = _createTextPoints()
     }
     
-    public init(radius: Double, text: String, textSize:CGFloat = 20.0, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
-        self.init(radius: radius, words: [text], textSize: textSize, color: color, upsideDown: upsideDown, reversed: reversed, begin: begin)
+    public init(radius: Double, text: String, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
+        self.init(radius: radius, words: [text], color: color, upsideDown: upsideDown, reversed: reversed, begin: begin)
     }
     
     private func _createTextPoints() -> [CGPolarPoint] {
@@ -85,8 +85,8 @@ public struct RingText : View {
                     Text(element)
                         .rotationEffect(self.textPoints[offset].cgangle.toAngle(offset: CGFloat.pi/2) + Angle.degrees(textUpsideDown ? 180 : 0))
                         .offset(x: textPt.x, y: textPt.y)
-                        .font(.system(size: textSize)).foregroundColor(textColor)
-                    
+                        .font(font)
+                        .foregroundColor(textColor)
                 }
             }.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
         }
@@ -157,6 +157,12 @@ extension RingText {
             tmp.textReversed = yes
             tmp.stringTable = _createStringTable(origin: tmp.originwords, reversed: tmp.textReversed)
             tmp.textPoints = tmp._createTextPoints()
+        }
+    }
+    
+    public func font(_ f: Font) -> Self {
+        setProperty { tmp in
+            tmp.font = f
         }
     }
 }
