@@ -8,23 +8,18 @@ public extension CGAngle {
     }
 }
 
-
-private func _createStringTable(origin: [String], reversed:Bool = false) -> [(Int, String)] {
+private func _createCharacters(origin: [String], reversed:Bool = false) -> [String] {
     var tmpWords = reversed ? origin.reversed() : origin
-    
     if(reversed) {
         tmpWords = tmpWords.map({ word -> String in
             String(word.reversed())
         })
     }
-    
-    let text = (tmpWords.count == 1) ? tmpWords[0] : tmpWords.reduce(String()) { result, element -> String in
+    let text = (tmpWords.count == 1) ? tmpWords[0] : tmpWords.reduce(String()) {
+        result, element -> String in
         result + element + " "
     }
-    
-    let characters = Array(text.enumerated()).map { (e: EnumeratedSequence<String>.Iterator.Element) -> (Int, String) in
-        (e.offset, String(e.element))
-    }
+    let characters = text.map(String.init)
     return characters
 }
 
@@ -42,7 +37,7 @@ public struct RingText : View {
     private var font = Font.system(size: 20.0)
     
     private var originwords: [String]
-    private var stringTable: [(offset: Int, element:String)]
+    private var characters: [String]
     private var textPoints: [CGPolarPoint] = []
     
     public init(radius: Double, words: [String], color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil) {
@@ -52,12 +47,12 @@ public struct RingText : View {
         self.textReversed = reversed
         self.originwords = words
         
-        stringTable = _createStringTable(origin: words, reversed: reversed)
+        characters = _createCharacters(origin: words, reversed: reversed)
         
         beginRadians = Double(begin.radians)
         
-        let count = stringTable.count-1
-        let ratio = CGFloat(count)/CGFloat(stringTable.count)
+        let count = characters.count-1
+        let ratio = CGFloat(count)/CGFloat(characters.count)
         
         endRadians = Double(end?.radians ?? 2*CGFloat.pi*ratio+begin.radians)
         
@@ -71,23 +66,21 @@ public struct RingText : View {
     }
     
     private func _createTextPoints() -> [CGPolarPoint] {
-        return stringTable.map({ (offset: Int, element: String) -> CGPolarPoint in
-            return CGPolarPoint(radius: radius, angle: CGAngle( beginRadians + char_spacing * Double(offset)))
-        })
+        return characters.enumerated().map { index, element -> CGPolarPoint in
+            return CGPolarPoint(radius: radius, angle: CGAngle(beginRadians + char_spacing * Double(index)))
+        }
     }
     
     public var body: some View {
         GeometryReader { geo in
             ZStack {
-                ForEach(stringTable, id: \.self.offset) { (offset, element) in
-                    let pt = self.textPoints[offset].cgpoint
+                ForEach(Array(zip(characters.indices, characters)), id: \.0) { index, item in
+                    let polarPt = self.textPoints[index]
+                    let pt = polarPt.cgpoint
                     let textPt = CGPoint(x: pt.x, y: pt.y)
-                    Text(element)
-                        .rotationEffect(self.textPoints[offset].cgangle.toAngle(offset: CGFloat.pi/2) + Angle.degrees(textUpsideDown ? 180 : 0))
-                        .offset(x: textPt.x, y: textPt.y)
-                        .font(font)
-                        .foregroundColor(textColor)
+                    Text(item).rotationEffect(polarPt.cgangle.toAngle(offset: CGFloat.pi/2) + Angle.degrees(textUpsideDown ? 180 : 0)).offset(x: textPt.x, y: textPt.y).font(font).foregroundColor(textColor)
                 }
+                
             }.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
         }
     }
@@ -129,7 +122,7 @@ extension RingText {
             let range = tmp.endRadians - tmp.beginRadians
             tmp.beginRadians = radians
             tmp.endRadians = radians + range
-            tmp.char_spacing = (tmp.endRadians - tmp.beginRadians)/Double(tmp.stringTable.count-1)
+            tmp.char_spacing = (tmp.endRadians - tmp.beginRadians)/Double(tmp.characters.count-1)
             
             tmp.textPoints = tmp._createTextPoints()
         }
@@ -142,7 +135,7 @@ extension RingText {
     public func end(radians: Double) -> Self {
         setProperty { tmp in
             tmp.endRadians = radians
-            tmp.char_spacing = (tmp.endRadians - tmp.beginRadians)/Double(tmp.stringTable.count-1)
+            tmp.char_spacing = (tmp.endRadians - tmp.beginRadians)/Double(tmp.characters.count-1)
             tmp.textPoints = tmp._createTextPoints()
         }
     }
@@ -156,7 +149,7 @@ extension RingText {
     public func reverse(_ yes: Bool) -> Self {
         setProperty { tmp in
             tmp.textReversed = yes
-            tmp.stringTable = _createStringTable(origin: tmp.originwords, reversed: tmp.textReversed)
+            tmp.characters = _createCharacters(origin: tmp.originwords, reversed: tmp.textReversed)
             tmp.textPoints = tmp._createTextPoints()
         }
     }
