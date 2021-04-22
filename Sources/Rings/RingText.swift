@@ -25,14 +25,15 @@ private func _createCharacters(origin: [String], reversed:Bool = false) -> [Stri
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct RingText : View {
-    var radius: Double
-    var textColor: Color
-    var textUpsideDown: Bool
-    var textReversed: Bool
+    private var radius: Double
+    private var textColor: Color
+    private var textUpsideDown: Bool
+    private var textReversed: Bool
     
-    var char_spacing: Double
-    var beginRadians: Double
-    var endRadians: Double
+    private var char_spacing: Double
+    private var kerning_r: Double
+    private var beginRadians: Double
+    private var endRadians: Double
     
     private var font = Font.system(size: 20.0)
     
@@ -57,6 +58,8 @@ public struct RingText : View {
         endRadians = Double(end?.radians ?? 2*CGFloat.pi*ratio+begin.radians)
         
         char_spacing = (endRadians - beginRadians)/Double(count)
+        
+        kerning_r = acos(1.0 - pow(20.0/self.radius, 2)/2.0)
         
         textPoints = _createTextPoints()
     }
@@ -106,9 +109,12 @@ extension RingText {
         }
     }
     
-    public func charSpacing(_ spacing: Double) -> Self {
-        setProperty { tmp in
-            tmp.char_spacing = spacing
+    public func kerning(_ pt: Double) -> Self {
+        let r = acos(1.0 - pow(pt/self.radius, 2)/2.0)
+        let adjusted = self.char_spacing - kerning_r + r
+        return setProperty { tmp in
+            tmp.kerning_r = pt
+            tmp.char_spacing = adjusted
             tmp.textPoints = tmp._createTextPoints()
         }
     }
@@ -169,7 +175,7 @@ struct RingText_Previews: PreviewProvider {
 }
 
 struct RingTextPreviewWrapper: View {
-    @State var spacing: Double = 0.3
+    @State var spacing: Double = 0.0
     @State var begin: Double = 0.0
     @State var end: Double = 360.0
     @State var upside_down: Bool = false
@@ -200,7 +206,7 @@ struct RingTextPreviewWrapper: View {
                         .upsideDown(upside_down)
                         .reverse(reverse_text)
                         .textColor(.red)
-                    RingText(radius: 40.0, words: ["1234567890"]).charSpacing(spacing)
+                    RingText(radius: 40.0, words: ["1234567890"]).kerning(spacing)
                         .upsideDown(upside_down)
                         .reverse(reverse_text)
                         .textColor(.blue)
@@ -208,7 +214,7 @@ struct RingTextPreviewWrapper: View {
                 }
                 VStack(alignment: .leading) {
                     Text("char spacing : \(spacing)")
-                    Slider(value: $spacing, in: 0.0...1.0)
+                    Slider(value: $spacing, in: 0.0...30.0)
                     Text("begin degrees: \(begin)")
                     Slider(value: $begin, in: 0.0...360.0)
                     Text("end degrees: \(end)")
