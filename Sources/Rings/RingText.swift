@@ -1,5 +1,6 @@
 import SwiftUI
 import CoreGraphicsExtension
+import CommonExts
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public extension CGAngle {
@@ -41,6 +42,9 @@ public struct RingText : View {
     private var characters: [String]
     private var textPoints: [CGPolarPoint] = []
     
+    @State private var sizes: [CGSize] = []
+    private var showBlueprint: Bool = false
+    
     public init(radius: Double, words: [String], color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil) {
         self.radius = radius
         self.textColor = color
@@ -74,6 +78,10 @@ public struct RingText : View {
         }
     }
     
+    private func size(at index: Int) -> CGSize {
+        sizes[safe: index] ?? CGSize(width: 100, height: 0)
+    }
+    
     public var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -81,10 +89,16 @@ public struct RingText : View {
                     let polarPt = self.textPoints[index]
                     let pt = polarPt.cgpoint
                     let textPt = CGPoint(x: pt.x, y: pt.y)
-                    Text(item).rotationEffect(polarPt.cgangle.toAngle(offset: CGFloat.pi/2) + Angle.degrees(textUpsideDown ? 180 : 0)).offset(x: textPt.x, y: textPt.y).font(font).foregroundColor(textColor)
+                    Sizing {
+                        Text(item).font(font).foregroundColor(textColor).if(showBlueprint) { content in
+                            content.border(Color.blue.opacity(0.5), width:1)
+                        }
+                    }.rotationEffect(polarPt.cgangle.toAngle(offset: CGFloat.pi/2) + Angle.degrees(textUpsideDown ? 180 : 0)).offset(x: textPt.x, y: textPt.y)
                 }
                 
-            }.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+            }.frame(width: geo.size.width, height: geo.size.height, alignment: .center).onPreferenceChange(ViewSizeKey.self, perform: { value in
+                sizes = value
+            })
         }
     }
 }
@@ -165,6 +179,12 @@ extension RingText {
             tmp.font = f
         }
     }
+    
+    public func showBlueprint(_ show: Bool) -> Self {
+        setProperty { tmp in
+            tmp.showBlueprint = show
+        }
+    }
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -180,49 +200,53 @@ struct RingTextPreviewWrapper: View {
     @State var end: Double = 360.0
     @State var upside_down: Bool = false
     @State var reverse_text: Bool = false
-    @State var begin_0: Double = 0.0
+    @State var begin_0: Double = -60.0
     @State var font_size: Double = 20.0
+    @State var blueprint: Bool = false
     var body: some View {
-        HStack {
-            VStack {
+        VStack {
+            HStack {
+                VStack {
+                    ZStack {
+                        RingText(radius: 40.0, words: ["1","2","3","4","5","6","7","8","9","10","11","12"], color: .blue, upsideDown: false, reversed: false).font(Font.custom("Apple Chancery", size: 16.0)).begin(degrees: begin_0).showBlueprint(blueprint)
+                        RingText(radius: 80.0, text: "0987654321", color: .green).font(.system(size: CGFloat(font_size)))
+                    }
+                    Text("begin degrees: \(begin_0)")
+                    Slider(value: $begin_0, in: 0.0...360)
+                    Text("font size: \(font_size)")
+                    Slider(value: $font_size, in: 10.0...40.0, step: 1)
+                }
                 ZStack {
-                    RingText(radius: 40.0, text: "1234567890", color: .blue, upsideDown: true, reversed: true).font(Font.custom("Apple Chancery", size: 16.0)).begin(degrees: begin_0)
-                    RingText(radius: 80.0, text: "0987654321", color: .green).font(.system(size: CGFloat(font_size)))
+                    RingText(radius: 40.0, words: ["a23", "b56", "c89"], reversed: true)
+                    RingText(radius: 80, words: ["1234567890"])
                 }
-                Text("begin degrees: \(begin_0)")
-                Slider(value: $begin_0, in: 0.0...360)
-                Text("font size: \(font_size)")
-                Slider(value: $font_size, in: 10.0...40.0, step: 1)
-            }
-            ZStack {
-                RingText(radius: 40.0, words: ["a23", "b56", "c89"], reversed: true)
-                RingText(radius: 80, words: ["1234567890"])
-            }
-            VStack {
-                ZStack {
-                    
-                    RingText(radius: 60.0, words: ["12345", "67890"]).begin(degrees: begin)
-                        .end(degrees: end)
-                        .upsideDown(upside_down)
-                        .reverse(reverse_text)
-                        .textColor(.red)
-                    RingText(radius: 40.0, words: ["1234567890"]).kerning(spacing)
-                        .upsideDown(upside_down)
-                        .reverse(reverse_text)
-                        .textColor(.blue)
-                    
+                VStack {
+                    ZStack {
+                        
+                        RingText(radius: 60.0, words: ["12345", "67890"]).begin(degrees: begin)
+                            .end(degrees: end)
+                            .upsideDown(upside_down)
+                            .reverse(reverse_text)
+                            .textColor(.red)
+                        RingText(radius: 40.0, words: ["1234567890"]).kerning(spacing)
+                            .upsideDown(upside_down)
+                            .reverse(reverse_text)
+                            .textColor(.blue)
+                        
+                    }
+                    VStack(alignment: .leading) {
+                        Text("char spacing : \(spacing)")
+                        Slider(value: $spacing, in: 0.0...30.0)
+                        Text("begin degrees: \(begin)")
+                        Slider(value: $begin, in: 0.0...360.0)
+                        Text("end degrees: \(end)")
+                        Slider(value: $end, in: 0.0...360.0)
+                        Toggle("Upside Down", isOn: $upside_down)
+                        Toggle("Reverse Text", isOn: $reverse_text)
+                    }
                 }
-                VStack(alignment: .leading) {
-                    Text("char spacing : \(spacing)")
-                    Slider(value: $spacing, in: 0.0...30.0)
-                    Text("begin degrees: \(begin)")
-                    Slider(value: $begin, in: 0.0...360.0)
-                    Text("end degrees: \(end)")
-                    Slider(value: $end, in: 0.0...360.0)
-                    Toggle("Upside Down", isOn: $upside_down)
-                    Toggle("Reverse Text", isOn: $reverse_text)
-                }
-            }
-        }.background(Color.black)
+            }.background(Color.black)
+            Toggle("Show Layout", isOn:$blueprint)
+        }
     }
 }
