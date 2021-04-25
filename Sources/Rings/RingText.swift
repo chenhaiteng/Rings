@@ -209,7 +209,7 @@ struct RingTextPreviewWrapper: View {
                 VStack {
                     ZStack {
                         RingText(radius: 40.0, words: ["1","2","3","4","5","6","7","8","9","10","11","12"], color: .blue, upsideDown: false, reversed: false).font(Font.custom("Apple Chancery", size: 16.0)).begin(degrees: begin_0).showBlueprint(blueprint)
-                        RingText(radius: 80.0, text: "0987654321", color: .green).font(.system(size: CGFloat(font_size)))
+                        RingText(radius: 80.0, text: "0987654321", color: .green).font(.system(size: CGFloat(font_size))).showBlueprint(blueprint)
                     }
                     Text("begin degrees: \(begin_0)")
                     Slider(value: $begin_0, in: 0.0...360)
@@ -217,8 +217,8 @@ struct RingTextPreviewWrapper: View {
                     Slider(value: $font_size, in: 10.0...40.0, step: 1)
                 }
                 ZStack {
-                    RingText(radius: 40.0, words: ["a23", "b56", "c89"], reversed: true)
-                    RingText(radius: 80, words: ["1234567890"])
+                    RingText(radius: 40.0, words: ["a23", "b56", "c89"], reversed: true).showBlueprint(blueprint)
+                    RingText(radius: 80, words: ["1234567890"]).showBlueprint(blueprint)
                 }
                 VStack {
                     ZStack {
@@ -227,11 +227,11 @@ struct RingTextPreviewWrapper: View {
                             .end(degrees: end)
                             .upsideDown(upside_down)
                             .reverse(reverse_text)
-                            .textColor(.red)
+                            .textColor(.red).showBlueprint(blueprint)
                         RingText(radius: 40.0, words: ["1234567890"]).kerning(spacing)
                             .upsideDown(upside_down)
                             .reverse(reverse_text)
-                            .textColor(.blue)
+                            .textColor(.blue).showBlueprint(blueprint)
                         
                     }
                     VStack(alignment: .leading) {
