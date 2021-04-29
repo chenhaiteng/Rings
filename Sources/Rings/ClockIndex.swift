@@ -9,17 +9,17 @@ import SwiftUI
 import CoreGraphicsExtension
 import CommonExts
 
-enum ClockIndexError: Error {
+public enum ClockIndexError: Error {
     case outOfBounds(String)
 }
 
-let defaultTextMarker = ["1","2","3","4","5","6","7","8","9","10","11","12"]
+public let defaultTextMarker = ["1","2","3","4","5","6","7","8","9","10","11","12"]
 
-let defaultMarkers: [AnyView] = defaultTextMarker.map { num -> AnyView in
+public let defaultMarkers: [AnyView] = defaultTextMarker.map { num -> AnyView in
     AnyView(Text(num))
 }
 
-let defaultRadius: CGFloat = 80.0
+public let defaultRadius: CGFloat = 80.0
 
 public struct ClockIndex<Surface: View>: View {
     
