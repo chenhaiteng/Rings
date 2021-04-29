@@ -27,7 +27,7 @@ public struct ClockIndex<Surface: View>: View {
     private var radius: CGFloat = defaultRadius
     private var showBlueprint: Bool = false
     
-    init(textMarkers: [String] = defaultTextMarker, surface: Surface? = nil) throws {
+    public init(textMarkers: [String] = defaultTextMarker, surface: Surface? = nil) throws {
         guard textMarkers.count == 12 else {
             throw ClockIndexError.outOfBounds("The number of markers whould be 12.")
         }
@@ -36,7 +36,7 @@ public struct ClockIndex<Surface: View>: View {
         })
     }
     
-    init(_ markers: [AnyView], surface: Surface? = nil) throws {
+    public init(_ markers: [AnyView], surface: Surface? = nil) throws {
         guard markers.count == 12 else {
             throw ClockIndexError.outOfBounds("The number of markers whould be 12.")
         }
