@@ -21,11 +21,36 @@ public let defaultMarkers: [AnyView] = defaultTextMarker.map { num -> AnyView in
 
 public let defaultRadius: CGFloat = 80.0
 
+public let classicHourStyle: StrokeStyle = StrokeStyle(lineWidth: 5.0, lineCap: CGLineCap.butt, lineJoin: CGLineJoin.miter, miterLimit: 0.0, dash: [0, CGFloat.pi*100/6], dashPhase: 0.0)
+
+public let classicMinStyle: StrokeStyle = StrokeStyle(lineWidth: 2.0, lineCap: CGLineCap.butt, lineJoin: CGLineJoin.miter, miterLimit: 0.0, dash: [0, CGFloat.pi*100/36], dashPhase: 0.0)
+
+public extension StrokeStyle {
+    func hourStyle(with radius: CGFloat) -> Self {
+        StrokeStyle(lineWidth: self.lineWidth, lineCap: self.lineCap, lineJoin: self.lineJoin, miterLimit: self.miterLimit, dash: [0, CGFloat.pi*radius/6], dashPhase: self.dashPhase)
+    }
+    
+    func minuteStyle(with radius: CGFloat) -> Self {
+        StrokeStyle(lineWidth: self.lineWidth, lineCap: self.lineCap, lineJoin: self.lineJoin, miterLimit: self.miterLimit, dash: [0, CGFloat.pi*radius/36], dashPhase: self.dashPhase)
+    }
+}
+
 public struct ClockIndex<Surface: View>: View {
     
     private var hourMarkers: [AnyView] = defaultMarkers
     private var radius: CGFloat = defaultRadius
     private var showBlueprint: Bool = false
+    
+    private var showIndex: Bool = true
+    private var indexColor: Color = .white
+    // hours index
+    private var hourIndexStyle: StrokeStyle = StrokeStyle()
+    private var hourIndexRadius: CGFloat = defaultRadius + 15.0
+    private var hourIndexColor: Color = .white
+    // minutes index
+    private var minIndexStyle: StrokeStyle = StrokeStyle()
+    private var minIndexRadius: CGFloat = defaultRadius + 10.0
+    private var minIndexColor: Color = .white
     
     public init(textMarkers: [String] = defaultTextMarker, surface: Surface? = nil) throws {
         guard textMarkers.count == 12 else {
@@ -46,6 +71,10 @@ public struct ClockIndex<Surface: View>: View {
     public var body: some View {
         GeometryReader { geo in
             ZStack {
+                if(showIndex) {
+                    Circle().stroke(style: hourIndexStyle).frame(width: 2*hourIndexRadius, height: 2*hourIndexRadius, alignment: .center).foregroundColor(hourIndexColor)
+                    Circle().stroke(style: minIndexStyle).frame(width: 2*minIndexRadius, height: 2*minIndexRadius, alignment: .center).foregroundColor(minIndexColor)
+                }
                 ForEach(0..<12) { index in
                     let polarPt = CGPolarPoint(radius: radius, angle: CGAngle.pi/6*CGFloat(index) - CGAngle.pi/3)
                     Sizing {
@@ -86,19 +115,64 @@ extension ClockIndex {
             tmp.showBlueprint = show
         }
     }
+    
+    public func hourIndexStyle(_ style: StrokeStyle, color: Color? = nil) -> Self {
+        setProperty { tmp in
+            tmp.hourIndexStyle = style
+            tmp.hourIndexColor = color ?? tmp.hourIndexColor
+        }
+    }
+    
+    public func hourIndexRadius(_ r: CGFloat) -> Self {
+        setProperty { tmp in
+            tmp.hourIndexRadius = r
+        }
+    }
+    
+    public func minIndexStyle(_ style: StrokeStyle, color: Color? = nil) -> Self {
+        setProperty { tmp in
+            tmp.minIndexStyle = style
+            tmp.minIndexColor = color ?? tmp.minIndexColor
+        }
+    }
+    
+    public func minIndexRadius(_ r: CGFloat) -> Self {
+        setProperty { tmp in
+            tmp.minIndexRadius = r
+        }
+    }
+    
+    public func showIndex(_ show: Bool = true) -> Self {
+        setProperty { tmp in
+            tmp.showIndex = show
+        }
+    }
 }
 
 //Previews
 struct ClockPreviewClassic : View {
     @State var showBlueprint: Bool = false
+    @State var showIndex: Bool = false
+    @State var indexRadius: CGFloat = 60
     var body: some View {
         VStack {
             Spacer(minLength: 10.0)
             Text("Classic Clocks")
             HStack {
-                try? ClockIndex<Text>().radius(50.0).showBlueprint(showBlueprint)
+                VStack {
+                    try? ClockIndex<Text>().radius(50.0).showBlueprint(showBlueprint).hourIndexStyle(StrokeStyle(lineWidth: 5.0).hourStyle(with: indexRadius)).hourIndexRadius(indexRadius)
+                        .minIndexStyle(StrokeStyle().minuteStyle(with: indexRadius)).minIndexRadius(indexRadius)
+                        .showIndex(showIndex)
+                    HStack {
+                        Slider(value: $indexRadius, in: 30...100, step: 5.0)
+                        Text("\(indexRadius)")
+                    }
+                    Toggle("Show Index", isOn: $showIndex)
+                }
                 try? ClockIndex<Text>(textMarkers: ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]).showBlueprint(showBlueprint)
             }
+            Spacer(minLength: 5.0)
+            Divider()
             Toggle("Blue Print", isOn: $showBlueprint)
             Spacer(minLength: 10.0)
         }
