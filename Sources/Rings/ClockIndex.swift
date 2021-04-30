@@ -35,9 +35,10 @@ public extension StrokeStyle {
     }
 }
 
-public struct ClockIndex<Surface: View>: View {
+public struct ClockIndex: View {
     
     private var hourMarkers: [AnyView] = defaultMarkers
+    private var textColor: Color = .white
     private var radius: CGFloat = defaultRadius
     private var showBlueprint: Bool = false
     
@@ -52,16 +53,17 @@ public struct ClockIndex<Surface: View>: View {
     private var minIndexRadius: CGFloat = defaultRadius + 10.0
     private var minIndexColor: Color = .white
     
-    public init(textMarkers: [String] = defaultTextMarker, surface: Surface? = nil) throws {
+    public init(textMarkers: [String] = defaultTextMarker, color: Color = .white) throws {
         guard textMarkers.count == 12 else {
             throw ClockIndexError.outOfBounds("The number of markers whould be 12.")
         }
+        textColor = color
         hourMarkers = textMarkers.map({ text -> AnyView in
-            AnyView(Text(text))
+            AnyView(Text(text).foregroundColor(textColor))
         })
     }
     
-    public init(_ markers: [AnyView], surface: Surface? = nil) throws {
+    public init(_ markers: [AnyView]) throws {
         guard markers.count == 12 else {
             throw ClockIndexError.outOfBounds("The number of markers whould be 12.")
         }
@@ -80,7 +82,6 @@ public struct ClockIndex<Surface: View>: View {
                     Sizing {
                         hourMarkers[index].if(showBlueprint) { content in
                             content.border(Color.blue, width: 1)
-                            
                         }
                     }.offset(x: polarPt.cgpoint.x, y: polarPt.cgpoint.y)
                 }
@@ -152,25 +153,34 @@ extension ClockIndex {
 //Previews
 struct ClockPreviewClassic : View {
     @State var showBlueprint: Bool = false
-    @State var showIndex: Bool = false
+    @State var showIndex: Bool = true
     @State var indexRadius: CGFloat = 60
+    @State var indexRadius2: CGFloat = 100
     var body: some View {
         VStack {
             Spacer(minLength: 10.0)
             Text("Classic Clocks")
             HStack {
                 VStack {
-                    try? ClockIndex<Text>().radius(50.0).showBlueprint(showBlueprint).hourIndexStyle(StrokeStyle(lineWidth: 5.0).hourStyle(with: indexRadius)).hourIndexRadius(indexRadius)
+                    try? ClockIndex().radius(50.0).showBlueprint(showBlueprint).hourIndexStyle(StrokeStyle(lineWidth: 5.0).hourStyle(with: indexRadius)).hourIndexRadius(indexRadius)
                         .minIndexStyle(StrokeStyle().minuteStyle(with: indexRadius)).minIndexRadius(indexRadius)
                         .showIndex(showIndex)
                     HStack {
                         Slider(value: $indexRadius, in: 30...100, step: 5.0)
                         Text("\(indexRadius)")
                     }
-                    Toggle("Show Index", isOn: $showIndex)
                 }
-                try? ClockIndex<Text>(textMarkers: ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]).showBlueprint(showBlueprint)
+                VStack {
+                    try? ClockIndex(textMarkers: ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]).showBlueprint(showBlueprint).hourIndexStyle(StrokeStyle(lineWidth: 5.0).hourStyle(with: indexRadius2+5), color: .red).hourIndexRadius(indexRadius2+5)
+                        .minIndexStyle(StrokeStyle().minuteStyle(with: indexRadius2-5), color: .blue).minIndexRadius(indexRadius2-5)
+                        .showIndex(showIndex)
+                    HStack {
+                        Slider(value: $indexRadius2, in: 60...150, step: 5.0)
+                        Text("\(indexRadius2)")
+                    }
+                }
             }
+            Toggle("Show Index", isOn: $showIndex)
             Spacer(minLength: 5.0)
             Divider()
             Toggle("Blue Print", isOn: $showBlueprint)
@@ -186,9 +196,9 @@ struct ClockPreviewEarthlyBranches : View {
             Spacer(minLength: 10.0)
             Text("Earchly Branches Clocks")
             HStack {
-                try? ClockIndex<Text>(textMarkers: ["．", "丑", "．", "寅", "．", "卯", "．", "辰", "．", "巳", "．", "子"]).showBlueprint(showBlueprint)
+                try? ClockIndex(textMarkers: ["．", "丑", "．", "寅", "．", "卯", "．", "辰", "．", "巳", "．", "子"], color: .red).showBlueprint(showBlueprint)
                 
-                try? ClockIndex<Text>(textMarkers: ["．", "未", "．", "申", "．", "酉", "．", "戌", "．", "亥", "．", "午"]).showBlueprint(showBlueprint)
+                try? ClockIndex(textMarkers: ["．", "未", "．", "申", "．", "酉", "．", "戌", "．", "亥", "．", "午"]).showBlueprint(showBlueprint)
             }
             Toggle("Blue Print", isOn: $showBlueprint)
             Spacer(minLength: 10.0)
