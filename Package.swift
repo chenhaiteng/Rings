@@ -31,6 +31,6 @@ let package = Package(
         .testTarget(
             name: "RingsTests",
             dependencies: ["Rings",
-                           "CoreGraphicsExtension"]),
+                           "CoreGraphicsExtension", "CommonExts"]),
     ]
 )
