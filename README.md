@@ -5,6 +5,7 @@
 It includes following controls:
 * RingText
 * ClockIndex
+* HandAiguille
 * ArchimedeanSpiralText (In-progress)
 * SphericText (In-progress)
 * Knob (In-planning)
