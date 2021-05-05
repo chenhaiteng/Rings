@@ -35,8 +35,9 @@ public struct HandAiguille<Content: View> : View {
     private var timeUnit: TimeUnit
     
     private var showBlueprint: Bool = false
+    private var handBackground: AnyView = AnyView(Color.clear)
     
-    public init(size: CGSize, offset: CGFloat, time: Binding<Double> = .constant(0), unit: TimeUnit = .second, @ViewBuilder content: @escaping () -> Content) {
+    public init(size: CGSize = CGSize(width: 3.0, height: 50.0), offset: CGFloat = 1.5, time: Binding<Double> = .constant(0), unit: TimeUnit = .second, @ViewBuilder content: @escaping () -> Content) {
         self.handSize = size
         self.offset = offset
         _time = time
@@ -59,7 +60,11 @@ public struct HandAiguille<Content: View> : View {
                 }.if(showBlueprint) { p in
                     p.stroke(Color.blue)
                 }
-                content().frame(width: handSize.width, height: handSize.height, alignment: .center).offset(y: -yoffset).rotationEffect(angleOfTime(time))
+                if(content() is EmptyView) {
+                    handBackground.frame(width: handSize.width, height: handSize.height, alignment: .center).offset(y: -yoffset).rotationEffect(angleOfTime(time))
+                } else {
+                    content().frame(width: handSize.width, height: handSize.height, alignment: .center).offset(y: -yoffset).rotationEffect(angleOfTime(time))
+                }
             }
         }
     }
@@ -91,11 +96,18 @@ extension HandAiguille {
             tmp.showBlueprint = isOn
         }
     }
+    
+    func handBackground<Background>(_ background: Background) -> Self where Background : View {
+        setProperty{ tmp in
+            tmp.handBackground = AnyView(background)
+        }
+    }
 }
 
 public struct HandFactory {
+    public static let standard = HandFactory()
     private let rectRatio: CGFloat = 0.2
-    public func makeWatchStyleHand(size: CGSize = CGSize(width: 4.0, height: 60.0), timeProvider: Binding<Double>, unit: TimeUnit = .second) -> some View {
+    public func makeAppleWatchStyleHand(size: CGSize = CGSize(width: 4.0, height: 60.0), timeProvider: Binding<Double>, unit: TimeUnit = .second) -> some View {
         HandAiguille(size: size, offset: 1.5, time: timeProvider, unit: unit) {
             VStack(spacing: 0) {
                 Capsule().stroke().frame(width: size.width)
@@ -127,8 +139,8 @@ struct AppleStyleHandPreview: View {
                     }.blueprint(showBlueprint).frame(width: 100, height: 100, alignment: .center)
                 }
                 ZStack {
-                    HandFactory().makeWatchStyleHand(size: CGSize(width: 5.0, height: 80.0),timeProvider: $emulateTime, unit: .hour).frame(width: 120, height: 120, alignment: .center)
-                    HandFactory().makeWatchStyleHand(size: CGSize(width: 4.0, height: 60.0),timeProvider: $emulateTime, unit: .minute).frame(width: 120, height: 120, alignment: .center)
+                    HandFactory.standard.makeAppleWatchStyleHand(size: CGSize(width: 5.0, height: 80.0),timeProvider: $emulateTime, unit: .hour).frame(width: 120, height: 120, alignment: .center)
+                    HandFactory.standard.makeAppleWatchStyleHand(size: CGSize(width: 4.0, height: 60.0),timeProvider: $emulateTime, unit: .minute).frame(width: 120, height: 120, alignment: .center)
                 }
             }
             HStack {
