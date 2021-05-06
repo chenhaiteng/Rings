@@ -159,11 +159,19 @@ struct AppleStyleHandPreview: View {
             }
             HStack {
                 Spacer(minLength: 10)
+                #if os(watchOS)
+                Picker("Time Unit", selection: $unit) {
+                    Text("hour").tag(TimeUnit.hour)
+                    Text("minute").tag(TimeUnit.minute)
+                    Text("second").tag(TimeUnit.second)
+                }
+                #else
                 Picker("Time Unit", selection: $unit) {
                     Text("hour").tag(TimeUnit.hour)
                     Text("minute").tag(TimeUnit.minute)
                     Text("second").tag(TimeUnit.second)
                 }.pickerStyle(SegmentedPickerStyle())
+                #endif
                 Spacer(minLength: 10)
             }
             Toggle("show blueprint", isOn: $showBlueprint)
