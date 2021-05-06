@@ -26,12 +26,12 @@ public let classicHourStyle: StrokeStyle = StrokeStyle(lineWidth: 5.0, lineCap: 
 public let classicMinStyle: StrokeStyle = StrokeStyle(lineWidth: 2.0, lineCap: CGLineCap.butt, lineJoin: CGLineJoin.miter, miterLimit: 0.0, dash: [0, CGFloat.pi*100/36], dashPhase: 0.0)
 
 public extension StrokeStyle {
-    func hourStyle(with radius: CGFloat) -> Self {
-        StrokeStyle(lineWidth: self.lineWidth, lineCap: self.lineCap, lineJoin: self.lineJoin, miterLimit: self.miterLimit, dash: [0, CGFloat.pi*radius/6], dashPhase: self.dashPhase)
+    func hourStyle<T: BinaryFloatingPoint>(with radius: T) -> Self {
+        StrokeStyle(lineWidth: self.lineWidth, lineCap: self.lineCap, lineJoin: self.lineJoin, miterLimit: self.miterLimit, dash: [0, CGFloat.pi*CGFloat(radius)/6], dashPhase: self.dashPhase)
     }
     
-    func minuteStyle(with radius: CGFloat) -> Self {
-        StrokeStyle(lineWidth: self.lineWidth, lineCap: self.lineCap, lineJoin: self.lineJoin, miterLimit: self.miterLimit, dash: [0, CGFloat.pi*radius/36], dashPhase: self.dashPhase)
+    func minuteStyle<T: BinaryFloatingPoint>(with radius: T) -> Self {
+        StrokeStyle(lineWidth: self.lineWidth, lineCap: self.lineCap, lineJoin: self.lineJoin, miterLimit: self.miterLimit, dash: [0, CGFloat.pi*CGFloat(radius)/36], dashPhase: self.dashPhase)
     }
 }
 
@@ -106,9 +106,9 @@ extension ClockIndex {
         return result
     }
     
-    public func radius(_ r: CGFloat) -> Self {
+    public func radius<T: BinaryFloatingPoint>(_ r: T) -> Self {
         setProperty { tmp in
-            tmp.radius = r
+            tmp.radius = CGFloat(r)
         }
     }
     public func showBlueprint(_ show: Bool) -> Self {
@@ -124,9 +124,9 @@ extension ClockIndex {
         }
     }
     
-    public func hourIndexRadius(_ r: CGFloat) -> Self {
+    public func hourIndexRadius<T: BinaryFloatingPoint>(_ r: T) -> Self {
         setProperty { tmp in
-            tmp.hourIndexRadius = r
+            tmp.hourIndexRadius = CGFloat(r)
         }
     }
     
@@ -137,9 +137,9 @@ extension ClockIndex {
         }
     }
     
-    public func minIndexRadius(_ r: CGFloat) -> Self {
+    public func minIndexRadius<T: BinaryFloatingPoint>(_ r: T) -> Self {
         setProperty { tmp in
-            tmp.minIndexRadius = r
+            tmp.minIndexRadius = CGFloat(r)
         }
     }
     
