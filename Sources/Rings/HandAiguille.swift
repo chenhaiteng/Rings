@@ -91,13 +91,13 @@ extension HandAiguille {
         return result
     }
     
-    func blueprint(_ isOn:Bool = true) -> Self {
+    public func blueprint(_ isOn:Bool = true) -> Self {
         setProperty { tmp in
             tmp.showBlueprint = isOn
         }
     }
     
-    func handBackground<Background>(_ background: Background) -> Self where Background : View {
+    public func handBackground<Background>(_ background: Background) -> Self where Background : View {
         setProperty{ tmp in
             tmp.handBackground = AnyView(background)
         }
