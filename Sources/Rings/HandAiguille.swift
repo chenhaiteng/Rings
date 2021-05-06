@@ -24,9 +24,9 @@ extension TimeUnit {
     }
 }
 
-public struct HandAiguille<Content: View> : View {
+public struct HandAiguille<Content: View, T: BinaryFloatingPoint> : View {
     
-    @Binding private var time: Double
+    @Binding private var time: T
     @State private var angle: Angle = Angle()
     
     private let content: () -> Content
@@ -37,9 +37,9 @@ public struct HandAiguille<Content: View> : View {
     private var showBlueprint: Bool = false
     private var handBackground: AnyView = AnyView(Color.clear)
     
-    public init(size: CGSize = CGSize(width: 3.0, height: 50.0), offset: CGFloat = 1.5, time: Binding<Double> = .constant(0), unit: TimeUnit = .second, @ViewBuilder content: @escaping () -> Content) {
+    public init(size: CGSize = CGSize(width: 3.0, height: 50.0), offset: T = 1.5, time: Binding<T> = .constant(0), unit: TimeUnit = .second, @ViewBuilder content: @escaping () -> Content) {
         self.handSize = size
-        self.offset = offset
+        self.offset = CGFloat(offset)
         _time = time
         timeUnit = unit
         self.content = content
@@ -69,15 +69,16 @@ public struct HandAiguille<Content: View> : View {
         }
     }
     
-    private func angleOfTime(_ time: Double) -> Angle {
+    private func angleOfTime(_ time: T) -> Angle {
+        let t = Double(time)
         switch timeUnit {
         case .hour:
-            let t = time.truncatingRemainder(dividingBy: 12.0)
-            return Angle(degrees: t * 30.0)
+            let r = t.truncatingRemainder(dividingBy: 12.0)
+            return Angle(degrees: r * 30.0)
         case .minute, .second:
-            let t =
-                time.truncatingRemainder(dividingBy: 60.0)
-            return Angle(degrees: t * 6.0)
+            let r =
+                t.truncatingRemainder(dividingBy: 60.0)
+            return Angle(degrees: r * 6.0)
         }
     }
 }
@@ -107,7 +108,7 @@ extension HandAiguille {
 public struct HandFactory {
     public static let standard = HandFactory()
     private let rectRatio: CGFloat = 0.2
-    public func makeAppleWatchStyleHand(size: CGSize = CGSize(width: 4.0, height: 60.0), timeProvider: Binding<Double>, unit: TimeUnit = .second) -> some View {
+    public func makeAppleWatchStyleHand<T: BinaryFloatingPoint>(size: CGSize = CGSize(width: 4.0, height: 60.0), timeProvider: Binding<T>, unit: TimeUnit = .second) -> some View {
         HandAiguille(size: size, offset: 1.5, time: timeProvider, unit: unit) {
             VStack(spacing: 0) {
                 Capsule().stroke().frame(width: size.width)
@@ -119,7 +120,7 @@ public struct HandFactory {
 }
 
 struct AppleStyleHandPreview: View {
-    @State var emulateTime: Double = 0.0
+    @State var emulateTime: CGFloat = 0.0
     @State var showBlueprint: Bool = false
     @State var offset: CGFloat = 1.5
     @State var unit: TimeUnit = .second

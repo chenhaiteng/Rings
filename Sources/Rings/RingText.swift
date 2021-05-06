@@ -44,9 +44,9 @@ public struct RingText : View {
     
     @State private var sizes: [CGSize] = []
     private var showBlueprint: Bool = false
-    
-    public init(radius: Double, words: [String], color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil) {
-        self.radius = radius
+
+    public init<T: BinaryFloatingPoint>(radius: T, words: [String], color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil) {
+        self.radius = Double(radius)
         self.textColor = color
         self.textUpsideDown = upsideDown
         self.textReversed = reversed
@@ -68,7 +68,7 @@ public struct RingText : View {
         textPoints = _createTextPoints()
     }
     
-    public init(radius: Double, text: String, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
+    public init<T: BinaryFloatingPoint>(radius: T, text: String, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
         self.init(radius: radius, words: [text], color: color, upsideDown: upsideDown, reversed: reversed, begin: begin)
     }
     
@@ -218,7 +218,7 @@ struct RingTextPreviewWrapper: View {
                 }
                 ZStack {
                     RingText(radius: 40.0, words: ["a23", "b56", "c89"], reversed: true).showBlueprint(blueprint)
-                    RingText(radius: 80, words: ["1234567890"]).showBlueprint(blueprint)
+                    RingText(radius: 80.0, words: ["1234567890"]).showBlueprint(blueprint)
                 }
                 VStack {
                     ZStack {
