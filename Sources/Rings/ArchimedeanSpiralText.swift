@@ -140,10 +140,10 @@ struct ArchimedeanSpiralTextDemo : View {
             }.padding(EdgeInsets(top: 0.0, leading: 10.0, bottom: 0.0, trailing: 10.0))
             #if os(watchOS)
             Picker("direct to center", selection: $direction) {
-                Text("up").tag(TextDirection.UpToCenter)
-                Text("down").tag(TextDirection.DownToCenter)
-                Text("right").tag(TextDirection.RightToCenter)
-                Text("left").tag(TextDirection.LeftToCenter)
+                Text("top").tag(TextDirection.Top)
+                Text("bottom").tag(TextDirection.Bottom)
+                Text("right").tag(TextDirection.Right)
+                Text("left").tag(TextDirection.Left)
             }
             #else
             Picker("head to center", selection: $direction) {
