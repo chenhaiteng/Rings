@@ -3,10 +3,10 @@
 **Rings** is a collection of controls which have similar shapes of ring, circle...
 
 It includes following controls:
-* RingText
-* ClockIndex
-* HandAiguille
-* ArchimedeanSpiralText
+* **RingText**
+* **ClockIndex**
+* **HandAiguille**
+* **ArchimedeanSpiralText**
 * SphericText (In-progress)
 * Knob (In-planning)
 
@@ -83,27 +83,9 @@ https://user-images.githubusercontent.com/1284944/117106480-83aeff80-adb2-11eb-8
   HandFactory.standard.makeAppleWatchStyleHand(time: $secsProvider)
 ```
 
-## ArchimedeanSpiralText
+## ![ArchimedeanSpiralText](Sources/Rings/ArchimedeanSpiralText.md)
 
 ### Preview:
-
 ![ArchimedeanSpiralTextDemo](https://user-images.githubusercontent.com/1284944/117950922-3ef10e80-b346-11eb-9da1-50b0f87990a2.gif)
 
-### Usage:
-```swift
-// Create text along archimedean spiral
-ArchimedeanSpiralText("My Archimedean Spiral")
-
-// Setup Archimedean Spiral parameters
-ArchimedeanSpiralText("My Archimedean Spiral")
-  .gap(10.0)                // To setup the distance between two calculated points.
-  .innerRadius(15.0)        // To specify the start radius of an archimedean spiral
-  .spacing(radiusSpacing)   // To adjust the constant separation distance between intersection points measured from the origin.
-   
-// Update the text appearance
-ArchimedeanSpiralText()
-  .text("My Archimedean Spiral")  // Modifing text content
-  .textDirection(direction)       // Specifing the direction of text.
-  .textColor(color)               // Change text color
-  .font(font)                     // Change font and text size
-```
+### ![Document](Sources/Rings/ArchimedeanSpiralText.md)
