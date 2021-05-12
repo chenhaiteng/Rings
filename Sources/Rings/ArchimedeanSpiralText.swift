@@ -29,9 +29,9 @@ public struct ArchimedeanSpiralText: View {
     private var radiusSpacing: Double
     private var innerRadius: Double
     private var gap: Double
-    private var startAngle: CGAngle = CGAngle.zero
-    
     private var textDirection: TextDirection = .Top
+    private var font = Font.system(size: 20.0)
+    private var textColor: Color = Color.red
     
     private var text: String {
         didSet {
@@ -47,19 +47,18 @@ public struct ArchimedeanSpiralText: View {
     
     private var textPoints: [CGPolarPoint] = []
     
-    public init(_ innerRadius: Double = 12.0, spacing: Double = 10.0, gap: Double = 5.0, text: String = "", angle: CGAngle = CGAngle.zero) {
+    public init(_ innerRadius: Double = 12.0, spacing: Double = 10.0, gap: Double = 5.0, text: String = "") {
         self.radiusSpacing = spacing
         self.innerRadius = innerRadius
         self.gap = gap
         self.text = text
         self.chars = Array(text.enumerated())
-        self.startAngle = angle
         updateTextPoints()
     }
     
     private mutating func updateTextPoints() {
         let spiral = ArchimedeanSpiral(innerRadius: self.innerRadius, radiusSpacing: self.radiusSpacing, spacing: self.gap)
-        textPoints = spiral.equidistantPoints(start: startAngle, num: self.chars.count)
+        textPoints = spiral.equidistantPoints(start: CGAngle.zero, num: self.chars.count)
     }
     
     public var body: some View {
@@ -72,7 +71,8 @@ public struct ArchimedeanSpiralText: View {
                     Text(String(element))
                         .rotationEffect(rotation)
                         .offset(x: textPt.x, y: textPt.y)
-                        .font(.system(size: 13))
+                        .foregroundColor(textColor)
+                        .font(font)
                     
                 }
             }.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
@@ -115,62 +115,120 @@ extension ArchimedeanSpiralText: Adjustable {
             tmp.textDirection = direction
         }
     }
+    
+    public func font(_ font: Font) -> Self {
+        setProperty { tmp in
+            tmp.font = font
+        }
+    }
+    
+    public func textColor(_ color: Color) -> Self {
+        setProperty { tmp in
+            tmp.textColor = color
+        }
+    }
 }
 
-struct ArchimedeanSpiralTextDemo : View {
+struct SegmentedPicker: ViewModifier {
+    func body(content: Content) -> some View {
+        #if os(watchOS)
+        content
+        #else
+        content.pickerStyle(SegmentedPickerStyle()).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 7))
+        #endif
+    }
+}
+
+struct ColoredPicker: ViewModifier {
+    @Binding var selection: Color
+    func body(content: Content) -> some View {
+        #if os(macOS) || os(iOS)
+        if #available(macOS 11.0, *) {
+            ColorPicker("", selection: _selection)
+        } else {
+            content.modifier(SegmentedPicker())
+        }
+        #else
+        content.modifier(SegmentedPicker())
+        #endif
+    }
+}
+
+extension Picker {
+    func segmented() -> some View {
+        modifier(SegmentedPicker())
+    }
+    
+    func colorPicker(_ selection: Binding<Color>) -> some View {
+        modifier(ColoredPicker(selection: selection))
+    }
+}
+
+public struct ArchimedeanSpiralTextDemo : View {
     private let demoText = "1234567890abcdefgABCDEFG♩♪♫♬"
-    @State var radiusSpacing: Double = 10.0
+    @State var radiusSpacing: Double = 20.0
     @State var innerR: Double = 25.0
     @State var gap: Double = 25.0
-    @State var textLength: Double = 10.0
-    @State var angle: Double = 90.0
+    @State var textLength: Double = 15.0
     @State var direction: TextDirection = TextDirection.Top
-    var body: some View {
+    @State var color: Color = .white
+    @State var font: Font = .system(.body)
+    
+    public var body: some View {
         VStack {
             let enabled = String(demoText.prefix(Int(textLength)))
             let disabled = String(demoText.suffix(demoText.count - Int(textLength)))
-            ArchimedeanSpiralText(angle: CGAngle.degrees(angle))
+            ArchimedeanSpiralText()
                 .gap(gap)
                 .innerRadius(innerR)
                 .spacing(radiusSpacing)
                 .text(enabled)
                 .textDirection(direction)
+                .textColor(color)
+                .font(font)
             Slider(value: $textLength, in: 1.0...28.0, step: 1.0) {
                 Text(enabled).foregroundColor(.white) + Text(disabled).foregroundColor(.gray)
             }.padding(EdgeInsets(top: 0.0, leading: 10.0, bottom: 0.0, trailing: 10.0))
-            #if os(watchOS)
-            Picker("direct to center", selection: $direction) {
-                Text("top").tag(TextDirection.Top)
-                Text("bottom").tag(TextDirection.Bottom)
-                Text("right").tag(TextDirection.Right)
-                Text("left").tag(TextDirection.Left)
+            HStack {
+                VStack {
+                    Text("direction forward to center")
+                    Picker("", selection: $direction) {
+                        Text("top").tag(TextDirection.Top)
+                        Text("bottom").tag(TextDirection.Bottom)
+                        Text("right").tag(TextDirection.Right)
+                        Text("left").tag(TextDirection.Left)
+                    }.segmented()
+                    Text("text color")
+                    Picker("", selection: $color) {
+                        Text("White").tag(Color.white)
+                        Text("Red").tag(Color.red)
+                        Text("Blue").tag(Color.blue)
+                        Text("Green").tag(Color.green)
+                    }.colorPicker($color)
+                    Picker("Font", selection: $font) {
+                        Text(".body").tag(Font.system(.body))
+                        Text(".caption").tag(Font.system(.caption))
+                        Text("Zapfino(10)").tag(Font.custom("Zapfino", size: 10.0))
+                    }.segmented()
+                }
+                VStack {
+                    Slider(value: $innerR, in: 0.0...30.0, step: 5.0) {
+                        Text("Inner Radius: \(innerR)")
+                    }.padding(EdgeInsets(top: 0.0, leading: 10.0, bottom: 0.0, trailing: 10.0))
+                    Slider(value: $radiusSpacing, in: 10.0...80.0, step: 5.0) {
+                        Text("Radius Spacing: \(radiusSpacing)")
+                    }.padding(EdgeInsets(top: 0.0, leading: 10.0, bottom: 0.0, trailing: 10.0))
+                    Slider(value: $gap, in: 10.0...40.0, step: 3.0) {
+                        Text("Gap:\(gap)")
+                    }.padding(EdgeInsets(top: 0.0, leading: 10.0, bottom: 0.0, trailing: 10.0))
+                }
             }
-            #else
-            Picker("head to center", selection: $direction) {
-                Text("top").tag(TextDirection.Top)
-                Text("bottom").tag(TextDirection.Bottom)
-                Text("right").tag(TextDirection.Right)
-                Text("left").tag(TextDirection.Left)
-            }.pickerStyle(SegmentedPickerStyle())
-            #endif
-            Slider(value: $angle, in: 0.0...360.0) {
-                Text("start at: \(angle)")
-            }.padding(EdgeInsets(top: 0, leading: 10.0, bottom: 0, trailing: 10.0))
-            Slider(value: $innerR, in: 0.0...30.0) {
-                Text("Inner Radius: \(innerR)")
-            }.padding(EdgeInsets(top: 0.0, leading: 10.0, bottom: 0.0, trailing: 10.0))
-            Slider(value: $radiusSpacing, in: 10.0...80.0) {
-                Text("Radius Spacing: \(radiusSpacing)")
-            }.padding(EdgeInsets(top: 0.0, leading: 10.0, bottom: 0.0, trailing: 10.0))
-            Slider(value: $gap, in: 10.0...40.0) {
-                Text("Gap:\(gap)")
-            }.padding(EdgeInsets(top: 0.0, leading: 10.0, bottom: 0.0, trailing: 10.0))
         }
     }
 }
 
-struct ArchimedeanSpiralText_Previews: PreviewProvider {
-    static var previews: some View {
+public struct ArchimedeanSpiralText_Previews: PreviewProvider {
+    public static var previews: some View {
         ArchimedeanSpiralTextDemo()
     }
 }
