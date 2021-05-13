@@ -6,7 +6,7 @@ It includes following controls:
 * **[RingText](#ringtext)**
 * **[ClockIndex](#clockindex)**
 * **[HandAiguille](#gandaiguille)**
-* **ArchimedeanSpiralText**
+* **[ArchimedeanSpiralText](#archimedeanspiraltext)**
 * SphericText (In-progress)
 * Knob (In-planning)
 
