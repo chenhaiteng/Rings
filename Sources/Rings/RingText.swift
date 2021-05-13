@@ -103,11 +103,6 @@ public struct RingText : View {
     }
 }
 
-internal func _setProperty<T>(content: T, _ setBlock:(_ newContent: inout T) -> T) -> T {
-    var temp = content
-    return setBlock(&temp)
-}
-
 extension RingText {
     func setProperty(_ setBlock: (_ text: inout Self) -> Void) -> Self {
         let result = _setProperty(content: self) { (tmp :inout Self) in
