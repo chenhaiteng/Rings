@@ -2,7 +2,7 @@
 
 **Rings** is a collection of controls which have similar shapes of ring, circle...
 
-It includes following controls:
+It includes following controls, click to see what it looks like:
 
 * **[RingText](#ringtext)**
 * **[ClockIndex](#clockindex)**
@@ -12,6 +12,40 @@ It includes following controls:
 and following functions are in progress:
 * SphericText
 * Knob
+
+---
+## Installation:
+### Install with Swift Package Manager
+#### - Add to Xcode:
+
+1. File > Swift Packages > Add Package Dependency...
+2. Choose Project you want to add Rings
+3. Paste repository https://github.com/chenhaiteng/Rings.git
+4. Rules > Version: Up to Next Major 0.1.0
+It's can also apply Rules > Branch : main to access latest code.
+If you want try some experimental features, you can also apply Rules > Branch : develop
+
+**Note:** It might need to link Rings to your target maunally.
+
+1. Open *Project Editor* by tap on root of project navigator
+2. Choose the target you want to use Rings.
+3. Choose **Build Phases**, and expand **Link Binary With Libraries**
+4. Tap on **+** button, and choose Rings to add it.
+
+#### - Add to SPM package: 
+```swift
+dependencies: [
+    .package(name: "Rings", url: "https://github.com/chenhaiteng/Rings.git", from: "0.1.0")
+    // To specify branch, use following statement to instead of.
+    // .package(name: "Rings", url: "https://github.com/chenhaiteng/Rings.git", .branch("branch_name"))
+],
+targets: [
+    .target(
+        name: "MyPackage",
+        dependencies: ["Rings"]),
+]
+```
+---
 
 ## RingText
 
@@ -42,3 +76,7 @@ and following functions are in progress:
 ![ArchimedeanSpiralTextDemo](https://user-images.githubusercontent.com/1284944/117950922-3ef10e80-b346-11eb-9da1-50b0f87990a2.gif)
 
 ### ![How to use it](Sources/Rings/ArchimedeanSpiralText.md)
+
+---
+# License
+Rings is released under the [MIT License](LICENSE).
