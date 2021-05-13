@@ -32,7 +32,6 @@ It includes following controls:
 
 ### ![How to use it](Sources/Rings/HandAiguille.md)
 
-
 ## ![ArchimedeanSpiralText](Sources/Rings/ArchimedeanSpiralText.md)
 
 ### What it looks like:
