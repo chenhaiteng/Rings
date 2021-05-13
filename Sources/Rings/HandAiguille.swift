@@ -119,6 +119,26 @@ public struct HandFactory {
     }
 }
 
+
+struct RoundedBorder: ViewModifier {
+    var cornerRadius:CGFloat = 5
+    var color = Color.white
+    var lineWidth:CGFloat = 1
+    func body(content: Content) -> some View {
+        content.padding(EdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5))
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(color, lineWidth: lineWidth)
+            )
+    }
+}
+
+extension View {
+    func rounded(_ cornerRadius:CGFloat = 5, color:Color = .white, width:CGFloat = 1) -> some View {
+        modifier(RoundedBorder(cornerRadius: cornerRadius, color: color, lineWidth: width))
+    }
+}
+
 struct AppleStyleHandPreview: View {
     @State var emulateTime: CGFloat = 0.0
     @State var showBlueprint: Bool = false
@@ -144,18 +164,21 @@ struct AppleStyleHandPreview: View {
                     HandFactory.standard.makeAppleWatchStyleHand(size: CGSize(width: 4.0, height: 60.0),timeProvider: $emulateTime, unit: .minute).frame(width: 120, height: 120, alignment: .center)
                 }
             }
+            
             HStack {
                 Spacer(minLength: 10)
-                Text("time:")
-                Slider(value: $emulateTime, in: 0.0...60.0)
-                Text("\(emulateTime)")
+                Slider(value: $emulateTime, in: 0.0...60.0, minimumValueLabel: Text("0.0"), maximumValueLabel: Text("60.0")) {
+                    
+                    Text("time")
+                        .rounded()
+                }
                 Spacer(minLength: 10)
             }
             HStack {
                 Spacer(minLength: 10)
-                Text("offset:")
-                Slider(value: $offset, in: 0.0...20.0, step: 0.5)
-                Text("\(offset)")
+                Slider(value: $offset, in: 0.0...20.0, step: 0.5, minimumValueLabel: Text("0.0"), maximumValueLabel: Text("20.0")) {
+                    Text("offset").rounded()
+                }
                 Spacer(minLength: 10)
             }
             HStack {

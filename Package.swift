@@ -28,7 +28,11 @@ let package = Package(
                 dependencies: []),
         .target(
             name: "Rings",
-            dependencies: ["CoreGraphicsExtension", "CommonExts", "ArchimedeanSpiral"]),
+            dependencies: ["CoreGraphicsExtension", "CommonExts", "ArchimedeanSpiral"],
+            exclude: ["RingText.md",
+                      "ClockIndex.md",
+                      "ArchimedeanSpiralText.md",
+                      "HandAiguille.md"]),
         .testTarget(
             name: "RingsTests",
             dependencies: ["Rings",

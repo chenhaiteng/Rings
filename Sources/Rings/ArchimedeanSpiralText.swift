@@ -164,7 +164,7 @@ extension Picker {
     }
 }
 
-public struct ArchimedeanSpiralTextDemo : View {
+struct ArchimedeanSpiralTextDemo : View {
     private let demoText = "1234567890abcdefgABCDEFG♩♪♫♬"
     @State var radiusSpacing: Double = 20.0
     @State var innerR: Double = 25.0
@@ -227,7 +227,7 @@ public struct ArchimedeanSpiralTextDemo : View {
     }
 }
 
-public struct ArchimedeanSpiralText_Previews: PreviewProvider {
+struct ArchimedeanSpiralText_Previews: PreviewProvider {
     public static var previews: some View {
         ArchimedeanSpiralTextDemo()
     }
