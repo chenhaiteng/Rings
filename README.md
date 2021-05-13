@@ -4,7 +4,7 @@
 
 It includes following controls:
 * **[RingText](#ringtext)**
-* **ClockIndex**
+* **[ClockIndex](#clockindex)**
 * **HandAiguille**
 * **ArchimedeanSpiralText**
 * SphericText (In-progress)
