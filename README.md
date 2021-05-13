@@ -32,7 +32,7 @@ and following functions are in progress:
 ## HandAiguille
 
 ### What it looks like:
-https://user-images.githubusercontent.com/1284944/117106480-83aeff80-adb2-11eb-8e82-d77d9569dcca.mov
+![HandAguille](https://user-images.githubusercontent.com/1284944/118101511-47128200-b40a-11eb-870f-90ac2f2a302a.gif)
 
 ### ![How to use it](Sources/Rings/HandAiguille.md)
 
