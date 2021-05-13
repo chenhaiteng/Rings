@@ -6,7 +6,7 @@ It includes following controls:
 
 * **[RingText](#ringtext)**
 * **[ClockIndex](#clockindex)**
-* **[HandAiguille](#gandaiguille)**
+* **[HandAiguille](#handaiguille)**
 * **[ArchimedeanSpiralText](#archimedeanspiraltext)**
 
 and following functions are in progress:
@@ -36,7 +36,7 @@ https://user-images.githubusercontent.com/1284944/117106480-83aeff80-adb2-11eb-8
 
 ### ![How to use it](Sources/Rings/HandAiguille.md)
 
-## ![ArchimedeanSpiralText](Sources/Rings/ArchimedeanSpiralText.md)
+## ArchimedeanSpiralText
 
 ### What it looks like:
 ![ArchimedeanSpiralTextDemo](https://user-images.githubusercontent.com/1284944/117950922-3ef10e80-b346-11eb-9da1-50b0f87990a2.gif)
