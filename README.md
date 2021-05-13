@@ -3,12 +3,15 @@
 **Rings** is a collection of controls which have similar shapes of ring, circle...
 
 It includes following controls:
+
 * **[RingText](#ringtext)**
 * **[ClockIndex](#clockindex)**
 * **[HandAiguille](#gandaiguille)**
 * **[ArchimedeanSpiralText](#archimedeanspiraltext)**
-* SphericText (In-progress)
-* Knob (In-planning)
+
+and following functions are in progress:
+* SphericText
+* Knob
 
 ## RingText
 
