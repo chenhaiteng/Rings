@@ -143,7 +143,7 @@ struct ColoredPicker: ViewModifier {
     @Binding var selection: Color
     func body(content: Content) -> some View {
         #if os(macOS) || os(iOS)
-        if #available(macOS 11.0, *) {
+        if #available(macOS 11.0, iOS 14.0, macCatalyst 14.0, *) {
             ColorPicker("", selection: _selection)
         } else {
             content.modifier(SegmentedPicker())
