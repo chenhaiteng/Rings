@@ -8,7 +8,7 @@
 import SwiftUI
 import CoreGraphicsExtension
 
-struct SphericText<T:BinaryFloatingPoint>: View {
+public struct SphericText<T:BinaryFloatingPoint>: View {
     
     @Binding var offsetDegree: T
     
@@ -26,7 +26,7 @@ struct SphericText<T:BinaryFloatingPoint>: View {
     @State private var estHeight: CGFloat = 30.0
     @State private var estWidth: CGFloat = 30.0
     
-    init(words: [String], word_spacing: T = 30.0 , font: Font? = nil, word_color: Color = Color.white, word_background: Color = Color.clear, hide_opposite: Bool = false, degree_offset: Binding<T> = .constant(0)) {
+    public init(words: [String], word_spacing: T = 30.0 , font: Font? = nil, word_color: Color = Color.white, word_background: Color = Color.clear, hide_opposite: Bool = false, degree_offset: Binding<T> = .constant(0)) {
         stringTable = words.enumerated().map { (i, e) in
             return (i, e)
         }
@@ -38,7 +38,7 @@ struct SphericText<T:BinaryFloatingPoint>: View {
         hideOpposite = hide_opposite
     }
     
-    init(_ text: String, _ rotateDegree: Binding<T>) {
+    public init(_ text: String, _ rotateDegree: Binding<T>) {
         let words = Array(text).map { c -> String in
             String(c)
         }
@@ -46,19 +46,19 @@ struct SphericText<T:BinaryFloatingPoint>: View {
         self.init(words: words, word_spacing: T(spacing), degree_offset: rotateDegree)
     }
     
-    init(_ text: String, word_spacing: T, _ rotateDegree: Binding<T>) {
+    public init(_ text: String, word_spacing: T, _ rotateDegree: Binding<T>) {
         let words = Array(text).map { c -> String in
             String(c)
         }
         self.init(words: words, word_spacing: word_spacing, degree_offset: rotateDegree)
     }
     
-    init(list: [String], _ rotateDegree: Binding<T>) {
+    public init(list: [String], _ rotateDegree: Binding<T>) {
         let spacing = 360.0/Double(list.count)
         self.init(words: list, word_spacing: T(spacing), degree_offset: rotateDegree)
     }
     
-    var body: some View {
+    public var body: some View {
         GeometryReader { geo in
             let w = geo.size.width
             let frameL = geo.frame(in: .local)
@@ -97,9 +97,9 @@ struct SphericText<T:BinaryFloatingPoint>: View {
 }
 
 extension SphericText : Adjustable {
-    public func wordSpacing(_ spacing: Double) -> SphericText {
+    public func wordSpacing(_ spacing: T) -> SphericText {
         setProperty { tmp in
-            tmp.wordSpacing = spacing
+            tmp.wordSpacing = Double(spacing)
         }
     }
     
@@ -139,15 +139,15 @@ extension SphericText : Adjustable {
         }
     }
     
-    public func perspective(_ value: CGFloat) -> SphericText {
+    public func perspective(_ value: T) -> SphericText {
         setProperty { tmp in
-            tmp.perspective = value
+            tmp.perspective = CGFloat(value)
         }
     }
     
-    public func radius(_ value: CGFloat) -> SphericText {
+    public func radius(_ value: T) -> SphericText {
         setProperty { tmp in
-            tmp.anchorZ = value
+            tmp.anchorZ = CGFloat(value)
         }
     }
     
@@ -159,7 +159,7 @@ extension SphericText : Adjustable {
 }
 
 struct SphericTextDemo: View {
-    @State var rotateDeg: Double = 0.0
+    @State var rotateDeg: CGFloat = 0.0
     @State var showModifier: Bool = false
     @State var radius: CGFloat = 40.0
     @State var perspective: CGFloat = 0.0
@@ -170,7 +170,7 @@ struct SphericTextDemo: View {
     @State var hideOpposite: Bool = false
     @State var textColor: Color = .white
     @State var backgroundColor: Color = .clear
-    @State var wordSpacing: Double = 100.0
+    @State var wordSpacing: CGFloat = 100.0
     
     var body: some View {
         let wordsInputBinding = Binding<String>(get: {
