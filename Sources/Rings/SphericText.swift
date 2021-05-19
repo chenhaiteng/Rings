@@ -38,7 +38,7 @@ public struct SphericText<T:BinaryFloatingPoint>: View {
         hideOpposite = hide_opposite
     }
     
-    public init(_ text: String, _ rotateDegree: Binding<T>) {
+    public init(_ text: String, _ rotateDegree: Binding<T> = .constant(0)) {
         let words = Array(text).map { c -> String in
             String(c)
         }
@@ -46,16 +46,16 @@ public struct SphericText<T:BinaryFloatingPoint>: View {
         self.init(words: words, word_spacing: T(spacing), degree_offset: rotateDegree)
     }
     
-    public init(_ text: String, word_spacing: T, _ rotateDegree: Binding<T>) {
+    public init(_ text: String, word_spacing: T, _ rotateDegree: Binding<T> = .constant(0)) {
         let words = Array(text).map { c -> String in
             String(c)
         }
         self.init(words: words, word_spacing: word_spacing, degree_offset: rotateDegree)
     }
     
-    public init(list: [String], _ rotateDegree: Binding<T>) {
-        let spacing = 360.0/Double(list.count)
-        self.init(words: list, word_spacing: T(spacing), degree_offset: rotateDegree)
+    public init(words: [String], _ rotateDegree: Binding<T>) {
+        let spacing = 360.0/Double(words.count)
+        self.init(words: words, word_spacing: T(spacing), degree_offset: rotateDegree)
     }
     
     public var body: some View {
