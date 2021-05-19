@@ -32,7 +32,8 @@ let package = Package(
             exclude: ["RingText.md",
                       "ClockIndex.md",
                       "ArchimedeanSpiralText.md",
-                      "HandAiguille.md"]),
+                      "HandAiguille.md",
+                      "SphericText.md"]),
         .testTarget(
             name: "RingsTests",
             dependencies: ["Rings",
