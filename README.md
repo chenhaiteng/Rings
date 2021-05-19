@@ -8,9 +8,10 @@ It includes following controls, click to see what it looks like:
 * **[ClockIndex](#clockindex)**
 * **[HandAiguille](#handaiguille)**
 * **[ArchimedeanSpiralText](#archimedeanspiraltext)**
+* **[SphericText](#spherictext)**
 
 and following functions are in progress:
-* SphericText
+
 * Knob
 
 ---
@@ -77,6 +78,13 @@ targets: [
 ![ArchimedeanSpiralTextDemo](https://user-images.githubusercontent.com/1284944/117950922-3ef10e80-b346-11eb-9da1-50b0f87990a2.gif)
 
 ### ![How to use it](Sources/Rings/ArchimedeanSpiralText.md)
+
+## SphericText
+
+### What it looks like:
+![Spheric Text Demo](https://user-images.githubusercontent.com/1284944/118671827-60f8fe00-b82a-11eb-9f0f-821841867cba.gif)
+
+### ![How to use it](Sources/Rings/SphericText.md)
 
 ---
 # License
