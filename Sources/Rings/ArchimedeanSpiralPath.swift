@@ -113,7 +113,7 @@ struct ArchimedeanSpiralPathDemo : View {
     }
 }
 
-struct SwiftUIView_Previews: PreviewProvider {
+struct ArchimedeanSpiralPath_Previews: PreviewProvider {
     static var previews: some View {
         ArchimedeanSpiralPathDemo()
     }
