@@ -20,16 +20,7 @@ enum Default {
 
 public protocol KnobMapping {
     func degree(from value: Double) -> Double
-    func degree(delta value: Double) -> Double
-    func value(from degree: Double) -> Double
-    func value(delta degree: Double) -> Double
-    func configure(with knob: Knob) -> Self
-}
-
-extension KnobMapping {
-    public func configure(with knob: Knob) -> Self {
-        return self
-    }
+    func newValue(_ v: Double, new: Angle, old: Angle) -> Double
 }
 
 public struct LinearMapping : KnobMapping, Adjustable {
@@ -37,6 +28,19 @@ public struct LinearMapping : KnobMapping, Adjustable {
     var maxDegree: Double = Default.Degree.Max.rawValue
     var minValue: Double = Default.Value.Min.rawValue
     var maxValue: Double = Default.Value.Max.rawValue
+    
+    public func newValue(_ v: Double, new: Angle, old: Angle) -> Double {
+        let deltaDegree = (old - new).degrees
+        let deltaValue = value(delta: deltaDegree)
+        var newValue = v + deltaValue
+        if newValue > maxValue {
+            newValue = maxValue
+        }
+        if newValue < minValue {
+            newValue = minValue
+        }
+        return newValue
+    }
     
     public func degree(from value: Double) -> Double {
         if(value < minValue) {
@@ -49,32 +53,8 @@ public struct LinearMapping : KnobMapping, Adjustable {
         return ratio * (maxDegree - minDegree) + minDegree
     }
     
-    public func degree(delta value: Double) -> Double {
-        return value * (maxDegree - minDegree) / (maxValue - minValue)
-    }
-    
-    public func value(from degree: Double) -> Double {
-        if(degree < minDegree) {
-            return minValue
-        }
-        if(degree > maxDegree) {
-            return maxValue
-        }
-        let ratio = (degree - minDegree)/(maxDegree - minDegree)
-        return ratio * (maxValue - minValue) + minValue
-    }
-    
-    public func value(delta degree: Double) -> Double {
+    private func value(delta degree: Double) -> Double {
         return degree * (maxValue - minValue) / (maxDegree - minDegree)
-    }
-    
-    public func configure(with knob: Knob) -> Self {
-        setProperty { tmp in
-            tmp.minDegree = knob.minDegree
-            tmp.maxDegree = knob.maxDegree
-            tmp.minValue = knob.minValue
-            tmp.maxValue = knob.maxValue
-        }
     }
 }
 
@@ -97,15 +77,32 @@ extension CGVector {
         return T(result + ((x < 0 && y < 0) ? 2*CGFloat.pi : 0))
     }
     
+    static func crossQuadrant34(v1: CGVector, v2: CGVector) -> Bool {
+        return (v1.dy*v2.dy > 0 && v2.dx*v1.dx < 0)
+    }
+    
     static func angularDistance(v1: CGVector, v2: CGVector) -> Angle {
         let angle2 = adjustedAtan2(y: v2.dy, x: v2.dx)
         let angle1 = adjustedAtan2(y: v1.dy, x: v1.dx)
-        if(v1.dy*v2.dy > 0 && v2.dx*v1.dx < 0) { // v1, v2 cross quadrant 3 and 4
+        if(crossQuadrant34(v1: v1, v2: v2)) { // v1, v2 cross quadrant 3 and 4
             return Angle.radians(Double(atan2(v2.dy, v2.dx) - atan2(v1.dy, v1.dx)))
         } else {
             return Angle(radians: Double(angle2 - angle1))
         }
     }
+    
+    func angle(_ shouldAdjust: Bool = false) -> Angle {
+        return Angle.radians(Double(radians(shouldAdjust)))
+    }
+    
+    func radians(_ shouldAdjust: Bool = false) -> CGFloat {
+        return shouldAdjust ? CGVector.adjustedAtan2(y: dy, x: dx) : atan2(dy, dx)
+    }
+    
+    func degrees(_ shouldAdjust: Bool = false) -> CGFloat {
+        return CGFloat(angle(shouldAdjust).degrees)
+    }
+}
 }
 
 public struct Knob: View {
@@ -138,13 +135,12 @@ public struct Knob: View {
         GeometryReader { geo in
             let center = CGPoint(x: geo.size.width/2, y: geo.size.height/2)
             let radius = min(geo.size.width, geo.size.height)/2.0
-            let mapping = mappingObj.configure(with: self)
             
             let pt = CGPoint(x: center.x + previousVector.dx, y: center.y - previousVector.dy)
             
             ZStack {
                 ForEach(layers.indices) { index in
-                    layers[index].degreeRange(minDegree...maxDegree).degree(mapping.degree(from: value)).view.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+                    layers[index].degreeRange(minDegree...maxDegree).degree(mappingObj.degree(from: value)).view.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
                 }
                 Group {
                     Path { p in
@@ -164,16 +160,8 @@ public struct Knob: View {
             }.contentShape(Circle()).gesture(DragGesture().onChanged({ value in
                 if(previousVector != CGVector.zero) {
                     currentVector = value.location - center
-                    deltaAngle = CGVector.angularDistance(v1: currentVector, v2: previousVector)
-                    let deltaValue = mapping.value(delta: deltaAngle.degrees)
-                    var newValue = self.value + deltaValue
-                    if(newValue > maxValue) {
-                        newValue = maxValue
-                    }
-                    if(newValue < minValue) {
-                        newValue = minValue
-                    }
-                    self.value = newValue
+                    let shouldAdjust = !CGVector.crossQuadrant34(v1: currentVector, v2: previousVector)
+                    self.value = mappingObj.newValue(self.value, new: currentVector.angle(shouldAdjust), old: previousVector.angle(shouldAdjust))
                 }
             }).onEnded({ value in
                 currentVector = .zero
@@ -194,7 +182,7 @@ extension Knob : Adjustable {
     
     func mapping<T: KnobMapping>(with mapping: T) -> Self {
         setProperty { tmp in
-            tmp.mappingObj = mapping.configure(with: tmp)
+            tmp.mappingObj = mapping
         }
     }
     
