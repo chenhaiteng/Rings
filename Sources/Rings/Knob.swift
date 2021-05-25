@@ -7,6 +7,17 @@
 
 import SwiftUI
 
+enum Default {
+    enum Degree: Double {
+        case Min = -225.0
+        case Max = 45.0
+    }
+    enum Value: Double {
+        case Min = 0.0
+        case Max = 1.0
+    }
+}
+
 public protocol KnobMapping {
     func degree(from value: Double) -> Double
     func degree(delta value: Double) -> Double
@@ -22,10 +33,10 @@ extension KnobMapping {
 }
 
 public struct LinearMapping : KnobMapping, Adjustable {
-    var minDegree: Double = -225
-    var maxDegree: Double = 45
-    var minValue: Double = 0.0
-    var maxValue: Double = 1.0
+    var minDegree: Double = Default.Degree.Min.rawValue
+    var maxDegree: Double = Default.Degree.Max.rawValue
+    var minValue: Double = Default.Value.Min.rawValue
+    var maxValue: Double = Default.Value.Max.rawValue
     
     public func degree(from value: Double) -> Double {
         if(value < minValue) {
@@ -99,10 +110,10 @@ extension CGVector {
 
 public struct Knob: View {
     private var layers: [AnyKnobLayer]  = []
-    var minDegree: Double = -225
-    var maxDegree: Double = 45
-    var minValue: Double = 0.0
-    var maxValue: Double = 1.0
+    var minDegree: Double = Default.Degree.Min.rawValue
+    var maxDegree: Double = Default.Degree.Max.rawValue
+    var minValue: Double = Default.Value.Min.rawValue
+    var maxValue: Double = Default.Value.Max.rawValue
     
     private var mappingObj: KnobMapping
     
@@ -111,11 +122,10 @@ public struct Knob: View {
     
     private var blueprint: Bool = false
     
-    //Debug State
     @State var currentVector: CGVector = .zero
     @State var deltaAngle: Angle = .zero
     
-    init<F: BinaryFloatingPoint>(_ value: Binding<F>, _ mapping: KnobMapping = LinearMapping(minDegree: -225, maxDegree: 45, minValue: 0.0, maxValue: 1.0)) {
+    init<F: BinaryFloatingPoint>(_ value: Binding<F>, _ mapping: KnobMapping = LinearMapping()) {
         _value = Binding<Double>(get: {
             Double(value.wrappedValue)
         }, set: { v in
