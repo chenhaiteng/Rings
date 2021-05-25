@@ -32,7 +32,7 @@ public struct ArcKnobLayer : KnobLayer {
             AnyView(ZStack {
                 GeometryReader { geo in
                     Path { p in
-                        let radius = min(geo.size.height, geo.size.width)/2
+                        let radius = min(geo.size.height, geo.size.width)/2.0 - arcWidth/2.0
                         p.addArc(center: CGPoint(x: geo.size.width/2, y: geo.size.height/2), radius: radius, startAngle: Angle.degrees(minDegree), endAngle: Angle.degrees(Double(degree)), clockwise: false)
                     }.stroke(arcColor, lineWidth: arcWidth).opacity(0.5)
                 }
