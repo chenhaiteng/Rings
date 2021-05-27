@@ -7,25 +7,6 @@
 
 import SwiftUI
 
-    }
-}
-
-        get {
-        }
-        }
-    }
-    
-        }
-        }
-    }
-    
-        }
-        }
-    }
-    
-    }
-}
-
 extension CGPoint {
     static func -(left: CGPoint, right: CGPoint) -> CGVector {
         // The origin of View's coordinate is on left-top, adjust it to left-bottom to fit mathmatic behaviour.
