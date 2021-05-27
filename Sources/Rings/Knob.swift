@@ -18,28 +18,47 @@ enum Default {
     }
 }
 
-public protocol KnobMapping {
+public protocol KnobMapping : Adjustable {
+    var degreeRange: ClosedRange<Double> { get set }
     func degree(from value: Double) -> Double
-    func newValue(_ v: Double, new: Angle, old: Angle) -> Double
+    func newValue(_ record: KnobGestureRecord) -> Double
+}
+
+extension KnobMapping {
+    func degreeRange(_ range: ClosedRange<Double>) -> Self {
+        setProperty { tmp in
+            tmp.degreeRange = range
+        }
+    }
+}
 }
 
 public struct LinearMapping : KnobMapping, Adjustable {
-    var minDegree: Double = Default.Degree.Min.rawValue
-    var maxDegree: Double = Default.Degree.Max.rawValue
+    private var minDegree: Double {
+        get {
+            degreeRange.lowerBound
+        }
+    }
+    private var maxDegree: Double {
+        get {
+            degreeRange.upperBound
+        }
+    }
+    public var degreeRange = Default.Degree.Min.rawValue...Default.Degree.Max.rawValue
     var minValue: Double = Default.Value.Min.rawValue
     var maxValue: Double = Default.Value.Max.rawValue
     
-    public func newValue(_ v: Double, new: Angle, old: Angle) -> Double {
-        let deltaDegree = (old - new).degrees
-        let deltaValue = value(delta: deltaDegree)
-        var newValue = v + deltaValue
-        if newValue > maxValue {
-            newValue = maxValue
+    public func newValue(_ record: KnobGestureRecord) -> Double {
+        let deltaDegre = (record.current.angle - record.next.angle).degrees
+        let deltaValue = value(delta: deltaDegre)
+        var nextValue = record.current.value + deltaValue
+        if nextValue > maxValue {
+            nextValue = maxValue
         }
-        if newValue < minValue {
-            newValue = minValue
+        if nextValue < minValue {
+            nextValue = minValue
         }
-        return newValue
+        return nextValue
     }
     
     public func degree(from value: Double) -> Double {
@@ -103,24 +122,31 @@ extension CGVector {
         return CGFloat(angle(shouldAdjust).degrees)
     }
 }
+
+public struct KnobGestureRecord {
+    struct Value {
+        var value: Double = .nan
+        var angle: Angle
+    }
+    var start: Value
+    var current: Value
+    var next: Value
 }
 
 public struct Knob: View {
     private var layers: [AnyKnobLayer]  = []
-    var minDegree: Double = Default.Degree.Min.rawValue
-    var maxDegree: Double = Default.Degree.Max.rawValue
-    var minValue: Double = Default.Value.Min.rawValue
-    var maxValue: Double = Default.Value.Max.rawValue
     
     private var mappingObj: KnobMapping
     
     @Binding var value: Double
-    @GestureState var previousVector: CGVector = .zero
+    @GestureState var currentVector: CGVector = .zero
     
     private var blueprint: Bool = false
     
-    @State var currentVector: CGVector = .zero
+    @State var nextVector: CGVector = .zero
     @State var deltaAngle: Angle = .zero
+    @State var startVector: CGVector = .zero
+    @State private var startValue: Double = .nan
     
     init<F: BinaryFloatingPoint>(_ value: Binding<F>, _ mapping: KnobMapping = LinearMapping()) {
         _value = Binding<Double>(get: {
@@ -130,17 +156,16 @@ public struct Knob: View {
         })
         mappingObj = mapping
     }
-    
     public var body: some View {
         GeometryReader { geo in
             let center = CGPoint(x: geo.size.width/2, y: geo.size.height/2)
             let radius = min(geo.size.width, geo.size.height)/2.0
             
-            let pt = CGPoint(x: center.x + previousVector.dx, y: center.y - previousVector.dy)
-            
+            let pt = CGPoint(x: center.x + currentVector.dx, y: center.y - currentVector.dy)
+            let startPt = CGPoint(x: center.x + startVector.dx, y: center.y - startVector.dy)
             ZStack {
                 ForEach(layers.indices) { index in
-                    layers[index].degreeRange(minDegree...maxDegree).degree(mappingObj.degree(from: value)).view.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+                    layers[index].degreeRange(mappingObj.degreeRange).degree(mappingObj.degree(from: value)).view.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
                 }
                 Group {
                     Path { p in
@@ -154,21 +179,59 @@ public struct Knob: View {
                         p.move(to: center)
                         p.addLine(to: pt)
                     }.stroke(Color.blue.opacity(0.5))
+                    Path { p in
+                        p.move(to: center)
+                        p.addLine(to: startPt)
+                    }.stroke(Color.red.opacity(0.5))
                 }.if(!blueprint) { content in
                     content.hidden()
                 }
             }.contentShape(Circle()).gesture(DragGesture().onChanged({ value in
-                if(previousVector != CGVector.zero) {
-                    currentVector = value.location - center
-                    let shouldAdjust = !CGVector.crossQuadrant34(v1: currentVector, v2: previousVector)
-                    self.value = mappingObj.newValue(self.value, new: currentVector.angle(shouldAdjust), old: previousVector.angle(shouldAdjust))
+                if(currentVector != CGVector.zero) {
+                    if(startValue.isNaN) {
+                        startValue = self.value
+                    }
+                    startVector = value.startLocation - center
+                    nextVector = value.location - center
+                    
+                    let shouldAdjust = !CGVector.crossQuadrant34(v1: nextVector, v2: currentVector)
+                    
+                    let valueStart = KnobGestureRecord.Value(value: startValue, angle: startVector.angle(shouldAdjust))
+                    
+                    let valueCurrent = KnobGestureRecord.Value(value: self.value, angle: currentVector.angle(shouldAdjust))
+                    
+                    let valueNext = KnobGestureRecord.Value(angle: nextVector.angle(shouldAdjust))
+                    
+                    let _degree = mappingObj.degree(from: self.value)
+                    if _degree >= mappingObj.degreeRange.upperBound {
+                        if valueCurrent.angle.degrees > valueNext.angle.degrees {
+                            return
+                        }
+                    }
+                    
+                    if _degree <= mappingObj.degreeRange.lowerBound {
+                        if valueCurrent.angle.degrees < valueNext.angle.degrees {
+                            return
+                        }
+                    }
+                    
+                    let record = KnobGestureRecord(start: valueStart, current:valueCurrent, next:valueNext)
+                    let newValue = mappingObj.newValue(record)
+                    if !newValue.isNaN {
+                        if(self.value != newValue) {
+                            self.value = newValue
+                        }
+                    }
                 }
             }).onEnded({ value in
-                currentVector = .zero
+                nextVector = .zero
                 deltaAngle = .zero
-            }).updating($previousVector, body: { value, state, transaction in
+                startValue = .nan
+                startVector = .zero
+            }).updating($currentVector, body: { value, state, transaction in
                 state = value.location - center
             }))
+            
         }
     }
 }
@@ -194,7 +257,8 @@ extension Knob : Adjustable {
 }
 
 struct KnobDemo: View {
-    @State var testValue: CGFloat = 0
+    @State var valueSegmented: CGFloat = 0
+    @State var valueContiune: CGFloat = 0
     @State var ringWidth: CGFloat = 5
     @State var arcWidth: CGFloat = 5
     @State var showBlueprint: Bool = false
@@ -202,7 +266,20 @@ struct KnobDemo: View {
     var body: some View {
         VStack {
             Spacer(minLength: 40)
-            Knob($testValue).addLayer(RingKnobLayer().ringColor(Gradient(colors: [.blue, .red, .red, .red, .red, .red, .blue])).ringWidth(ringWidth)).addLayer(ArcKnobLayer().arcWidth(arcWidth)).blueprint(showBlueprint)
+            HStack {
+                VStack {
+                    Knob($valueContiune).addLayer(RingKnobLayer().ringColor(Gradient(colors: [.red, .blue, .blue, .blue, .blue, .blue, .red])).ringWidth(ringWidth)).addLayer(ArcKnobLayer().arcWidth(arcWidth)).blueprint(showBlueprint)
+                    Slider(value: $valueContiune, in: 0.0...1.0) {
+                        Text(String(format: "value: %.2f", valueContiune))
+                    }
+                }
+                VStack {
+                    Knob($valueSegmented).addLayer(RingKnobLayer().ringColor(Gradient(colors: [.blue, .red, .red, .red, .red, .red, .blue])).ringWidth(ringWidth)).addLayer(ArcKnobLayer().arcWidth(arcWidth)).blueprint(showBlueprint).mapping(with: SegmentMapping().stops([KnobStop(0.0, -215.0), KnobStop(1.0, 45.0), KnobStop(0.5, -90.0), KnobStop(0.2, 0.0), KnobStop(0.8, -180.0), KnobStop(0.3, -135)]))
+                    Slider(value: $valueSegmented, in: 0.0...1.0, step: 0.1) {
+                        Text(String(format: "value: %.2f", valueSegmented))
+                    }
+                }
+            }
             Spacer(minLength: 40)
             Group {
                 Slider(value: $ringWidth, in: 5.0...25.0, step: 1.0) {
@@ -210,9 +287,6 @@ struct KnobDemo: View {
                 }
                 Slider(value: $arcWidth, in: 5.0...25.0, step: 1.0) {
                     Text(String(format: "Arc Width: %.2f", arcWidth))
-                }
-                Slider(value: $testValue, in: 0.0...1.0) {
-                    Text("test value")
                 }
                 Toggle("blue print", isOn: $showBlueprint)
             }

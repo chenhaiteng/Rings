@@ -13,7 +13,7 @@ internal func _setProperty<T>(content: T, _ setBlock:(_ newContent: inout T) -> 
 }
 
 
-protocol Adjustable {}
+public protocol Adjustable {}
 
 extension Adjustable {
     func setProperty(_ setBlock: (_ text: inout Self) -> Void) -> Self {
