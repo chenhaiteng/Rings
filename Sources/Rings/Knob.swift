@@ -105,16 +105,6 @@ extension CGVector {
     }
 }
 
-public struct KnobGestureRecord {
-    struct Value {
-        var value: Double = .nan
-        var angle: Angle
-    }
-    var start: Value
-    var current: Value
-    var next: Value
-}
-
 public struct Knob: View {
     private var layers: [AnyKnobLayer]  = []
     
