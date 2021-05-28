@@ -133,6 +133,7 @@ public struct Knob: View {
                         if valueCurrent.angle.degrees > valueNext.angle.degrees {
                             return
                         }
+                        debugPrint("current:\(currentVector), next:\(nextVector)")
                         if currentVector.dx*nextVector.dx < 0 {
                             return
                         }
@@ -144,6 +145,7 @@ public struct Knob: View {
                         if valueCurrent.angle.degrees < valueNext.angle.degrees {
                             return
                         }
+                        debugPrint("current:\(currentVector), next:\(nextVector)")
                         if currentVector.dx*nextVector.dx < 0 {
                             return
                         }
