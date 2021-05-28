@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ImageKnobLayer : KnobLayer {
+public struct ImageKnobLayer : KnobLayer {
     var image: Image
     var isFixed: Bool = false
     

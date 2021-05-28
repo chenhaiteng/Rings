@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct RingKnobLayer : KnobLayer {
+public struct RingKnobLayer : KnobLayer {
     var isFixed: Bool = true
     var minDegree: Double = 0.0
     var maxDegree: Double = 0.0
