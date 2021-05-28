@@ -25,6 +25,8 @@ struct RingKnobLayer : KnobLayer {
     private var ringColor: Color = .white
     private var ringGradient: Gradient? = nil
     private var ringWidth: CGFloat = 2.0
+    
+    public init() {}
 }
 
 extension RingKnobLayer : Adjustable {

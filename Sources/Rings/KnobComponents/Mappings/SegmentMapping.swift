@@ -86,4 +86,6 @@ public struct SegmentMapping: KnobMapping, Adjustable {
             tmp.stops = at
         }
     }
+    
+    public init() {}
 }

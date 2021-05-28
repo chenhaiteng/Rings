@@ -68,7 +68,7 @@ public struct Knob: View {
     @State var startVector: CGVector = .zero
     @State private var startValue: Double = .nan
     
-    init<F: BinaryFloatingPoint>(_ value: Binding<F>, _ mapping: KnobMapping = LinearMapping()) {
+    public init<F: BinaryFloatingPoint>(_ value: Binding<F>, _ mapping: KnobMapping = LinearMapping()) {
         _value = Binding<Double>(get: {
             Double(value.wrappedValue)
         }, set: { v in

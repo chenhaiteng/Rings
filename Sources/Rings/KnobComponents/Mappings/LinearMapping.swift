@@ -49,4 +49,7 @@ public struct LinearMapping : KnobMapping, Adjustable {
     private func value(delta degree: Double) -> Double {
         return degree * (maxValue - minValue) / (maxDegree - minDegree)
     }
+    public init() {
+        
+    }
 }

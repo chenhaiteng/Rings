@@ -42,6 +42,8 @@ public struct ArcKnobLayer : KnobLayer {
     
     private var arcWidth: CGFloat = 5.0
     private var arcColor: Color = .white
+    
+    public init() {}
 }
 
 extension ArcKnobLayer : Adjustable {
