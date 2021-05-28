@@ -129,14 +129,16 @@ public struct Knob: View {
                     if _degree >= mappingObj.degreeRange.upperBound {
                         debugPrint("over upper bound :\(_degree)")
                         debugPrint("delta distance: \(delta)")
-                        
-                        if valueCurrent.angle.degrees > valueNext.angle.degrees {
+                        if nextVector.dx < currentVector.dx {
                             return
                         }
-                        debugPrint("current:\(currentVector), next:\(nextVector)")
-                        if currentVector.dx*nextVector.dx < 0 {
-                            return
-                        }
+//                        if valueCurrent.angle.degrees > valueNext.angle.degrees {
+//                            return
+//                        }
+//                        debugPrint("current:\(currentVector), next:\(nextVector)")
+//                        if currentVector.dx*nextVector.dx < 0 {
+//                            return
+//                        }
                     }
                     
                     if _degree <= mappingObj.degreeRange.lowerBound {
