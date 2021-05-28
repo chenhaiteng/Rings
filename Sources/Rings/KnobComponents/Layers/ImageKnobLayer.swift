@@ -9,13 +9,13 @@ import SwiftUI
 
 public struct ImageKnobLayer : KnobLayer {
     var image: Image
-    var isFixed: Bool = false
+    public var isFixed: Bool = false
     
-    var minDegree: Double = 0.0
-    var maxDegree: Double = 0.0
-    var degree: CGFloat = 0.0
+    public var minDegree: Double = 0.0
+    public var maxDegree: Double = 0.0
+    public var degree: CGFloat = 0.0
     
-    var view: AnyView {
+    public var view: AnyView {
         get {
             AnyView(image.rotationEffect(Angle.degrees(Double(degree))))
         }

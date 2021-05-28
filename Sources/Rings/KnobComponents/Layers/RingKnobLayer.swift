@@ -8,16 +8,17 @@
 import SwiftUI
 
 public struct RingKnobLayer : KnobLayer {
-    var isFixed: Bool = true
-    var minDegree: Double = 0.0
-    var maxDegree: Double = 0.0
-    var degree: CGFloat = 0.0
+    public var isFixed: Bool = true
+    public var minDegree: Double = 0.0
+    public var maxDegree: Double = 0.0
+    public var degree: CGFloat = 0.0
     
-    var view: AnyView {
+    public var view: AnyView {
         get {
             AnyView(Circle().stroke(ringAngularGradient(), lineWidth: ringWidth).padding(EdgeInsets(top: ringWidth/2.0, leading: ringWidth/2.0, bottom: ringWidth/2.0, trailing: ringWidth/2.0)))
         }
     }
+    
     private func ringAngularGradient() -> AngularGradient {
         let gradient = ringGradient ?? Gradient(colors: [ringColor])
         return AngularGradient(gradient: gradient, center: .center, startAngle: Angle.degrees(minDegree), endAngle: Angle.degrees(maxDegree))
