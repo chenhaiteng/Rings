@@ -123,28 +123,24 @@ public struct Knob: View {
                     let valueNext = KnobGestureRecord.Value(angle: nextVector.angle(shouldAdjust))
                     
                     let _degree = mappingObj.degree(from: self.value)
+                    
+                    let delta = CGVector.angularDistance(v1: currentVector, v2: nextVector)
+                    
                     if _degree >= mappingObj.degreeRange.upperBound {
-                        debugPrint("over upper bound")
+                        debugPrint("over upper bound :\(_degree)")
+                        debugPrint("delta distance: \(delta)")
+                        
                         if valueCurrent.angle.degrees > valueNext.angle.degrees {
                             return
                         }
-                        let d = CGVector.angularDistance(v1: currentVector, v2: nextVector)
-                        if d.radians > 0 {
-                            return
-                        }
-                        debugPrint("current: \(valueCurrent.angle), next:\(valueNext.angle), d: \(d)")
                     }
                     
                     if _degree <= mappingObj.degreeRange.lowerBound {
-                        debugPrint("over lower bound")
+                        debugPrint("over lower bound : \(_degree)")
+                        debugPrint("delta distance: \(delta)")
                         if valueCurrent.angle.degrees < valueNext.angle.degrees {
                             return
                         }
-                        let d = CGVector.angularDistance(v1: currentVector, v2: nextVector)
-                        if d.radians < 0 {
-                            return
-                        }
-                        debugPrint("current: \(valueCurrent.angle), next:\(valueNext.angle), d: \(d)")
                     }
                     
                     let record = KnobGestureRecord(start: valueStart, current:valueCurrent, next:valueNext)
