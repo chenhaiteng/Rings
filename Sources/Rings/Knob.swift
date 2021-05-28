@@ -157,19 +157,19 @@ public struct Knob: View {
 }
 
 extension Knob : Adjustable {
-    func addLayer<L>(_ layer: L) -> Self where L : KnobLayer {
+    public func addLayer<L>(_ layer: L) -> Self where L : KnobLayer {
         setProperty { tmp in
             tmp.layers.append(AnyKnobLayer(layer))
         }
     }
     
-    func mapping<T: KnobMapping>(with mapping: T) -> Self {
+    public func mapping<T: KnobMapping>(with mapping: T) -> Self {
         setProperty { tmp in
             tmp.mappingObj = mapping
         }
     }
     
-    func blueprint(_ show: Bool) -> Self {
+    public func blueprint(_ show: Bool) -> Self {
         setProperty { tmp in
             tmp.blueprint = show
         }

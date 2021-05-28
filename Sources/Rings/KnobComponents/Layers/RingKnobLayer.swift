@@ -30,19 +30,19 @@ struct RingKnobLayer : KnobLayer {
 }
 
 extension RingKnobLayer : Adjustable {
-    func ringColor(_ color: Color) -> Self {
+    public func ringColor(_ color: Color) -> Self {
         setProperty { tmp in
             tmp.ringColor = color
             tmp.ringGradient = nil
         }
     }
-    func ringColor(_ gradient: Gradient) -> Self {
+    public func ringColor(_ gradient: Gradient) -> Self {
         setProperty { tmp in
             tmp.ringGradient = gradient
             tmp.ringColor = .clear
         }
     }
-    func ringWidth<T>(_ width: T) -> Self where T:BinaryFloatingPoint {
+    public func ringWidth<T>(_ width: T) -> Self where T:BinaryFloatingPoint {
         setProperty { tmp in
             tmp.ringWidth = CGFloat(width)
         }

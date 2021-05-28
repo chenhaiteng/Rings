@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct KnobStop {
+public struct KnobStop {
     var value: Double
     var degree: Double
     init(_ v:Double, _ d: Double) {
@@ -81,7 +81,7 @@ public struct SegmentMapping: KnobMapping, Adjustable {
         return .nan
     }
     
-    func stops(_ at:[KnobStop]) -> Self {
+    public func stops(_ at:[KnobStop]) -> Self {
         setProperty { tmp in
             tmp.stops = at
         }
