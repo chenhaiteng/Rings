@@ -124,15 +124,19 @@ public struct Knob: View {
                     
                     let _degree = mappingObj.degree(from: self.value)
                     if _degree >= mappingObj.degreeRange.upperBound {
+                        debugPrint("over upper bound")
                         if valueCurrent.angle.degrees > valueNext.angle.degrees {
                             return
                         }
+                        debugPrint("current: \(valueCurrent.angle), next:\(valueNext.angle)")
                     }
                     
                     if _degree <= mappingObj.degreeRange.lowerBound {
+                        debugPrint("over lower bound")
                         if valueCurrent.angle.degrees < valueNext.angle.degrees {
                             return
                         }
+                        debugPrint("current: \(valueCurrent.angle), next:\(valueNext.angle)")
                     }
                     
                     let record = KnobGestureRecord(start: valueStart, current:valueCurrent, next:valueNext)
