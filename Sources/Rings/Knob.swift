@@ -124,20 +124,12 @@ public struct Knob: View {
                     
                     let _degree = mappingObj.degree(from: self.value)
                     
-                    let delta = CGVector.angularDistance(v1: currentVector, v2: nextVector)
-                    
-                    if _degree >= mappingObj.degreeRange.upperBound {
-                        if nextVector.dx < currentVector.dx {
-                            return
-                        }
-                        debugPrint("cannot stop over q <-")
+                    if _degree > mappingObj.degreeRange.upperBound {
+                        return
                     }
                     
-                    if _degree <= mappingObj.degreeRange.lowerBound {
-                        if nextVector.dx > currentVector.dx {
-                            return
-                        }
-                        debugPrint("cannot stop over q ->")
+                    if _degree < mappingObj.degreeRange.lowerBound {
+                        return
                     }
                     
                     let record = KnobGestureRecord(start: valueStart, current:valueCurrent, next:valueNext)
