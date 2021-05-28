@@ -121,16 +121,14 @@ public struct Knob: View {
                     let valueCurrent = KnobGestureRecord.Value(value: self.value, angle: currentVector.angle(shouldAdjust))
                     
                     let valueNext = KnobGestureRecord.Value(angle: nextVector.angle(shouldAdjust))
-                    
-                    let _degree = mappingObj.degree(from: self.value)
-                    
-                    if _degree > mappingObj.degreeRange.upperBound {
+                 
+                    if -nextVector.angle(shouldAdjust).degrees > mappingObj.degreeRange.upperBound {
                         return
                     }
-                    
-                    if _degree < mappingObj.degreeRange.lowerBound {
+                    if -nextVector.angle(shouldAdjust).degrees < mappingObj.degreeRange.lowerBound {
                         return
                     }
+
                     
                     let record = KnobGestureRecord(start: valueStart, current:valueCurrent, next:valueNext)
                     let newValue = mappingObj.newValue(record)
