@@ -125,11 +125,11 @@ public struct Knob: View {
                     let _degree = mappingObj.degree(from: self.value)
                     if _degree >= mappingObj.degreeRange.upperBound {
                         debugPrint("over upper bound")
-//                        if valueCurrent.angle.degrees > valueNext.angle.degrees {
-//                            return
-//                        }
+                        if valueCurrent.angle.degrees > valueNext.angle.degrees {
+                            return
+                        }
                         let d = CGVector.angularDistance(v1: currentVector, v2: nextVector)
-                        if d.degrees > 0.0 {
+                        if d.radians > 0 {
                             return
                         }
                         debugPrint("current: \(valueCurrent.angle), next:\(valueNext.angle), d: \(d)")
@@ -137,11 +137,11 @@ public struct Knob: View {
                     
                     if _degree <= mappingObj.degreeRange.lowerBound {
                         debugPrint("over lower bound")
-//                        if valueCurrent.angle.degrees < valueNext.angle.degrees {
-//                            return
-//                        }
+                        if valueCurrent.angle.degrees < valueNext.angle.degrees {
+                            return
+                        }
                         let d = CGVector.angularDistance(v1: currentVector, v2: nextVector)
-                        if d.degrees < 0.0 {
+                        if d.radians < 0 {
                             return
                         }
                         debugPrint("current: \(valueCurrent.angle), next:\(valueNext.angle), d: \(d)")
