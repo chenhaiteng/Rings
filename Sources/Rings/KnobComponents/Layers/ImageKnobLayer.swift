@@ -17,7 +17,7 @@ public struct ImageKnobLayer : KnobLayer {
     
     public var view: AnyView {
         get {
-            AnyView(image.rotationEffect(Angle.degrees(Double(degree))))
+            AnyView(image.resizable().rotationEffect(Angle.degrees(Double(degree))))
         }
     }
     
