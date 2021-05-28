@@ -128,7 +128,8 @@ public struct Knob: View {
                         if valueCurrent.angle.degrees > valueNext.angle.degrees {
                             return
                         }
-                        debugPrint("current: \(valueCurrent.angle), next:\(valueNext.angle)")
+                        let d = CGVector.angularDistance(v1: currentVector, v2: nextVector)
+                        debugPrint("current: \(valueCurrent.angle), next:\(valueNext.angle), d: \(d)")
                     }
                     
                     if _degree <= mappingObj.degreeRange.lowerBound {
@@ -136,7 +137,8 @@ public struct Knob: View {
                         if valueCurrent.angle.degrees < valueNext.angle.degrees {
                             return
                         }
-                        debugPrint("current: \(valueCurrent.angle), next:\(valueNext.angle)")
+                        let d = CGVector.angularDistance(v1: currentVector, v2: nextVector)
+                        debugPrint("current: \(valueCurrent.angle), next:\(valueNext.angle), d: \(d)")
                     }
                     
                     let record = KnobGestureRecord(start: valueStart, current:valueCurrent, next:valueNext)
