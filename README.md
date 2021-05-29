@@ -9,10 +9,11 @@ It includes following controls, click to see what it looks like:
 * **[HandAiguille](#handaiguille)**
 * **[ArchimedeanSpiralText](#archimedeanspiraltext)**
 * **[SphericText](#spherictext)**
+* **[Knob](#knob)**
 
 and following functions are in progress:
 
-* Knob
+* Swing
 
 ---
 ## Installation:
