@@ -9,10 +9,11 @@ It includes following controls, click to see what it looks like:
 * **[HandAiguille](#handaiguille)**
 * **[ArchimedeanSpiralText](#archimedeanspiraltext)**
 * **[SphericText](#spherictext)**
+* **[Knob](#knob)**
 
 and following functions are in progress:
 
-* Knob
+* Swing
 
 ---
 ## Installation:
@@ -85,6 +86,14 @@ targets: [
 ![Spheric Text Demo](https://user-images.githubusercontent.com/1284944/118671827-60f8fe00-b82a-11eb-9f0f-821841867cba.gif)
 
 ### ![How to use it](Sources/Rings/SphericText.md)
+
+## Knob
+
+### What it looks like:
+![Knob Demo](https://user-images.githubusercontent.com/1284944/120065810-e2138900-c0a5-11eb-8324-2fe340bb578f.gif)
+
+
+### ![How to use it](Sources/Rings/Knob.md)
 
 ---
 # License
