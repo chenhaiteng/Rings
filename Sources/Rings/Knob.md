@@ -3,6 +3,10 @@
 ### Preview
 
 ### Usage
+
+![Knob Arc Demo](https://user-images.githubusercontent.com/1284944/120065862-1d15bc80-c0a6-11eb-876f-687db7b35d00.gif=50x50)
+
+<img src="drawing.jpg" alt="drawing" width="200"/>
 ```swift
     // Baisc Knob drawing value along the circumference.
     @State knobValue : Double                       // default range: 0.0...1.0, the range of knob value depends on mapping object.
