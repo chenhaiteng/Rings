@@ -86,6 +86,12 @@ targets: [
 
 ### ![How to use it](Sources/Rings/SphericText.md)
 
+## Knob
+
+### What it looks like:
+
+### ![How to use it](Sources/Rings/Knob.md)
+
 ---
 # License
 Rings is released under the [MIT License](LICENSE).
