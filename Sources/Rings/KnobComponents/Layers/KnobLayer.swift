@@ -35,7 +35,7 @@ public protocol KnobLayer {
     var isFixed: Bool { get set }
     var minDegree: Double { get set }
     var maxDegree: Double { get set }
-    var degree: CGFloat { get set }
+    var degree: Double { get set }
     var view: AnyView { get }
 }
 
@@ -67,7 +67,7 @@ public struct AnyKnobLayer: KnobLayer {
         }
     }
     
-    public var degree: CGFloat {
+    public var degree: Double {
         get {
             return rawLayer.degree
         }
@@ -98,7 +98,7 @@ extension KnobLayer {
     
     public func degree<F>(_ degree: F) -> Self where F: BinaryFloatingPoint {
         setBaseProperty { tmp in
-            tmp.degree = CGFloat(degree)
+            tmp.degree = Double(degree)
         }
     }
     
@@ -109,4 +109,3 @@ extension KnobLayer {
         }
     }
 }
-

@@ -11,16 +11,16 @@ public struct ArcKnobLayer : KnobLayer {
     public var isFixed: Bool = false
     public var minDegree: Double = 0.0
     public var maxDegree: Double = 0.0
-    private var _degree: CGFloat = 120.0
-    public var degree: CGFloat {
+    private var _degree: Double = 120.0
+    public var degree: Double {
         get {
             return _degree
         }
         set {
-            if newValue > CGFloat(maxDegree) {
-                _degree = CGFloat(maxDegree)
-            } else if newValue < CGFloat(minDegree) {
-                _degree = CGFloat(minDegree)
+            if newValue > maxDegree {
+                _degree = maxDegree
+            } else if newValue < minDegree {
+                _degree = minDegree
             } else {
                 _degree = newValue
             }

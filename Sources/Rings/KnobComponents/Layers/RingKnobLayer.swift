@@ -11,7 +11,7 @@ public struct RingKnobLayer : KnobLayer {
     public var isFixed: Bool = true
     public var minDegree: Double = 0.0
     public var maxDegree: Double = 0.0
-    public var degree: CGFloat = 0.0
+    public var degree: Double = 0.0
     
     public var view: AnyView {
         get {
