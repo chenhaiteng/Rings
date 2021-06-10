@@ -33,11 +33,46 @@ public struct Clamping<T> where T:Comparable {
 
 public protocol KnobLayer {
     var isFixed: Bool { get set }
-    var range: ClosedRange<Double> { get set }
+    /// It's a workground to define property wrapper to protocol
+    ///
+    /// For layers that need the degree to be clamped, it could declare degree with @Clamping as following:
+    ///
+    /// ```
+    /// struct SimpleClampDegreeLayer: KnobLayer {
+    ///     // Declare degree in the range 90.0...270.0 with default value 120.0
+    ///     @Clamping(90.0...270.0) public var degree = 120.0
+    ///     // If the degree range should not be modified from outside, simply declare it with any initial value.
+    ///     var degreeRange = 0.0...0.0
+    ///     // Other properties...
+    /// }
+    /// ```
+    ///
+    /// In additional, if the layer need adjust the range of degree, it can decalare degree with  property wrapper as following:
+    /// ```
+    /// struct DynamicClampRangeLayer: KnobLayer {
+    ///     @Clamping(0.0...360.0) public var degree = 180.0
+    ///
+    ///     // Re-direct degreeRange to $degree that developer can modify $degree by degreeRange
+    ///     var degreeRange: ClosedRange<Double> {
+    ///         get { $degree }
+    ///         set { $degree = newValue }
+    ///     }
+    /// }
+    /// ```
+    /// In most situation, developer also can access $degree without degreeRange:
+    /// ```
+    /// var dynamicRangeLayer = DynamicClampRangeLayer()
+    /// dynamicRangeLayer.$degree = 0.0...100.0
+    /// dynamicRangeLayer.degreeRange = 0.0...100.0 // This statement is equal to previous one.
+    /// ```
+    ///  KnobLayer requires degreeRange for AnyKnobLayer, since it cannot access $degree from KnobLayer protocol directly.
+    ///
+    var degreeRange: ClosedRange<Double> { get set }
     var degree: Double { get set }
     var view: AnyView { get }
 }
 
+/// Type eraser for KnobLayer
 public struct AnyKnobLayer: KnobLayer {
     var rawLayer: KnobLayer
     public var isFixed: Bool {
@@ -49,29 +84,12 @@ public struct AnyKnobLayer: KnobLayer {
         }
     }
     
-//    public var minDegree: Double {
-//        get {
-//            rawLayer.minDegree
-//        }
-//        set {
-//            rawLayer.minDegree = newValue
-//        }
-//    }
-//    public var maxDegree: Double {
-//        get {
-//            rawLayer.maxDegree
-//        }
-//        set {
-//            rawLayer.maxDegree = newValue
-//        }
-//    }
-    
-    public var range: ClosedRange<Double> {
+    public var degreeRange: ClosedRange<Double> {
         get {
-            return rawLayer.range
+            return rawLayer.degreeRange
         }
         set {
-            rawLayer.range = newValue
+            rawLayer.degreeRange = newValue
         }
     }
     
@@ -118,7 +136,7 @@ extension KnobLayer {
     
     public func degreeRange<F>(_ range: ClosedRange<F>) -> Self where F: BinaryFloatingPoint {
         setBaseProperty { tmp in
-            tmp.range = range.toDoubleRange()
+            tmp.degreeRange = range.toDoubleRange()
         }
     }
 }
