@@ -9,18 +9,17 @@ import SwiftUI
 
 public struct ArcKnobLayer : KnobLayer {
     public var isFixed: Bool = false
-    public var minDegree: Double = 0.0
-    public var maxDegree: Double = 0.0
+    public var range: ClosedRange<Double> = 0.0...0.0
     private var _degree: Double = 120.0
     public var degree: Double {
         get {
             return _degree
         }
         set {
-            if newValue > maxDegree {
-                _degree = maxDegree
-            } else if newValue < minDegree {
-                _degree = minDegree
+            if newValue > range.upperBound {
+                _degree = range.upperBound
+            } else if newValue < range.lowerBound {
+                _degree = range.lowerBound
             } else {
                 _degree = newValue
             }
@@ -33,7 +32,7 @@ public struct ArcKnobLayer : KnobLayer {
                 GeometryReader { geo in
                     Path { p in
                         let radius = min(geo.size.height, geo.size.width)/2.0 - arcWidth/2.0
-                        p.addArc(center: CGPoint(x: geo.size.width/2, y: geo.size.height/2), radius: radius, startAngle: Angle.degrees(minDegree), endAngle: Angle.degrees(Double(degree)), clockwise: false)
+                        p.addArc(center: CGPoint(x: geo.size.width/2, y: geo.size.height/2), radius: radius, startAngle: Angle.degrees(range.lowerBound), endAngle: Angle.degrees(Double(degree)), clockwise: false)
                     }.stroke(arcColor, lineWidth: arcWidth).opacity(0.5)
                 }
             })

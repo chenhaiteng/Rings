@@ -33,8 +33,7 @@ public struct Clamping<T> where T:Comparable {
 
 public protocol KnobLayer {
     var isFixed: Bool { get set }
-    var minDegree: Double { get set }
-    var maxDegree: Double { get set }
+    var range: ClosedRange<Double> { get set }
     var degree: Double { get set }
     var view: AnyView { get }
 }
@@ -50,20 +49,29 @@ public struct AnyKnobLayer: KnobLayer {
         }
     }
     
-    public var minDegree: Double {
+//    public var minDegree: Double {
+//        get {
+//            rawLayer.minDegree
+//        }
+//        set {
+//            rawLayer.minDegree = newValue
+//        }
+//    }
+//    public var maxDegree: Double {
+//        get {
+//            rawLayer.maxDegree
+//        }
+//        set {
+//            rawLayer.maxDegree = newValue
+//        }
+//    }
+    
+    public var range: ClosedRange<Double> {
         get {
-            rawLayer.minDegree
+            return rawLayer.range
         }
         set {
-            rawLayer.minDegree = newValue
-        }
-    }
-    public var maxDegree: Double {
-        get {
-            rawLayer.maxDegree
-        }
-        set {
-            rawLayer.maxDegree = newValue
+            rawLayer.range = newValue
         }
     }
     
@@ -87,6 +95,12 @@ public struct AnyKnobLayer: KnobLayer {
     }
 }
 
+extension ClosedRange where Bound:BinaryFloatingPoint {
+    func toDoubleRange() -> ClosedRange<Double> {
+        Double(lowerBound)...Double(upperBound)
+    }
+}
+
 extension KnobLayer {
     func setBaseProperty(_ setBlock: (_ text: inout Self) -> Void) -> Self {
         let result = _setProperty(content: self) { (tmp :inout Self) in
@@ -104,8 +118,7 @@ extension KnobLayer {
     
     public func degreeRange<F>(_ range: ClosedRange<F>) -> Self where F: BinaryFloatingPoint {
         setBaseProperty { tmp in
-            tmp.minDegree = Double(range.lowerBound)
-            tmp.maxDegree = Double(range.upperBound)
+            tmp.range = range.toDoubleRange()
         }
     }
 }

@@ -9,8 +9,7 @@ import SwiftUI
 
 public struct RingKnobLayer : KnobLayer {
     public var isFixed: Bool = true
-    public var minDegree: Double = 0.0
-    public var maxDegree: Double = 0.0
+    public var range: ClosedRange<Double> = 0.0...0.0
     public var degree: Double = 0.0
     
     public var view: AnyView {
@@ -21,7 +20,7 @@ public struct RingKnobLayer : KnobLayer {
     
     private func ringAngularGradient() -> AngularGradient {
         let gradient = ringGradient ?? Gradient(colors: [ringColor])
-        return AngularGradient(gradient: gradient, center: .center, startAngle: Angle.degrees(minDegree), endAngle: Angle.degrees(maxDegree))
+        return AngularGradient(gradient: gradient, center: .center, startAngle: Angle.degrees(range.lowerBound), endAngle: Angle.degrees(range.upperBound))
     }
     private var ringColor: Color = .white
     private var ringGradient: Gradient? = nil
