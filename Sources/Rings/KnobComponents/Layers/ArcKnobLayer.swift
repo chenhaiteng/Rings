@@ -12,7 +12,6 @@ public struct ArcKnobLayer : KnobLayer {
     public var minDegree: Double = 0.0
     public var maxDegree: Double = 0.0
     private var _degree: CGFloat = 120.0
-    @ValueInRange(range: -225.0...45.0) var degreeRange = 0.0
     public var degree: CGFloat {
         get {
             return _degree
@@ -45,10 +44,6 @@ public struct ArcKnobLayer : KnobLayer {
     private var arcColor: Color = .white
     
     public init() {}
-    
-    private mutating func updateDegree(_ newRange: ClosedRange<Double>) {
-        _degreeRange = ValueInRange(wrappedValue: degreeRange, range: newRange)
-    }
 }
 
 extension ArcKnobLayer : Adjustable {
@@ -61,12 +56,6 @@ extension ArcKnobLayer : Adjustable {
     public func arcColor(_ color:Color) -> Self {
         setProperty { tmp in
             tmp.arcColor = color
-        }
-    }
-    
-    public func rangeOfDegree<T>(_ newRange: ClosedRange<T>) -> Self where T:BinaryFloatingPoint {
-        setProperty { tmp in
-            tmp.updateDegree(Double(newRange.lowerBound)...Double(newRange.upperBound))
         }
     }
 }
