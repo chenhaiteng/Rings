@@ -7,24 +7,6 @@
 
 import SwiftUI
 
-@propertyWrapper
-struct ValueInRange<T> where T:Comparable {
-    private(set) var value: T
-    var range: ClosedRange<T>
-    var wrappedValue: T {
-        get {
-            return value
-        }
-        set {
-            value = max(min(newValue, range.upperBound), range.lowerBound)
-        }
-    }
-    
-    init(wrappedValue: T, range: ClosedRange<T>) {
-        self.range = range
-        value = max(min(wrappedValue, range.upperBound), range.lowerBound)
-    }
-}
 public struct ArcKnobLayer : KnobLayer {
     public var isFixed: Bool = false
     public var minDegree: Double = 0.0

@@ -7,6 +7,30 @@
 
 import SwiftUI
 
+@propertyWrapper
+public struct Clamping<T> where T:Comparable {
+    private(set) var value: T
+    var range: ClosedRange<T>
+    public var wrappedValue: T {
+        get {
+            return value
+        }
+        set {
+            value = max(min(newValue, range.upperBound), range.lowerBound)
+        }
+    }
+    
+    public var projectedValue: ClosedRange<T> {
+        get { range }
+        set { range = newValue }
+      }
+    
+    init(wrappedValue: T, _ range: ClosedRange<T>) {
+        self.range = range
+        value = max(min(wrappedValue, range.upperBound), range.lowerBound)
+    }
+}
+
 public protocol KnobLayer {
     var isFixed: Bool { get set }
     var minDegree: Double { get set }
