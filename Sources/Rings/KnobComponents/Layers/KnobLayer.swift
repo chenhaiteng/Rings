@@ -16,18 +16,32 @@ public struct Clamping<T> where T:Comparable {
             return value
         }
         set {
-            value = max(min(newValue, range.upperBound), range.lowerBound)
+            value = clamp(newValue)
         }
     }
     
     public var projectedValue: ClosedRange<T> {
         get { range }
-        set { range = newValue }
+        set {
+            range = newValue
+            value = clamp(value)
+        }
       }
+    
+    private func clamp(_ v: T) -> T {
+        max(min(v, range.upperBound), range.lowerBound)
+    }
     
     init(wrappedValue: T, _ range: ClosedRange<T>) {
         self.range = range
-        value = max(min(wrappedValue, range.upperBound), range.lowerBound)
+        value = wrappedValue // 1st phase, initialize properties.
+        value = clamp(wrappedValue) // 2nd phase, custom the value of property
+    }
+    
+    init(wrappedValue: T, max: T, min: T) {
+        self.range = min...max
+        value = wrappedValue
+        value = clamp(wrappedValue)
     }
 }
 
