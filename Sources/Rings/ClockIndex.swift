@@ -7,7 +7,7 @@
 
 import SwiftUI
 import CoreGraphicsExtension
-import CommonExts
+import Common
 
 public enum ClockIndexError: Error {
     case outOfBounds(String)
