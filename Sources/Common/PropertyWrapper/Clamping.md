@@ -15,7 +15,9 @@
     }
 ```
 Because the get/set syntax will change variable to computed variable, it always need write a getter, even through we want a write-only property.
+
 Also, to keep the modified value, a extra storage variable is needed, and it looks ugly.
+
 3. In additionally, we also want the solution could be apply to protocol.
 
 ### Solution:
@@ -48,8 +50,12 @@ struct ClampStruct {
 
 The detail about the implementation of @Clamping could be refer to :  [Clamping.swift](Clamping.swift)
 
-Other references:
+### References:
+
 [Property Wrapper - Swift Doc](https://docs.swift.org/swift-book/LanguageGuide/Properties.html#ID617)
+
 [Property Wrapper(SE-0258) - Swift Evolution](https://github.com/apple/swift-evolution/blob/master/proposals/0258-property-wrappers.md)
+
 [Swift: Why does a variable with a setter must also have a getter? - stackoverflow](https://stackoverflow.com/a/34677538/505763)
+
 [PropertyWrappers and protocol declaration? - stackoverflow](https://stackoverflow.com/a/57657870/505763)
