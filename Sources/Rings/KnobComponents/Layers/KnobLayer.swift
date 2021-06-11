@@ -7,49 +7,11 @@
 
 import SwiftUI
 
-@propertyWrapper
-public struct Clamping<T> where T:Comparable {
-    private(set) var value: T
-    var range: ClosedRange<T>
-    public var wrappedValue: T {
-        get {
-            return value
-        }
-        set {
-            value = clamp(newValue)
-        }
-    }
-    
-    public var projectedValue: ClosedRange<T> {
-        get { range }
-        set {
-            range = newValue
-            value = clamp(value)
-        }
-      }
-    
-    private func clamp(_ v: T) -> T {
-        max(min(v, range.upperBound), range.lowerBound)
-    }
-    
-    init(wrappedValue: T, _ range: ClosedRange<T>) {
-        self.range = range
-        value = wrappedValue // 1st phase, initialize properties.
-        value = clamp(wrappedValue) // 2nd phase, custom the value of property
-    }
-    
-    init(wrappedValue: T, max: T, min: T) {
-        self.range = min...max
-        value = wrappedValue
-        value = clamp(wrappedValue)
-    }
-}
-
 public protocol KnobLayer {
     var isFixed: Bool { get set }
     /// It's a workground to define property wrapper to protocol
     ///
-    /// For layers that need the degree to be clamped, it could declare degree with @Clamping as following:
+    /// For layers that need the degree to be clamped, it could declare degree with @Clamping<Double> as following:
     ///
     /// ```
     /// struct SimpleClampDegreeLayer: KnobLayer {
@@ -127,12 +89,6 @@ public struct AnyKnobLayer: KnobLayer {
     }
 }
 
-extension ClosedRange where Bound:BinaryFloatingPoint {
-    func toDoubleRange() -> ClosedRange<Double> {
-        Double(lowerBound)...Double(upperBound)
-    }
-}
-
 extension KnobLayer {
     func setBaseProperty(_ setBlock: (_ text: inout Self) -> Void) -> Self {
         let result = _setProperty(content: self) { (tmp :inout Self) in
@@ -152,5 +108,11 @@ extension KnobLayer {
         setBaseProperty { tmp in
             tmp.degreeRange = range.toDoubleRange()
         }
+    }
+}
+
+extension ClosedRange where Bound:BinaryFloatingPoint {
+    func toDoubleRange() -> ClosedRange<Double> {
+        Double(lowerBound)...Double(upperBound)
     }
 }

@@ -9,8 +9,8 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
-            name: "CommonExts",
-            targets: ["CommonExts"]),
+            name: "Common",
+            targets: ["Common"]),
         .library(
             name: "Rings",
             targets: ["Rings"]),
@@ -24,11 +24,11 @@ let package = Package(
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
-        .target(name: "CommonExts",
+        .target(name: "Common",
                 dependencies: []),
         .target(
             name: "Rings",
-            dependencies: ["CoreGraphicsExtension", "CommonExts", "ArchimedeanSpiral"],
+            dependencies: ["CoreGraphicsExtension", "Common", "ArchimedeanSpiral"],
             exclude: ["RingText.md",
                       "ClockIndex.md",
                       "ArchimedeanSpiralText.md",
@@ -37,6 +37,6 @@ let package = Package(
         .testTarget(
             name: "RingsTests",
             dependencies: ["Rings",
-                           "CoreGraphicsExtension", "CommonExts"]),
+                           "CoreGraphicsExtension", "Common"]),
     ]
 )
