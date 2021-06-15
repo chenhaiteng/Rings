@@ -83,23 +83,41 @@ public struct RingText : View {
     }
     
     public var body: some View {
-        GeometryReader { geo in
-            ZStack {
-                ForEach(Array(zip(characters.indices, characters)), id: \.0) { index, item in
-                    let polarPt = self.textPoints[index]
-                    let pt = polarPt.cgpoint
-                    let textPt = CGPoint(x: pt.x, y: pt.y)
-                    Sizing {
-                        Text(item).font(font).foregroundColor(textColor).if(showBlueprint) { content in
-                            content.border(Color.blue.opacity(0.5), width:1)
-                        }
-                    }.rotationEffect(polarPt.cgangle.toAngle(offset: CGFloat.pi/2) + Angle.degrees(textUpsideDown ? 180 : 0)).offset(x: textPt.x, y: textPt.y)
-                }
-                
-            }.frame(width: geo.size.width, height: geo.size.height, alignment: .center).onPreferenceChange(ViewSizeKey.self, perform: { value in
-                sizes = value
-            })
+        if #available(macOS 12.0, iOS 14.0, *) {
+//            Canvas { context, size in
+//                for (index, item) in characters.enumerated() {
+//                    let polarPt = self.textPoints[index]
+//                    let pt = polarPt.cgpoint
+//                    let textPt = CGPoint(x: pt.x, y: pt.y)
+//                    var textContext = context
+//                    textContext.transform = CGAffineTransform.identity.rotated(by: ((polarPt.cgangle.toAngle(offset: CGFloat.pi/2) + Angle.degrees(textUpsideDown ? 180 : 0)).degrees)).translatedBy(x: textPt.x, y: textPt.y)
+//                    let text = Text(item).font(font).foregroundColor(textColor)
+//                    if showBlueprint {
+//                        let _ = text.border(Color.blue.opacity(0.5), width: 1)
+//                    }
+//                    textContext.draw(text, at: .zero)
+//                }
+//            }
+        } else {
+            GeometryReader { geo in
+                ZStack {
+                    ForEach(Array(zip(characters.indices, characters)), id: \.0) { index, item in
+                        let polarPt = self.textPoints[index]
+                        let pt = polarPt.cgpoint
+                        let textPt = CGPoint(x: pt.x, y: pt.y)
+                        Sizing {
+                            Text(item).font(font).foregroundColor(textColor).if(showBlueprint) { content in
+                                content.border(Color.blue.opacity(0.5), width:1)
+                            }
+                        }.rotationEffect(polarPt.cgangle.toAngle(offset: CGFloat.pi/2) + Angle.degrees(textUpsideDown ? 180 : 0)).offset(x: textPt.x, y: textPt.y)
+                    }
+                    
+                }.frame(width: geo.size.width, height: geo.size.height, alignment: .center).onPreferenceChange(ViewSizeKey.self, perform: { value in
+                    sizes = value
+                })
+            }
         }
+
     }
 }
 
@@ -186,6 +204,35 @@ extension RingText {
 struct RingText_Previews: PreviewProvider {
     static var previews: some View {
         RingTextPreviewWrapper()
+
+    }
+}
+
+@available(macOS 11.0, iOS 14.0, *)
+struct LibraryRingText: LibraryContentProvider {
+    @LibraryContentBuilder
+    var views: [LibraryItem] {
+        LibraryItem (
+            RingText(radius: 100.0, text: "Ring Text"),
+            visible: true,
+            title: "Ring Text",
+            category: .control
+        )
+        LibraryItem (
+            RingText(radius: 100.0, words: ["Group","Ring","Text"]),
+            visible: true,
+            title: "Ring Group Text",
+            category: .control
+        )
+    }
+    @LibraryContentBuilder
+    func modifiers(base: RingText) -> [LibraryItem] {
+        LibraryItem(
+            base.begin(degrees: 90.0),
+            visible: true,
+            title: "Setup begin of RingText in degree",
+            category: .layout
+        )
     }
 }
 
