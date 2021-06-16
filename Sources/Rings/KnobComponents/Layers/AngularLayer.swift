@@ -8,6 +8,8 @@
 import SwiftUI
 
 public protocol AngularLayer {
+    associatedtype Body : View
+    
     var isFixed: Bool { get set }
     /// It's a workground to define property wrapper to protocol
     ///
@@ -43,50 +45,10 @@ public protocol AngularLayer {
     /// ```
     ///  KnobLayer requires degreeRange for AnyKnobLayer, since it cannot access $degree from KnobLayer protocol directly.
     ///
-    var degreeRange: ClosedRange<Double> { get set }
     var degree: Double { get set }
-    var view: AnyView { get }
-}
+    var degreeRange: ClosedRange<Double> { get set }
 
-/// Type eraser for KnobLayer
-public struct AnyKnobLayer: AngularLayer {
-    var rawLayer: AngularLayer
-    public var isFixed: Bool {
-        get {
-            return rawLayer.isFixed
-        }
-        set {
-            rawLayer.isFixed = newValue
-        }
-    }
-    
-    public var degreeRange: ClosedRange<Double> {
-        get {
-            return rawLayer.degreeRange
-        }
-        set {
-            rawLayer.degreeRange = newValue
-        }
-    }
-    
-    public var degree: Double {
-        get {
-            return rawLayer.degree
-        }
-        set {
-            rawLayer.degree = newValue
-        }
-    }
-    
-    public var view: AnyView {
-        get {
-            rawLayer.view
-        }
-    }
-    
-    public init<T>(_ knobLayer: T) where T: AngularLayer {
-        self.rawLayer = knobLayer
-    }
+    @ViewBuilder var body: Self.Body { get }
 }
 
 extension AngularLayer {
@@ -109,10 +71,64 @@ extension AngularLayer {
             tmp.degreeRange = range.toDoubleRange()
         }
     }
+    
+    public func mappingValue<F>(_ value: F, with mapping:KnobMapping) -> Self where F:BinaryFloatingPoint {
+        setBaseProperty { tmp in
+            tmp.degreeRange = mapping.degreeRange
+            tmp.degree = mapping.degree(from: Double(value))
+        }
+    }
 }
 
 extension ClosedRange where Bound:BinaryFloatingPoint {
     func toDoubleRange() -> ClosedRange<Double> {
         Double(lowerBound)...Double(upperBound)
+    }
+}
+
+@resultBuilder struct AngularLayerBuilder {
+    static func buildBlock() -> EmptyView {
+        EmptyView()
+    }
+    
+    static func buildBlock<L: AngularLayer>(_ layer:L) -> L.Body {
+        layer.body
+    }
+}
+
+
+extension AngularLayerBuilder {
+    static func buildBlock<L0: AngularLayer, L1: AngularLayer>(_ layer0: L0, _ layer1: L1) -> ZStack<TupleView<(L0.Body, L1.Body)>> {
+        return ZStack {
+            layer0.body
+            layer1.body
+        }
+    }
+    
+    static func buildBlock<L0: AngularLayer, L1: AngularLayer, L2: AngularLayer>(_ layer0: L0, _ layer1: L1, _ layer2: L2) -> ZStack<TupleView<(L0.Body, L1.Body, L2.Body)>> {
+        return ZStack {
+            layer0.body
+            layer1.body
+            layer2.body
+        }
+    }
+    
+    static func buildBlock<L0: AngularLayer, L1: AngularLayer, L2: AngularLayer, L3: AngularLayer>(_ layer0: L0, _ layer1: L1, _ layer2: L2, _ layer3: L3) -> ZStack<TupleView<(L0.Body, L1.Body, L2.Body, L3.Body)>> {
+        return ZStack {
+            layer0.body
+            layer1.body
+            layer2.body
+            layer3.body
+        }
+    }
+    
+    static func buildBlock<L0: AngularLayer, L1: AngularLayer, L2: AngularLayer, L3: AngularLayer, L4: AngularLayer>(_ layer0: L0, _ layer1: L1, _ layer2: L2, _ layer3: L3, _ layer4: L4) -> ZStack<TupleView<(L0.Body, L1.Body, L2.Body, L3.Body, L4.Body)>> {
+        return ZStack {
+            layer0.body
+            layer1.body
+            layer2.body
+            layer3.body
+            layer4.body
+        }
     }
 }
