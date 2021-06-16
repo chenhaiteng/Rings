@@ -8,7 +8,7 @@
 import SwiftUI
 import Common
 
-public struct ArcKnobLayer : KnobLayer {
+public struct ArcKnobLayer : AngularLayer {
     public var isFixed: Bool = false
     
     public var degreeRange: ClosedRange<Double> {

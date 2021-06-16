@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct RingKnobLayer : KnobLayer {
+public struct RingKnobLayer : AngularLayer {
     public var isFixed: Bool = true
     public var degreeRange = 0.0...0.0
     public var degree: Double = 0.0

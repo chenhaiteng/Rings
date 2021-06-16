@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public protocol KnobLayer {
+public protocol AngularLayer {
     var isFixed: Bool { get set }
     /// It's a workground to define property wrapper to protocol
     ///
@@ -49,8 +49,8 @@ public protocol KnobLayer {
 }
 
 /// Type eraser for KnobLayer
-public struct AnyKnobLayer: KnobLayer {
-    var rawLayer: KnobLayer
+public struct AnyKnobLayer: AngularLayer {
+    var rawLayer: AngularLayer
     public var isFixed: Bool {
         get {
             return rawLayer.isFixed
@@ -84,12 +84,12 @@ public struct AnyKnobLayer: KnobLayer {
         }
     }
     
-    public init<T>(_ knobLayer: T) where T: KnobLayer {
+    public init<T>(_ knobLayer: T) where T: AngularLayer {
         self.rawLayer = knobLayer
     }
 }
 
-extension KnobLayer {
+extension AngularLayer {
     func setBaseProperty(_ setBlock: (_ text: inout Self) -> Void) -> Self {
         let result = _setProperty(content: self) { (tmp :inout Self) in
             setBlock(&tmp)

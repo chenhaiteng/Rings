@@ -152,7 +152,7 @@ public struct Knob: View {
 }
 
 extension Knob : Adjustable {
-    public func addLayer<L>(_ layer: L) -> Self where L : KnobLayer {
+    public func addLayer<L>(_ layer: L) -> Self where L : AngularLayer {
         setProperty { tmp in
             tmp.layers.append(AnyKnobLayer(layer))
         }
