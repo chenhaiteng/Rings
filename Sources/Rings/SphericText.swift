@@ -163,6 +163,11 @@ extension SphericText : Adjustable {
             tmp.blurMinors = isBlur
         }
     }
+    public func writingDirection(_ direction: WritingDirection) -> Self {
+        setProperty { tmp in
+            tmp.writingDirection = direction
+        }
+    }
 }
 
 struct SphericTextDemo: View {
