@@ -6,45 +6,48 @@
 //
 
 import SwiftUI
+import Common
 
-public struct RingKnobLayer : KnobLayer {
+@resultBuilder struct RingGradientBuilder {
+    static func buildBlock(_ components: Color...) -> AngularGradient {
+        guard !components.isEmpty else {
+            return AngularGradient(gradient: Gradient(colors: [.white]), center: .center)
+        }
+        
+        var flatColors = components.flatMap { Array(repeating:$0,count:2) }
+        flatColors += [flatColors[0]] // To close angular gradient
+        return AngularGradient(gradient: Gradient(colors: flatColors), center: .center)
+    }
+}
+
+public struct RingKnobLayer : AngularLayer {
     public var isFixed: Bool = true
-    public var degreeRange = 0.0...0.0
-    public var degree: Double = 0.0
     
-    public var view: AnyView {
+    @Clamping(max:0.0, min:0.0) public var degree: Double = 0.0
+    
+    public var degreeRange: ClosedRange<Double> = 0.0...0.0
+    
+    private var gradient: AngularGradient = AngularGradient(gradient: Gradient(colors: [.white]), center: .center)
+    var ringWidth: Double = 5.0
+    
+    public var body: some View {
         get {
-            AnyView(Circle().stroke(ringAngularGradient(), lineWidth: ringWidth).padding(EdgeInsets(top: ringWidth/2.0, leading: ringWidth/2.0, bottom: ringWidth/2.0, trailing: ringWidth/2.0)))
+            Circle().stroke(gradient, lineWidth: CGFloat(ringWidth)).padding(EdgeInsets(top: CGFloat(ringWidth/2.0), leading: CGFloat(ringWidth/2.0), bottom: CGFloat(ringWidth/2.0), trailing: CGFloat(ringWidth/2.0)))
         }
     }
-    
-    private func ringAngularGradient() -> AngularGradient {
-        let gradient = ringGradient ?? Gradient(colors: [ringColor])
-        return AngularGradient(gradient: gradient, center: .center, startAngle: Angle.degrees(degreeRange.lowerBound), endAngle: Angle.degrees(degreeRange.upperBound))
-    }
-    private var ringColor: Color = .white
-    private var ringGradient: Gradient? = nil
-    private var ringWidth: CGFloat = 2.0
-    
-    public init() {}
 }
 
 extension RingKnobLayer : Adjustable {
-    public func ringColor(_ color: Color) -> Self {
-        setProperty { tmp in
-            tmp.ringColor = color
-            tmp.ringGradient = nil
-        }
+    func color(@RingGradientBuilder _ builder: ()->AngularGradient ) -> Self {
+        var tmp = self
+        tmp.gradient = builder()
+        return tmp
     }
-    public func ringColor(_ gradient: Gradient) -> Self {
-        setProperty { tmp in
-            tmp.ringGradient = gradient
-            tmp.ringColor = .clear
-        }
+    
+    func ringWidth<T>(_ width: T) -> Self where T: BinaryFloatingPoint {
+        var tmp = self
+        tmp.ringWidth = Double(width)
+        return tmp
     }
-    public func ringWidth<T>(_ width: T) -> Self where T:BinaryFloatingPoint {
-        setProperty { tmp in
-            tmp.ringWidth = CGFloat(width)
-        }
-    }
+    
 }
