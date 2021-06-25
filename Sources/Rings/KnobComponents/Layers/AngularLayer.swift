@@ -86,7 +86,8 @@ extension ClosedRange where Bound:BinaryFloatingPoint {
     }
 }
 
-@resultBuilder struct AngularLayerBuilder {
+@resultBuilder
+public enum AngularLayerBuilder {
     
     static func buildBlock() -> EmptyView {
         EmptyView()

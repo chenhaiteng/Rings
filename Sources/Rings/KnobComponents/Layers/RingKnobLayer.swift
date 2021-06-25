@@ -8,7 +8,8 @@
 import SwiftUI
 import Common
 
-@resultBuilder struct RingGradientBuilder {
+@resultBuilder
+public enum RingGradientBuilder {
     static func buildBlock(_ components: Color...) -> AngularGradient {
         guard !components.isEmpty else {
             return AngularGradient(gradient: Gradient(colors: [.white]), center: .center)
