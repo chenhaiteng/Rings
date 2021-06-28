@@ -35,7 +35,7 @@ public struct HandAiguille<Content: View, T: BinaryFloatingPoint> : View {
     private var timeUnit: TimeUnit
     
     private var showBlueprint: Bool = false
-    private var handBackground: AnyView = AnyView(Color.clear)
+    private var handPlaceholder: Color = .gray
     
     public init(size: CGSize = CGSize(width: 3.0, height: 50.0), offset: T = 1.5, time: Binding<T> = .constant(0), unit: TimeUnit = .second, @ViewBuilder content: @escaping () -> Content) {
         self.handSize = size
@@ -61,7 +61,7 @@ public struct HandAiguille<Content: View, T: BinaryFloatingPoint> : View {
                     p.stroke(Color.blue)
                 }
                 if(content() is EmptyView) {
-                    handBackground.frame(width: handSize.width, height: handSize.height, alignment: .center).offset(y: -yoffset).rotationEffect(angleOfTime(time))
+                    handPlaceholder.frame(width: handSize.width, height: handSize.height, alignment: .center).offset(y: -yoffset).rotationEffect(angleOfTime(time))
                 } else {
                     content().frame(width: handSize.width, height: handSize.height, alignment: .center).offset(y: -yoffset).rotationEffect(angleOfTime(time))
                 }
@@ -95,12 +95,6 @@ extension HandAiguille {
     public func blueprint(_ isOn:Bool = true) -> Self {
         setProperty { tmp in
             tmp.showBlueprint = isOn
-        }
-    }
-    
-    public func handBackground<Background>(_ background: Background) -> Self where Background : View {
-        setProperty{ tmp in
-            tmp.handBackground = AnyView(background)
         }
     }
 }
