@@ -7,19 +7,7 @@
 
 import SwiftUI
 import Common
-
-@resultBuilder
-public enum RingGradientBuilder {
-    static func buildBlock(_ components: Color...) -> AngularGradient {
-        guard !components.isEmpty else {
-            return AngularGradient(gradient: Gradient(colors: [.white]), center: .center)
-        }
-        
-        var flatColors = components.flatMap { Array(repeating:$0,count:2) }
-        flatColors += [flatColors[0]] // To close angular gradient
-        return AngularGradient(gradient: Gradient(colors: flatColors), center: .center)
-    }
-}
+import GradientBuilder
 
 public struct RingKnobLayer : AngularLayer {
     public var isFixed: Bool = true
@@ -39,7 +27,7 @@ public struct RingKnobLayer : AngularLayer {
 }
 
 extension RingKnobLayer : Adjustable {
-    func color(@RingGradientBuilder _ builder: ()->AngularGradient ) -> Self {
+    func color(@GradientBuilder _ builder: ()->AngularGradient ) -> Self {
         var tmp = self
         tmp.gradient = builder()
         return tmp

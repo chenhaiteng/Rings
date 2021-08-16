@@ -19,7 +19,8 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(name: "CoreGraphicsExtension", url: "https://github.com/chenhaiteng/CoreGraphicsExtension.git", from: "0.2.0"),
-        .package(name: "ArchimedeanSpiral", url: "https://github.com/chenhaiteng/ArchimedeanSpiral.git",  from: "1.0.12")
+        .package(name: "ArchimedeanSpiral", url: "https://github.com/chenhaiteng/ArchimedeanSpiral.git",  from: "1.0.12"),
+        .package(name: "GradientBuilder", url: "https://github.com/chenhaiteng/GradientBuilder.git", .branch("main"))
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -29,7 +30,7 @@ let package = Package(
                 exclude: ["PropertyWrapper/Clamping.md"]),
         .target(
             name: "Rings",
-            dependencies: ["CoreGraphicsExtension", "Common", "ArchimedeanSpiral"],
+            dependencies: ["CoreGraphicsExtension", "Common", "ArchimedeanSpiral", "GradientBuilder"],
             exclude: ["RingText.md",
                       "ClockIndex.md",
                       "ArchimedeanSpiralText.md",
