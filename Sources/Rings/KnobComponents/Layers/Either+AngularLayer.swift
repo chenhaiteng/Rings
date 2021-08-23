@@ -9,30 +9,67 @@ import SwiftUI
 import SequenceBuilder
 
 extension Either : AngularLayer where Left:AngularLayer, Right: AngularLayer {
+    
     public var isFixed: Bool {
         get {
-            true
+            switch self {
+            case .left(let layer):
+                return layer.isFixed
+            case .right(let layer):
+                return layer.isFixed
+            }
         }
-        set {
-            
+        mutating set {
+            switch self {
+            case .left(var layer):
+                layer.isFixed = newValue
+                self = .left(layer)
+            case .right(var layer):
+                layer.isFixed = newValue
+                self = .right(layer)
+            }
         }
     }
     
     public var degree: Double {
         get {
-            0.0
+            switch self {
+            case .left(let layer):
+                return layer.degree
+            case .right(let layer):
+                return layer.degree
+            }
         }
-        set {
-            
+        mutating set {
+            switch self {
+            case .left(var layer):
+                layer.degree = newValue
+                self = .left(layer)
+            case .right(var layer):
+                layer.degree = newValue
+                self = .right(layer)
+            }
         }
     }
     public var degreeRange: ClosedRange<Double> {
         get {
-            0.0...1.0
+            switch self {
+            case .left(let layer):
+                return layer.degreeRange
+            case .right(let layer):
+                return layer.degreeRange
+            }
         }
         
-        set {
-        
+        mutating set {
+            switch self {
+            case .left(var layer):
+                layer.degreeRange = newValue
+                self = .left(layer)
+            case .right(var layer):
+                layer.degreeRange = newValue
+                self = .right(layer)
+            }
         }
     }
     
