@@ -20,7 +20,7 @@ extension StrokeStyle {
 public struct ArcKnobLayer : AngularLayer {
     public var isFixed: Bool
     
-    @Clamping(0.0...0.0) public var degree: Double = 120.0
+    @Clamping(-225.0...45.0) public var degree: Double = 120.0
     public var degreeRange: ClosedRange<Double> {
         get {
             $degree
@@ -70,5 +70,44 @@ extension ArcKnobLayer : Adjustable {
         setProperty { tmp in
             tmp.style = style
         }
+    }
+}
+
+struct ArcLayerDemo: View {
+    @State var degree: Double = -75.0
+    var body: some View {
+        VStack {
+            HStack {
+                ArcKnobLayer(fixed: true).arcWidth(5.0).arcColor {
+                    (Color.green.opacity(0.3), 0.6)
+                    (Color.yellow.opacity(0.3), 0.7)
+                    (Color.yellow.opacity(0.3), 0.9)
+                    (Color.red.opacity(0.3), 0.95)
+                }.degree(degree).body
+                
+                ArcKnobLayer().arcWidth(5.0).arcColor {
+                    (Color.green, 0.6)
+                    (Color.yellow, 0.7)
+                    (Color.yellow, 0.9)
+                    (Color.red, 0.95)
+                }.degree(degree).body
+                
+                ArcKnobLayer(fixed:true).arcWidth(5.0).arcColor {
+                    (Color.green, 0.6)
+                    (Color.yellow, 0.7)
+                    (Color.yellow, 0.9)
+                    (Color.red, 0.95)
+                }.style(StrokeStyle(lineCap: .butt, lineJoin: .miter, miterLimit: 1.0, dash: [5.0,2.0], dashPhase: 1.0)).arcWidth(30.0).degree(degree).body
+            }.padding()
+            Slider(value: $degree, in: -225.0...45.0, label: {
+                Text("Degree")
+            }).padding()
+        }
+    }
+}
+
+struct ArcLayerPreview : PreviewProvider {
+    static var previews: some View {
+        ArcLayerDemo()
     }
 }
