@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SequenceBuilder
 
 extension CGPoint {
     static func -(left: CGPoint, right: CGPoint) -> CGVector {
@@ -71,9 +72,10 @@ extension GeometryProxy {
     }
 }
 
-public struct Knob<Content: View>: View {
-    private var contentBuilder: (Double, KnobMapping)->Content
-
+public struct Knob<Layers:Sequence>: View where Layers.Element: AngularLayer{
+    //    private var contentBuilder: (Double, KnobMapping)->Content
+    private var layers: Layers
+    
     private var mappingObj: KnobMapping
     
     @Binding var value: Double
@@ -86,14 +88,14 @@ public struct Knob<Content: View>: View {
     @State var startVector: CGVector = .zero
     @State private var startValue: Double = .nan
     
-    public init<F: BinaryFloatingPoint>(_ value: Binding<F>, _ mapping: KnobMapping = LinearMapping(), @AngularLayerBuilder _ content: @escaping (Double, KnobMapping)->Content) {
+    public init<F:BinaryFloatingPoint>(_ value: Binding<F>, _ mapping: KnobMapping = LinearMapping(), @SequenceBuilder _ builder: ()->Layers) {
         _value = Binding<Double>(get: {
             Double(value.wrappedValue)
         }, set: { v in
             value.wrappedValue = F(v)
         })
         mappingObj = mapping
-        contentBuilder = content
+        layers = builder()
     }
     
     public var body: some View {
@@ -104,9 +106,10 @@ public struct Knob<Content: View>: View {
             let pt = CGPoint(x: center.x + currentVector.dx, y: center.y - currentVector.dy)
             let startPt = CGPoint(x: center.x + startVector.dx, y: center.y - startVector.dy)
             ZStack(alignment: .center){
-                VStack {
-                    contentBuilder(value, mappingObj).frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+                ForEach(sequence: layers) { (index, layer) in
+                    layer.mappingValue(value, with: mappingObj).body.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
                 }
+                
                 if blueprint {
                     Path { p in
                         p.move(to: CGPoint(x: center.x - radius, y: center.y))
@@ -141,14 +144,14 @@ public struct Knob<Content: View>: View {
                     let valueCurrent = KnobGestureRecord.Value(value: self.value, angle: currentVector.angle(shouldAdjust))
                     
                     let valueNext = KnobGestureRecord.Value(angle: nextVector.angle(shouldAdjust))
-                 
+                    
                     if -nextVector.angle(shouldAdjust).degrees > mappingObj.degreeRange.upperBound {
                         return
                     }
                     if -nextVector.angle(shouldAdjust).degrees < mappingObj.degreeRange.lowerBound {
                         return
                     }
-
+                    
                     
                     let record = KnobGestureRecord(start: valueStart, current:valueCurrent, next:valueNext)
                     let newValue = mappingObj.newValue(record)
@@ -172,7 +175,7 @@ public struct Knob<Content: View>: View {
 }
 
 extension Knob : Adjustable {
-   
+    
     public func mapping<T: KnobMapping>(with mapping: T) -> Self {
         setProperty { tmp in
             tmp.mappingObj = mapping
@@ -198,16 +201,14 @@ struct KnobDemo: View {
             Spacer(minLength: 40)
             HStack {
                 VStack {
-                    Knob($valueContiune) { value, mapping in
+                    Knob($valueContiune) {
                         RingKnobLayer()
-                            .mappingValue(value, with: mapping)
                             .color {
                                 Color.red
                                 Color.blue
                                 Color.yellow
                             }
                         ArcKnobLayer()
-                            .mappingValue(value, with: mapping)
                             .arcColor(.red)
                     }.blueprint(showBlueprint)
                     Slider(value: $valueContiune, in: 0.0...1.0) {
@@ -215,9 +216,16 @@ struct KnobDemo: View {
                     }
                 }
                 VStack {
-                    Knob($valueSegmented) { value, mapping in
-                        RingKnobLayer()
-                    }.blueprint(showBlueprint)
+                    Knob($valueSegmented) {
+                        RingKnobLayer().color {
+                            Color.green
+                            Color.yellow
+                            Color.red
+                        }.ringWidth(ringWidth)
+                        ArcKnobLayer()
+                            .arcColor(.red)
+                            .arcWidth(arcWidth)
+                    }.blueprint(showBlueprint).mapping(with: SegmentMapping().stops([KnobStop(0.0, -215.0), KnobStop(1.0, 45.0), KnobStop(0.5, -90.0), KnobStop(0.2, 0.0), KnobStop(0.8, -180.0), KnobStop(0.3, -135)]))
                     Slider(value: $valueSegmented, in: 0.0...1.0, step: 0.1) {
                         Text(String(format: "value: %.2f", valueSegmented))
                     }
