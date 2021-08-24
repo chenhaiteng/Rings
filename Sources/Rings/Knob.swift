@@ -98,17 +98,6 @@ public struct Knob<Layers:Sequence>: View where Layers.Element: AngularLayer{
         layers = builder()
     }
     
-    //
-    //    public init<F: BinaryFloatingPoint>(_ value: Binding<F>, _ mapping: KnobMapping = LinearMapping(), @AngularLayerBuilder _ content: @escaping (Double, KnobMapping)->Content) {
-    //        _value = Binding<Double>(get: {
-    //            Double(value.wrappedValue)
-    //        }, set: { v in
-    //            value.wrappedValue = F(v)
-    //        })
-    //        mappingObj = mapping
-    //        contentBuilder = content
-    //    }
-    
     public var body: some View {
         GeometryReader { geo in
             let center = geo.localCenter
