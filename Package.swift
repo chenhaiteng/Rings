@@ -37,10 +37,20 @@ let package = Package(
                       "ArchimedeanSpiralText.md",
                       "HandAiguille.md",
                       "SphericText.md",
-                      "Knob.md"]),
+                      "Knob.md",
+                      "KnobComponents/Layers/ArcKnobLayer.md",
+                      "KnobComponents/Layers/ArcKnobDemo.gif"]),
         .testTarget(
             name: "RingsTests",
             dependencies: ["Rings",
-                           "CoreGraphicsExtension", "Common"]),
+                           "CoreGraphicsExtension", "Common"],
+            exclude: ["RingText.md",
+                      "ClockIndex.md",
+                      "ArchimedeanSpiralText.md",
+                      "HandAiguille.md",
+                      "SphericText.md",
+                      "Knob.md",
+                      "KnobComponents/Layers/ArcKnobLayer.md",
+                      "KnobComponents/Layers/ArcKnobDemo.gif"]),
     ]
 )

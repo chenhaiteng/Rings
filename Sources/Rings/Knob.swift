@@ -209,7 +209,9 @@ struct KnobDemo: View {
                                 Color.yellow
                             }
                         ArcKnobLayer()
-                            .arcColor(.red)
+                            .arcColor {
+                                .red
+                            }
                     }.blueprint(showBlueprint)
                     Slider(value: $valueContiune, in: 0.0...1.0) {
                         Text(String(format: "value: %.2f", valueContiune))
@@ -217,15 +219,23 @@ struct KnobDemo: View {
                 }
                 VStack {
                     Knob($valueSegmented) {
-                        RingKnobLayer().color {
-                            Color.green
-                            Color.yellow
-                            Color.red
-                        }.ringWidth(ringWidth)
-                        ArcKnobLayer()
-                            .arcColor(.red)
+                        ArcKnobLayer(fixed:true)
+                            .arcColor {
+                                Color.green.opacity(0.5)
+                                Color.yellow.opacity(0.5)
+                                Color.red.opacity(0.5)
+                            }
                             .arcWidth(arcWidth)
-                    }.blueprint(showBlueprint).mapping(with: SegmentMapping().stops([KnobStop(0.0, -215.0), KnobStop(1.0, 45.0), KnobStop(0.5, -90.0), KnobStop(0.2, 0.0), KnobStop(0.8, -180.0), KnobStop(0.3, -135)]))
+                            .style(StrokeStyle(lineWidth: arcWidth,lineCap: .butt, lineJoin: .bevel, miterLimit: 10.0, dash: [5,2], dashPhase: 10.0))
+                        ArcKnobLayer()
+                            .arcColor {
+                                Color.green
+                                Color.yellow
+                                Color.red
+                            }
+                            .arcWidth(arcWidth)
+                            .style(StrokeStyle(lineWidth: arcWidth,lineCap: .butt, lineJoin: .bevel, miterLimit: 10.0, dash: [5,2], dashPhase: 10.0))
+                    }.blueprint(showBlueprint).mapping(with: SegmentMapping().stops([KnobStop(0.0, -225.0), KnobStop(1.0, 45.0), KnobStop(0.5, -90.0), KnobStop(0.2, 0.0), KnobStop(0.8, -180.0), KnobStop(0.3, -135)]))
                     Slider(value: $valueSegmented, in: 0.0...1.0, step: 0.1) {
                         Text(String(format: "value: %.2f", valueSegmented))
                     }
