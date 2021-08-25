@@ -73,7 +73,6 @@ ArcKnobLayer(fixed:true).arcWidth(5.0).arcColor {
     miterLimit: 1.0, 
     dash: [5.0,2.0], 
     dashPhase: 1.0))
-.arcWidth(30.0).degree(degree).body
 ```
 ArcKnobLayer allows developer to provide its own stroke style, but the attribute *lineWidth* will be **ignored**.
 To adjust the width of arc layer, use *arcWidth* instead of.

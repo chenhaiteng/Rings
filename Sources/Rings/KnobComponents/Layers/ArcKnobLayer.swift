@@ -17,6 +17,12 @@ extension StrokeStyle {
     }
 }
 
+/**
+ ArcKnobLayer implements an angular layer that drawing arc based on specified degree.
+ 
+ This struct allows developer to create fixed or non-fixed arc. A *fixed* layer draws a arc based on degreeRange, and a *non-fixed* layer draws  by degreeRange and its degree.
+ 
+ */
 public struct ArcKnobLayer : AngularLayer {
     public var isFixed: Bool
     
@@ -29,7 +35,6 @@ public struct ArcKnobLayer : AngularLayer {
             $degree = newValue
         }
     }
-    
     
     private var arcWidth: CGFloat = 5.0
     private var gradient: Gradient = Gradient(colors: [.white])
@@ -54,18 +59,70 @@ public struct ArcKnobLayer : AngularLayer {
 }
 
 extension ArcKnobLayer : Adjustable {
+    /**
+     Create and return a new layer with adjusted arc width
+     */
     public func arcWidth<F>(_ width:F) -> Self where F: BinaryFloatingPoint {
         setProperty { tmp in
             tmp.arcWidth = CGFloat(width)
         }
     }
     
+    /**
+     Create and return a new layer with adjusted arc color.
+     
+     To apply rich color on arc, refers to samples below:
+     ```swift
+     // Single color
+     arcColor {
+        Color.white
+     }
+     // Gradient colors
+     arcColor {
+        Color.red
+        Color.blue
+     }
+     // Gradient colors represented by tuple -- rgba or rgba float.
+     arcColor {
+        (255, 0, 0, 255)
+        (0.0, 0.0, 1.0, 1.0)
+     }
+     // Gradient colors with stops
+     arcColor {
+        Gradient.Stop(color: .red, location: 0.2)
+        (Color.blue, location: 0.7) // a simplified represention of Gradient.Stop
+     }
+     ```
+     
+     - parameters:
+        - builder: A GradientBuilder that build gradient from colors. It can accept Color, Gradient.Stop, and simplfied tuple representations.
+     */
     public func arcColor(@GradientBuilder _ builder:()->Gradient) -> Self {
         setProperty { tmp in
             tmp.gradient = builder()
         }
     }
     
+    /**
+     Create and return a new layer with custom storke style.
+     
+     ArcKnobLayer allows developer to provide its own stroke style.
+     Following example shows how to apply dash line on ArcKnobLayer
+    ```swift
+     ArcKnobLayer(fixed:true).arcWidth(5.0).arcColor {
+         (Color.green, 0.6)
+         (Color.yellow, 0.7)
+         (Color.yellow, 0.9)
+         (Color.red, 0.95)
+     }.style(StrokeStyle(lineCap: .butt,
+         lineJoin: .miter,
+         miterLimit: 1.0,
+         dash: [5.0,2.0],
+         dashPhase: 1.0))
+     ```
+     - parameters:
+        - style: The StrokeStyle apply on arc.  Note that the attribute *lineWidth* in StrokeStyle will be **ignored**. To adjust the width of arc layer, use *arcWidth* instead of.
+     */
     public func style(_ style: StrokeStyle) -> Self {
         setProperty { tmp in
             tmp.style = style
