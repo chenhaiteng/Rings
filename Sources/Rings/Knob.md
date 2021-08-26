@@ -9,40 +9,43 @@
 ```swift
     // Baisc Knob drawing value along the circumference.
     @State knobValue : Double               // default range: 0.0...1.0
-    Knob($knobValue) { value, mapping in    // Create a Knob with default mapping(LinearMapping)
+    Knob($knobValue) {
         ArcKnobLayer()                      // Add ArcKnobLayer to draw circumference.
-            .mappingValue(value, with: mapping) // setup value and mapping
             .arcWidth(10.0)
-            .arcColor(.blue.opacity(0.7))
+            .arcColor {
+                .blue.opacity(0.7)
+            }
     }.frame(width: 100.0, height: 100.0)    // setup knob size
 ```
-<img src="https://user-images.githubusercontent.com/1284944/120065862-1d15bc80-c0a6-11eb-876f-687db7b35d00.gif" alt="drawing" width="200"/>
+![Demo1](KnobDemo1.gif)
 
 ---
 
 ```swift
     // A Knob drawing value along circular track. 
     @State knobValue : Double               // default range: 0.0...1.0.
-    Knob($knobValue) { value, mapping in    // Create a Knob with default mapping(LinearMapping)
+    Knob($knobValue) {
         RingKnobLayer()                     // Add RingKnobLayer as the track. It has no need to setup value and mapping on RingKnobLayer.
             .ringWidth(10.0)
-            .ringColor(.red.opacity(0.5))
+            .color {
+                .red.opacity(0.5)
+            }
         ArcKnobLayer()                      // Add ArcKnobLayer to draw circumference.
-            .mappingValue(value, with: mapping)
             .arcWidth(10.0)
-            .arcColor(.blue.opacity(0.7))
+            .arcColor {
+                .blue.opacity(0.7)
+            }
     }.frame(width: 100.0, height: 100.0)
 ```
-<img src="https://user-images.githubusercontent.com/1284944/120066040-2bb0a380-c0a7-11eb-865e-e4f2220ffead.gif" alt="drawing" width="200"/>
+![Demo2](KnobDemo2.gif)
 
 ---
 
 ```swift
     // A Knob with rotate image
     @State knobValue : Double                       // default range: 0.0...1.0, the range of knob value depends on mapping object.
-    Knob($knobValue) { value, mapping in
+    Knob($knobValue) {
         ImageKnobLayer(Image("SimpleKnob"))
-            .mappingValue(value, with: mapping)
     }.frame(width: 150, height: 150)    
 ```
 <img src="https://user-images.githubusercontent.com/1284944/120066082-61ee2300-c0a7-11eb-97e5-4a64b0bd4e8e.gif" alt="drawing" width="200"/>
