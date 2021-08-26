@@ -8,6 +8,10 @@
 import SwiftUI
 import CoreGraphicsExtension
 
+public enum WritingDirection {
+    case LeftToRight, RightToLeft
+}
+
 public struct SphericText<T:BinaryFloatingPoint>: View {
     
     @Binding var offsetDegree: T
@@ -23,6 +27,7 @@ public struct SphericText<T:BinaryFloatingPoint>: View {
     private var frontMostRange = -10...10
     private var perspective: CGFloat = 0.0
     private var anchorZ: CGFloat = 100.0
+    private var writingDirection: WritingDirection = .LeftToRight
     @State private var estHeight: CGFloat = 30.0
     @State private var estWidth: CGFloat = 30.0
     
@@ -67,18 +72,20 @@ public struct SphericText<T:BinaryFloatingPoint>: View {
                 Sizing {
                     Text("A").font(font).opacity(0.0)
                 }
-                ForEach(stringTable, id: \.self.offset) { (i, e) in
-                    let deg = Double(i)*wordSpacing + Double(offsetDegree)
-                    let _ = print("degrees: \(deg)")
-                    let normalizedD = Int(deg)%360
+                ForEach(stringTable, id: \.self.offset) { i, element in
+                    let positionInDegree =  Double(offsetDegree) + (writingDirection == .LeftToRight ? -1.0 : 1.0)*Double(i)*wordSpacing
+                    let _ = print("degrees: \(positionInDegree)")
+                    let normalizedD = Int(positionInDegree)%360
                     let shouldBlur = blurMinors ? !(frontMostRange ~= abs(normalizedD)) : false
                     let shouldHide = hideOpposite ? (oppositeRange ~= abs(normalizedD)) : false
-                    Text(e).frame(width: estWidth*CGFloat(e.count), height: 50, alignment: Alignment(horizontal: .center, vertical: .center))
+
+                    let text = writingDirection == .RightToLeft ? String(element.reversed()) : element
+                    Text(text).frame(width: estWidth*CGFloat(text.count), height: 50, alignment: Alignment(horizontal: .center, vertical: .center))
                         .font(font)
                         .foregroundColor(wordColor)
                         .background(wordBackground)
                         .rotation3DEffect(
-                            .degrees(deg),
+                            .degrees(positionInDegree),
                             axis: (x: 0.0, y: 1.0, z: 0.0),
                             anchor: .center,
                             anchorZ: anchorZ,
@@ -154,6 +161,11 @@ extension SphericText : Adjustable {
     public func blurMinors(_ isBlur: Bool) -> Self {
         setProperty { tmp in
             tmp.blurMinors = isBlur
+        }
+    }
+    public func writingDirection(_ direction: WritingDirection) -> Self {
+        setProperty { tmp in
+            tmp.writingDirection = direction
         }
     }
 }

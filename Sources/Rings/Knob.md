@@ -6,41 +6,49 @@
 
 ### Usage
 
+Following shows a basic Knob drawing value along the circumference.
 ```swift
-    // Baisc Knob drawing value along the circumference.
-    @State knobValue : Double                       // default range: 0.0...1.0
-    Knob($knobValue)                                // Create a Knob with default mapping(LinearMapping)
-        .addLayer(ArcKnobLayer()                    // Add ArcKnobLayer to draw circumference.
-                    .arcWidth(10.0)
-                    .arcColor(.blue.opacity(0.7)))
-        .frame(width: 100.0, height: 100.0)
+    @State knobValue : Double               // default range: 0.0...1.0
+    Knob($knobValue) {
+        ArcKnobLayer()                      // Add ArcKnobLayer to draw circumference.
+            .arcWidth(10.0)
+            .arcColor {
+                .blue.opacity(0.7)
+            }
+    }.frame(width: 100.0, height: 100.0)    // setup knob size
 ```
-<img src="https://user-images.githubusercontent.com/1284944/120065862-1d15bc80-c0a6-11eb-876f-687db7b35d00.gif" alt="drawing" width="200"/>
+![Demo1](KnobDemo1.gif)
 
 ---
 
+By adding a ring layer, it makes a Knob which has a circular track. 
 ```swift
-    // A Knob drawing value along circular track. 
-    @State knobValue : Double                       // default range: 0.0...1.0.
-    Knob($knobValue)                                // Create a Knob with default mapping(LinearMapping)
-        .addLayer(RingKnobLayer()                   // Add RingKnobLayer as the track.
-                    .ringWidth(10.0)
-                    .ringColor(.red.opacity(0.5)))
-        .addLayer(ArcKnobLayer()                    // Add ArcKnobLayer to draw circumference.
-                    .arcWidth(10.0)
-                    .arcColor(.blue.opacity(0.7)))
-        .frame(width: 100.0, height: 100.0)
+    @State knobValue : Double               // default range: 0.0...1.0.
+    Knob($knobValue) {
+        RingKnobLayer()                     // Add RingKnobLayer as the track. It has no need to setup value and mapping on RingKnobLayer.
+            .ringWidth(10.0)
+            .color {
+                .red.opacity(0.5)
+            }
+        ArcKnobLayer()                      // Add ArcKnobLayer to draw circumference.
+            .arcWidth(10.0)
+            .arcColor {
+                .blue.opacity(0.7)
+            }
+    }.frame(width: 100.0, height: 100.0)
 ```
-<img src="https://user-images.githubusercontent.com/1284944/120066040-2bb0a380-c0a7-11eb-865e-e4f2220ffead.gif" alt="drawing" width="200"/>
+![Demo2](KnobDemo2.gif)
+
+Also, it can make the knob and its track much richer by adjusting each layer. For more detail, see [ArcKnobLayer](KnobComponents/Layers/ArcKnobLayer.md)
 
 ---
 
+Finally, it can apply images on knob.
 ```swift
-    // A Knob with rotate image
     @State knobValue : Double                       // default range: 0.0...1.0, the range of knob value depends on mapping object.
-    Knob($knobValue)
-        .addLayer(ImageKnobLayer(Image("SimpleKnob")))
-        .frame(width: 150, height: 150)    
+    Knob($knobValue) {
+        ImageKnobLayer(Image("SimpleKnob"))
+    }.frame(width: 150, height: 150)    
 ```
 <img src="https://user-images.githubusercontent.com/1284944/120066082-61ee2300-c0a7-11eb-97e5-4a64b0bd4e8e.gif" alt="drawing" width="200"/>
 

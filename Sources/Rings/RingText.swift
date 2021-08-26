@@ -1,6 +1,6 @@
 import SwiftUI
 import CoreGraphicsExtension
-import CommonExts
+import Common
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public extension CGAngle {
@@ -29,7 +29,6 @@ public struct RingText : View {
     private var radius: Double
     private var textColor: Color
     private var textUpsideDown: Bool
-    private var textReversed: Bool
     
     private var char_spacing: Double
     private var kerning_r: Double
@@ -44,15 +43,14 @@ public struct RingText : View {
     
     @State private var sizes: [CGSize] = []
     private var showBlueprint: Bool = false
-
-    public init<T: BinaryFloatingPoint>(radius: T, words: [String], color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil) {
+    
+    public init<T: BinaryFloatingPoint>(radius: T, @WordsBuilder _ builder: ()->[String], color: Color = Color.white, upsideDown: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil ) {
         self.radius = Double(radius)
         self.textColor = color
         self.textUpsideDown = upsideDown
-        self.textReversed = reversed
-        self.originwords = words
+        self.originwords = []
         
-        characters = _createCharacters(origin: words, reversed: reversed)
+        characters = builder()
         
         beginRadians = Double(begin.radians)
         
@@ -69,7 +67,9 @@ public struct RingText : View {
     }
     
     public init<T: BinaryFloatingPoint>(radius: T, text: String, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
-        self.init(radius: radius, words: [text], color: color, upsideDown: upsideDown, reversed: reversed, begin: begin)
+        self.init(radius: radius, {
+            text
+        }, color: color, upsideDown: upsideDown,  begin: begin)
     }
     
     private func _createTextPoints() -> [CGPolarPoint] {
@@ -161,14 +161,6 @@ extension RingText {
         }
     }
     
-    public func reverse(_ yes: Bool) -> Self {
-        setProperty { tmp in
-            tmp.textReversed = yes
-            tmp.characters = _createCharacters(origin: tmp.originwords, reversed: tmp.textReversed)
-            tmp.textPoints = tmp._createTextPoints()
-        }
-    }
-    
     public func font(_ f: Font) -> Self {
         setProperty { tmp in
             tmp.font = f
@@ -195,7 +187,7 @@ struct RingTextPreviewWrapper: View {
     @State var end: Double = 360.0
     @State var upside_down: Bool = false
     @State var reverse_text: Bool = false
-    @State var begin_0: Double = -60.0
+    @State var begin_0: Double = 0.0
     @State var font_size: Double = 20.0
     @State var blueprint: Bool = false
     var body: some View {
@@ -203,31 +195,55 @@ struct RingTextPreviewWrapper: View {
             HStack {
                 VStack {
                     ZStack {
-                        RingText(radius: 40.0, words: ["1","2","3","4","5","6","7","8","9","10","11","12"], color: .blue, upsideDown: false, reversed: false).font(Font.custom("Apple Chancery", size: 16.0)).begin(degrees: begin_0).showBlueprint(blueprint)
+                        RingText(radius: 40.0, {
+                            "✪"
+                            for i in 1...10 {
+                                "\(i)"
+                            }
+                        }, color: .blue, upsideDown: false).font(Font.custom("Apple Chancery", size: 16.0)).begin(degrees: begin_0).showBlueprint(blueprint).contentShape(Circle()).onTapGesture(count: 2, perform: {
+                            begin_0 = 0.0
+                            font_size = 20.0
+                        })
                         RingText(radius: 80.0, text: "0987654321", color: .green).font(.system(size: CGFloat(font_size))).showBlueprint(blueprint)
                     }
                     Text("begin degrees: \(begin_0)")
-                    Slider(value: $begin_0, in: 0.0...360)
+                    Slider(value: $begin_0, in: -360.0...360)
                     Text("font size: \(font_size)")
                     Slider(value: $font_size, in: 10.0...40.0, step: 1)
                 }
                 ZStack {
-                    RingText(radius: 40.0, words: ["a23", "b56", "c89"], reversed: true).showBlueprint(blueprint)
-                    RingText(radius: 80.0, words: ["1234567890"]).showBlueprint(blueprint)
+                    RingText(radius: 40.0) {
+                        "a23"
+                        "b56"
+                        "c89"
+                    }.showBlueprint(blueprint)
+                    RingText(radius: 80.0) {
+                        "1234567890"
+                    }.showBlueprint(blueprint)
                 }
                 VStack {
                     ZStack {
-                        
-                        RingText(radius: 60.0, words: ["12345", "67890"]).begin(degrees: begin)
-                            .end(degrees: end)
-                            .upsideDown(upside_down)
-                            .reverse(reverse_text)
-                            .textColor(.red).showBlueprint(blueprint)
-                        RingText(radius: 40.0, words: ["1234567890"]).kerning(spacing)
-                            .upsideDown(upside_down)
-                            .reverse(reverse_text)
-                            .textColor(.blue).showBlueprint(blueprint)
-                        
+                        RingText(radius: 60.0) {
+                            if reverse_text {
+                                "09876"
+                                "54321"
+                            } else {
+                                "12345"
+                                "67890"
+                            }
+                        }.begin(degrees: begin)
+                        .end(degrees: end)
+                        .upsideDown(upside_down)
+                        .textColor(.red).showBlueprint(blueprint)
+                        RingText(radius: 40.0){
+                            if reverse_text {
+                                String("1234567890".reversed())
+                            } else {
+                                "1234567890"
+                            }
+                        }.kerning(spacing)
+                        .upsideDown(upside_down)
+                        .textColor(.blue).showBlueprint(blueprint)
                     }
                     VStack(alignment: .leading) {
                         Text("char spacing : \(spacing)")

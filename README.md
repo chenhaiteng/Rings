@@ -1,3 +1,5 @@
+![Screen Shot 2021-06-15 at 13 01 13](https://user-images.githubusercontent.com/1284944/121996229-c6fd8480-cdda-11eb-9c3e-345681b3e641.png)
+
 # Rings ![GitHub](https://img.shields.io/github/license/chenhaiteng/Rings?style=plastic) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/chenhaiteng/Rings)
 
 **Rings** is a collection of controls which have similar shapes of ring, circle...
@@ -53,7 +55,7 @@ targets: [
 ## RingText
 
 ### What it looks like
-![RingDemo](https://user-images.githubusercontent.com/1284944/115984682-fb26a700-a5da-11eb-8a59-a1554ec41bdf.gif)
+![RingDemo](Sources/Rings/RingTextDemo.gif)
 
 ### ![How to use it](Sources/Rings/RingText.md)
 

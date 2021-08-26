@@ -6,18 +6,20 @@
 //
 
 import SwiftUI
+import Common
 
-public struct ImageKnobLayer : KnobLayer {
+public struct ImageKnobLayer : AngularLayer {
     var image: Image
     public var isFixed: Bool = false
     
-    public var minDegree: Double = 0.0
-    public var maxDegree: Double = 0.0
-    public var degree: CGFloat = 0.0
+    @Clamping(0.0...0.0) public var degree: Double = 0.0
+    public var degreeRange: ClosedRange<Double> = 0.0...0.0
     
-    public var view: AnyView {
+    public var body: some View {
         get {
-            AnyView(image.resizable().rotationEffect(Angle.degrees(Double(degree))))
+            image.resizable().if(!isFixed, content: { content in
+                content.rotationEffect(Angle.degrees(Double(degree)))
+            })
         }
     }
     
