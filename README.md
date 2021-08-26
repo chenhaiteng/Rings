@@ -55,7 +55,7 @@ targets: [
 ## RingText
 
 ### What it looks like
-![RingDemo](https://user-images.githubusercontent.com/1284944/115984682-fb26a700-a5da-11eb-8a59-a1554ec41bdf.gif)
+![RingDemo](Sources/Rings/RingTextDemo.gif)
 
 ### ![How to use it](Sources/Rings/RingText.md)
 
