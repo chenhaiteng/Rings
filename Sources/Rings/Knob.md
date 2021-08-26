@@ -6,8 +6,8 @@
 
 ### Usage
 
+Following shows a basic Knob drawing value along the circumference.
 ```swift
-    // Baisc Knob drawing value along the circumference.
     @State knobValue : Double               // default range: 0.0...1.0
     Knob($knobValue) {
         ArcKnobLayer()                      // Add ArcKnobLayer to draw circumference.
@@ -21,8 +21,8 @@
 
 ---
 
+By adding a ring layer, it makes a Knob which has a circular track. 
 ```swift
-    // A Knob drawing value along circular track. 
     @State knobValue : Double               // default range: 0.0...1.0.
     Knob($knobValue) {
         RingKnobLayer()                     // Add RingKnobLayer as the track. It has no need to setup value and mapping on RingKnobLayer.
@@ -39,10 +39,12 @@
 ```
 ![Demo2](KnobDemo2.gif)
 
+Also, it can make the knob and its track much richer by adjusting each layer. For more detail, see [ArcKnobLayer](KnobComponents/Layers/ArcKnobLayer.md)
+
 ---
 
+Finally, it can apply images on knob.
 ```swift
-    // A Knob with rotate image
     @State knobValue : Double                       // default range: 0.0...1.0, the range of knob value depends on mapping object.
     Knob($knobValue) {
         ImageKnobLayer(Image("SimpleKnob"))
