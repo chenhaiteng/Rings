@@ -27,30 +27,13 @@ let package = Package(
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(name: "Common",
-                dependencies: [],
-                exclude: ["PropertyWrapper/Clamping.md"]),
+                dependencies: []),
         .target(
             name: "Rings",
-            dependencies: ["CoreGraphicsExtension", "Common", "ArchimedeanSpiral", "GradientBuilder", "SequenceBuilder"],
-            exclude: ["RingText.md",
-                      "ClockIndex.md",
-                      "ArchimedeanSpiralText.md",
-                      "HandAiguille.md",
-                      "SphericText.md",
-                      "Knob.md",
-                      "KnobComponents/Layers/ArcKnobLayer.md",
-                      "KnobComponents/Layers/ArcKnobDemo.gif"]),
+            dependencies: ["CoreGraphicsExtension", "Common", "ArchimedeanSpiral", "GradientBuilder", "SequenceBuilder"]),
         .testTarget(
             name: "RingsTests",
             dependencies: ["Rings",
-                           "CoreGraphicsExtension", "Common"],
-            exclude: ["RingText.md",
-                      "ClockIndex.md",
-                      "ArchimedeanSpiralText.md",
-                      "HandAiguille.md",
-                      "SphericText.md",
-                      "Knob.md",
-                      "KnobComponents/Layers/ArcKnobLayer.md",
-                      "KnobComponents/Layers/ArcKnobDemo.gif"]),
+                           "CoreGraphicsExtension", "Common"]),
     ]
 )
