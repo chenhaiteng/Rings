@@ -20,8 +20,8 @@ let package = Package(
         // .package(url: /* package url */, from: "1.0.0"),
         .package(name: "CoreGraphicsExtension", url: "https://github.com/chenhaiteng/CoreGraphicsExtension.git", from: "0.2.0"),
         .package(name: "ArchimedeanSpiral", url: "https://github.com/chenhaiteng/ArchimedeanSpiral.git",  from: "1.0.12"),
-        .package(name: "GradientBuilder", url: "https://github.com/chenhaiteng/GradientBuilder.git", .branch("main")),
-        .package(name: "SequenceBuilder", url: "https://github.com/andtie/SequenceBuilder.git", .branch("main"))
+        .package(name: "GradientBuilder", url: "https://github.com/chenhaiteng/GradientBuilder.git", from: "1.0.0"),
+        .package(name: "SequenceBuilder", url: "https://github.com/andtie/SequenceBuilder.git", from: "0.0.7")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
