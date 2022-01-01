@@ -55,9 +55,9 @@ targets: [
 ## RingText
 
 ### What it looks like
-![RingDemo](Sources/Rings/RingTextDemo.gif)
+![RingDemo](Markdown/Rings/RingTextDemo.gif)
 
-### ![How to use it](Sources/Rings/RingText.md)
+### ![How to use it](Markdown/Rings/RingText.md)
 
 ## ClockIndex
 
@@ -66,28 +66,28 @@ targets: [
 
 <img width="598" alt="earchly_clock_demo" src="https://user-images.githubusercontent.com/1284944/116664737-73baa880-a9cb-11eb-97e1-afcb49dfcfcd.png">
 
-### ![How to use it](Sources/Rings/ClockIndex.md)
+### ![How to use it](Markdown/Rings/ClockIndex.md)
 
 ## HandAiguille
 
 ### What it looks like:
 ![HandAguille](https://user-images.githubusercontent.com/1284944/118101511-47128200-b40a-11eb-870f-90ac2f2a302a.gif)
 
-### ![How to use it](Sources/Rings/HandAiguille.md)
+### ![How to use it](Markdown/Rings/HandAiguille.md)
 
 ## ArchimedeanSpiralText
 
 ### What it looks like:
 ![ArchimedeanSpiralTextDemo](https://user-images.githubusercontent.com/1284944/117950922-3ef10e80-b346-11eb-9da1-50b0f87990a2.gif)
 
-### ![How to use it](Sources/Rings/ArchimedeanSpiralText.md)
+### ![How to use it](Markdown/Rings/ArchimedeanSpiralText.md)
 
 ## SphericText
 
 ### What it looks like:
 ![Spheric Text Demo](https://user-images.githubusercontent.com/1284944/118671827-60f8fe00-b82a-11eb-9f0f-821841867cba.gif)
 
-### ![How to use it](Sources/Rings/SphericText.md)
+### ![How to use it](Markdown/Rings/SphericText.md)
 
 ## Knob
 
@@ -95,7 +95,7 @@ targets: [
 ![Knob Demo](https://user-images.githubusercontent.com/1284944/120065810-e2138900-c0a5-11eb-8324-2fe340bb578f.gif)
 
 
-### ![How to use it](Sources/Rings/Knob.md)
+### ![How to use it](Markdown/Rings/Knob.md)
 
 ---
 # License
