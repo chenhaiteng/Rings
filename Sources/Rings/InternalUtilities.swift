@@ -16,7 +16,7 @@ internal func _setProperty<T>(content: T, _ setBlock:(_ newContent: inout T) -> 
 public protocol Adjustable {}
 
 extension Adjustable {
-    func setProperty(_ setBlock: (_ text: inout Self) -> Void) -> Self {
+    func setProperty(_ setBlock: (_ adjustObject: inout Self) -> Void) -> Self {
         let result = _setProperty(content: self) { (tmp :inout Self) in
             setBlock(&tmp)
             return tmp
@@ -24,3 +24,4 @@ extension Adjustable {
         return result
     }
 }
+
