@@ -25,13 +25,16 @@ public enum TextDirection {
     }
 }
 
-public struct ArchimedeanSpiralText: View {
+public struct ArchimedeanSpiralText: View, CompatibleForeground {
+    public typealias Content = Self
+    
     private var radiusSpacing: Double
     private var innerRadius: Double
     private var gap: Double
     private var textDirection: TextDirection = .Top
     private var font = Font.system(size: 20.0)
-    private var textColor: Color = Color.red
+    public var color: Color
+    public var style: any ShapeStyle
     
     private var text: String {
         didSet {
@@ -47,12 +50,14 @@ public struct ArchimedeanSpiralText: View {
     
     private var textPoints: [CGPolarPoint] = []
     
-    public init(_ innerRadius: Double = 12.0, spacing: Double = 10.0, gap: Double = 5.0, text: String = "") {
-        self.radiusSpacing = spacing
+    public init(_ innerRadius: Double = 12.0, radiusSpacing: Double = 10.0, gap: Double = 5.0, text: String = "") {
+        self.radiusSpacing = radiusSpacing
         self.innerRadius = innerRadius
         self.gap = gap
         self.text = text
         self.chars = Array(text.enumerated())
+        self.color = .white
+        self.style = .white
         updateTextPoints()
     }
     
@@ -69,9 +74,9 @@ public struct ArchimedeanSpiralText: View {
                     let textPt = CGPoint(x: pt.x, y: pt.y)
                     let rotation = (self.textPoints[offset].cgangle + textDirection.cgangle).toAngle()
                     Text(String(element))
+                        .compatibleForeground(self)
                         .rotationEffect(rotation)
                         .offset(x: textPt.x, y: textPt.y)
-                        .foregroundColor(textColor)
                         .font(font)
                     
                 }
@@ -81,7 +86,7 @@ public struct ArchimedeanSpiralText: View {
 }
 
 extension ArchimedeanSpiralText: Adjustable {
-    public func spacing<T: BinaryFloatingPoint>(_ space: T) -> Self {
+    public func radiusSpacing<T: BinaryFloatingPoint>(_ space: T) -> Self {
         setProperty { tmp in
             tmp.radiusSpacing = Double(space)
             tmp.updateTextPoints()
@@ -102,14 +107,6 @@ extension ArchimedeanSpiralText: Adjustable {
         }
     }
     
-    public func text(_ text: String) -> Self {
-        setProperty { tmp in
-            tmp.text = text
-            tmp.chars = Array(text.enumerated())
-            tmp.updateTextPoints()
-        }
-    }
-    
     public func textDirection(_ direction: TextDirection) -> Self {
         setProperty { tmp in
             tmp.textDirection = direction
@@ -124,7 +121,8 @@ extension ArchimedeanSpiralText: Adjustable {
     
     public func textColor(_ color: Color) -> Self {
         setProperty { tmp in
-            tmp.textColor = color
+            tmp.color = color
+            tmp.style = color
         }
     }
 }
@@ -171,18 +169,17 @@ struct ArchimedeanSpiralTextDemo : View {
     @State var gap: Double = 25.0
     @State var textLength: Double = 15.0
     @State var direction: TextDirection = TextDirection.Top
-    @State var color: Color = .white
+    @State var color: Color = .red
     @State var font: Font = .system(.body)
     
     public var body: some View {
         VStack {
             let enabled = String(demoText.prefix(Int(textLength)))
             let disabled = String(demoText.suffix(demoText.count - Int(textLength)))
-            ArchimedeanSpiralText()
+            ArchimedeanSpiralText(text: enabled)
                 .gap(gap)
                 .innerRadius(innerR)
-                .spacing(radiusSpacing)
-                .text(enabled)
+                .radiusSpacing(radiusSpacing)
                 .textDirection(direction)
                 .textColor(color)
                 .font(font)
