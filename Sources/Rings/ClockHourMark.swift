@@ -20,7 +20,7 @@ public struct ClockHourMark<Mark: View>: View, Adjustable {
     }
     
     public var body: some View {
-        if #available(macOS 13.0, iOS 16.0, watchOS 9.0, *) {
+        if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *) {
             Extract(markers) { list in
                 RingStack(radius: radius, phase: .degrees(-60.0)) {
                     ForEach(0..<12) { idx in
@@ -59,7 +59,7 @@ struct ClockHourMarkPreview: View {
 #endif
 #endif
     
-#if os(watchOS) || os(macOS)
+#if os(watchOS) || os(macOS) || os(tvOS)
     let invertColor = false
 #else
 #if targetEnvironment(macCatalyst)

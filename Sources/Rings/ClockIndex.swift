@@ -59,13 +59,13 @@ public struct ClockIndex: View {
     public var body: some View {
         GeometryReader { geo in
             ZStack {
-                if #available(iOS 15.0, macOS 12.0, watchOS 8.0, *) {
+                if #available(iOS 15.0, macOS 12.0, watchOS 8.0, tvOS 15.0, *) {
                     Circle().stroke(style: minuteIndexStyle.strokeStyle).frame(width: 2*minuteIndexStyle.radius, height: 2*minuteIndexStyle.radius, alignment: .center).foregroundStyle(minuteGradient)
                 } else {
                     Circle().stroke(style: minuteIndexStyle.strokeStyle).frame(width: 2*minuteIndexStyle.radius, height: 2*minuteIndexStyle.radius, alignment: .center).foregroundColor(minuteIndexStyle.color)
                 }
                 
-                if #available(iOS 15.0, macOS 12.0, watchOS 8.0, *) {
+                if #available(iOS 15.0, macOS 12.0, watchOS 8.0, tvOS 15.0, *) {
                     Circle().stroke(style: hourIndexStyle.strokeStyle).frame(width: 2*hourIndexStyle.radius, height: 2*hourIndexStyle.radius, alignment: .center).foregroundStyle(hourGradient)
                 } else {
                     Circle().stroke(style: hourIndexStyle.strokeStyle).frame(width: 2*hourIndexStyle.radius, height: 2*hourIndexStyle.radius, alignment: .center).foregroundColor(hourIndexStyle.color)
@@ -189,6 +189,7 @@ extension ClockIndex {
 
 
 //Previews
+@available(tvOS, unavailable)
 struct ClockIndexPreview_iPhone : View {
     @State var showIndex: Bool = true
     @State var hourRadius: CGFloat = 100
@@ -266,6 +267,7 @@ struct ClockIndexPreview_iPhone : View {
     }
 }
 
+@available(tvOS, unavailable)
 struct ClockIndexPreview_MacOS : View {
     @State var showIndex: Bool = true
     @State var hourRadius: CGFloat = 80
@@ -344,7 +346,6 @@ struct ClockIndexPreview_MacOS : View {
     }
 }
 
-
 struct ClockIndexPreview_Watch : View {
     @State var showIndex: Bool = true
     @State var hourIndexWidth: CGFloat = 2
@@ -369,6 +370,25 @@ struct ClockIndexPreview_Watch : View {
     }
 }
 
+struct ClockIndex_Preview_tvOS : View {
+    @State var hourRadius: CGFloat = 200
+    @State var minRadius: CGFloat = 200
+    @State var hourIndexWidth: CGFloat = 5
+    @State var hourIndexHeight: CGFloat = 20
+    @State var minIndexWidth: CGFloat = 5
+    @State var minIndexHeight: CGFloat = 10
+    
+    var body: some View {
+        VStack {
+            VStack {
+                ClockIndex().minuteIndex(style:StrokeStyle.minuteStyle(markWidth: minIndexWidth, markHeight: minIndexHeight, radius: minRadius), color: .blue, radius: minRadius).hourIndex(style: StrokeStyle.hourStyle(markWidth: hourIndexWidth, markHeight: hourIndexHeight, radius: hourRadius), color: .red, radius: hourRadius)
+            }
+            
+        }
+    }
+}
+
+
 struct ClockIndex_Previews: PreviewProvider {
     static var previews: some View {
 #if os(iOS)
@@ -379,6 +399,9 @@ struct ClockIndex_Previews: PreviewProvider {
 #endif
 #if os(watchOS)
         ClockIndexPreview_Watch()
+#endif
+#if os(tvOS)
+        ClockIndex_Preview_tvOS()
 #endif
     }
 }
