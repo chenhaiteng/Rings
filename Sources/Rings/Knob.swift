@@ -72,7 +72,8 @@ extension GeometryProxy {
     }
 }
 
-public struct Knob<Layers:Sequence>: View where Layers.Element: AngularLayer{
+@available(tvOS, unavailable)
+public struct Knob<Layers:Sequence>: View where Layers.Element: AngularLayer {
     //    private var contentBuilder: (Double, KnobMapping)->Content
     private var layers: Layers
     
@@ -174,6 +175,7 @@ public struct Knob<Layers:Sequence>: View where Layers.Element: AngularLayer{
     }
 }
 
+@available(tvOS, unavailable)
 extension Knob : Adjustable {
     
     public func mapping<T: KnobMapping>(with mapping: T) -> Self {
@@ -189,6 +191,7 @@ extension Knob : Adjustable {
     }
 }
 
+@available(tvOS, unavailable)
 struct KnobDemo: View {
     @State var valueSegmented: CGFloat = 0
     @State var valueContiune: CGFloat = 0
@@ -207,11 +210,11 @@ struct KnobDemo: View {
                                 Color.red
                                 Color.blue
                                 Color.yellow
-                            }
+                            }.ringWidth(ringWidth)
                         ArcKnobLayer()
                             .arcColor {
                                 .red
-                            }
+                            }.arcWidth(ringWidth)
                     }.blueprint(showBlueprint)
                     Slider(value: $valueContiune, in: 0.0...1.0) {
                         Text(String(format: "value: %.2f", valueContiune))
@@ -255,6 +258,7 @@ struct KnobDemo: View {
     }
 }
 
+@available(tvOS, unavailable)
 struct Knob_Previews: PreviewProvider {
     static var previews: some View {
         KnobDemo()
