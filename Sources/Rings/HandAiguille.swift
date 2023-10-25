@@ -130,6 +130,8 @@ extension View {
     }
 }
 
+
+@available(tvOS, unavailable)
 struct AppleStyleHandPreview: View {
     @State var emulateTime: CGFloat = 0.0
     @State var showBlueprint: Bool = false
@@ -196,6 +198,10 @@ struct AppleStyleHandPreview: View {
 
 struct HandAiguille_Previews: PreviewProvider {
     static var previews: some View {
+        #if os(tvOS)
+        Text("No Preview Yet")
+        #else
         AppleStyleHandPreview().frame(width: 350, height: 350, alignment: .center)
+        #endif
     }
 }

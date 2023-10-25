@@ -130,6 +130,7 @@ extension ArcKnobLayer : Adjustable {
     }
 }
 
+@available(tvOS, unavailable)
 struct ArcLayerDemo: View {
     @State var degree: Double = -75.0
     var body: some View {
@@ -165,6 +166,10 @@ struct ArcLayerDemo: View {
 
 struct ArcLayerPreview : PreviewProvider {
     static var previews: some View {
+        #if os(tvOS)
+        Text("No Preview Yet")
+        #else
         ArcLayerDemo()
+        #endif
     }
 }

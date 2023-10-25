@@ -170,6 +170,7 @@ extension SphericText : Adjustable {
     }
 }
 
+@available(tvOS, unavailable)
 struct SphericTextDemo: View {
     @State var rotateDeg: CGFloat = 0.0
     @State var showModifier: Bool = false
@@ -208,7 +209,9 @@ struct SphericTextDemo: View {
                         }
                         HStack {
                             Spacer()
-                            TextField("Input Spheric Characters", text: $characters).textFieldStyle(RoundedBorderTextFieldStyle())
+                            #if os(iOS)
+                                TextField("Input Spheric Characters", text: $characters).textFieldStyle(RoundedBorderTextFieldStyle())
+                            #endif
                             Spacer()
                         }
                         Toggle("Blur Minor", isOn: $blurMinors)
@@ -217,7 +220,8 @@ struct SphericTextDemo: View {
                     Divider().background(Color.white)
                     VStack {
                         SphericText(words: words, degree_offset: $rotateDeg).wordSpacing(wordSpacing).font( .system(size: 32.0)).wordColor(textColor).wordBackground(backgroundColor).hideOpposite(false).perspective(perspective).radius(radius).frame(width: width)
-                        if #available(macOS 11.0, iOS 14.0, macCatalyst 14.0, *) {
+                        #if os(iOS)
+                        if #available(macOS 11.0, iOS 14.0, *) {
                             TextEditor(text: wordsInputBinding).textFieldStyle(RoundedBorderTextFieldStyle()).frame(width: 100, height: 80, alignment: .center)
                         } else {
                             // Fallback on earlier versions
@@ -225,6 +229,7 @@ struct SphericTextDemo: View {
                                 result + word + ","
                             }))
                         }
+                        #endif
                         HStack {
                             Spacer()
                             Text("text:")
@@ -302,6 +307,10 @@ struct SphericTextDemo: View {
 struct SphericText_Previews:
     PreviewProvider {
     static var previews: some View {
+#if os(tvOS)
+        Text("No Preview Yet")
+#else
         SphericTextDemo()
+#endif
     }
 }

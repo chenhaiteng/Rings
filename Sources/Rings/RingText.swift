@@ -191,10 +191,15 @@ extension RingText {
 @available(iOS 14.0, macOS 11.0, tvOS 13.0, watchOS 6.0, *)
 struct RingText_Previews: PreviewProvider {
     static var previews: some View {
+        #if os(tvOS)
+        Text("No Preview Yet")
+        #else
         RingTextPreviewWrapper()
+        #endif
     }
 }
 
+@available(tvOS, unavailable)
 struct RingTextPreviewWrapper: View {
     @State var spacing: Double = 0.0
     @State var begin: Double = 0.0
@@ -214,10 +219,13 @@ struct RingTextPreviewWrapper: View {
                             for i in 1...10 {
                                 "\(i)"
                             }
-                        }, color: .blue, upsideDown: false).font(Font.custom("Apple Chancery", size: 16.0)).begining(atDegrees: begin_0).showingBlueprint(blueprint).contentShape(Circle()).onTapGesture(count: 2, perform: {
+                        }, color: .blue, upsideDown: false).font(Font.custom("Apple Chancery", size: 16.0)).begining(atDegrees: begin_0).showingBlueprint(blueprint).contentShape(Circle())
+                        #if !os(tvOS)
+                            .onTapGesture(count: 2, perform: {
                             begin_0 = 0.0
                             font_size = 20.0
                         })
+                        #endif
                         RingText(radius: 80.0, text: "0987654321", color: .green).font(.system(size: CGFloat(font_size))).showingBlueprint(blueprint)
                     }
                     Text("begin degrees: \(begin_0)")
