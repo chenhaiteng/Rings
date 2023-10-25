@@ -48,7 +48,7 @@ public protocol AngularLayer {
     var degree: Double { get set }
     var degreeRange: ClosedRange<Double> { get set }
 
-    @ViewBuilder var body: Self.Body { get }
+    var body: Self.Body { get }
 }
 
 extension AngularLayer {
@@ -83,78 +83,5 @@ extension AngularLayer {
 extension ClosedRange where Bound:BinaryFloatingPoint {
     func toDoubleRange() -> ClosedRange<Double> {
         Double(lowerBound)...Double(upperBound)
-    }
-}
-
-@resultBuilder
-public enum AngularLayerBuilder {
-    
-    static func buildBlock() -> EmptyView {
-        EmptyView()
-    }
-    
-    static func buildFinalResult(_ component: EmptyView) -> EmptyView {
-        return component
-    }
-    
-    static func buildBlock<L: AngularLayer>(_ layer:L) -> L.Body {
-        layer.body
-    }
-    
-    static func buildFinalResult<V: View>(_ component: V) -> V {
-        return component
-    }
-}
-
-extension AngularLayerBuilder {
-    
-    static func buildFinalResult<L0: AngularLayer, L1: AngularLayer>(_ component: (L0, L1)) -> ZStack<TupleView<(L0.Body, L1.Body)>> {
-        return ZStack {
-            component.0.body
-            component.1.body
-        }
-    }
-    
-    static func buildBlock<L0: AngularLayer, L1: AngularLayer>(_ layer0: L0, _ layer1: L1) -> (L0, L1) {
-        return (layer0, layer1)
-    }
-    
-    static func buildFinalResult<L0: AngularLayer, L1: AngularLayer, L2: AngularLayer>(_ component: (L0, L1, L2)) -> ZStack<TupleView<(L0.Body, L1.Body, L2.Body)>> {
-        return ZStack {
-            component.0.body
-            component.1.body
-            component.2.body
-        }
-    }
-    
-    static func buildBlock<L0: AngularLayer, L1: AngularLayer, L2: AngularLayer>(_ layer0: L0, _ layer1: L1, _ layer2: L2) -> (L0, L1, L2) {
-        return (layer0, layer1, layer2)
-    }
-    
-    static func buildFinalResult<L0: AngularLayer, L1: AngularLayer, L2: AngularLayer, L3: AngularLayer>(_ component: (L0,L1,L2,L3)) -> ZStack<TupleView<(L0.Body, L1.Body, L2.Body, L3.Body)>> {
-        return ZStack {
-            component.0.body
-            component.1.body
-            component.2.body
-            component.3.body
-        }
-    }
-    
-    static func buildBlock<L0: AngularLayer, L1: AngularLayer, L2: AngularLayer, L3: AngularLayer>(_ layer0: L0, _ layer1: L1, _ layer2: L2, _ layer3: L3) -> (L0, L1, L2, L3) {
-        return (layer0, layer1, layer2, layer3)
-    }
-    
-    static func buildFinalResult<L0: AngularLayer, L1: AngularLayer, L2: AngularLayer, L3: AngularLayer, L4: AngularLayer>(_ component: (L0,L1,L2,L3,L4)) -> ZStack<TupleView<(L0.Body, L1.Body, L2.Body, L3.Body, L4.Body)>> {
-        return ZStack {
-            component.0.body
-            component.1.body
-            component.2.body
-            component.3.body
-            component.4.body
-        }
-    }
-    
-    static func buildBlock<L0: AngularLayer, L1: AngularLayer, L2: AngularLayer, L3: AngularLayer, L4: AngularLayer>(_ layer0: L0, _ layer1: L1, _ layer2: L2, _ layer3: L3, _ layer4: L4) -> (L0, L1, L2, L3, L4) {
-        return (layer0, layer1, layer2, layer3, layer4)
     }
 }
