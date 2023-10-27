@@ -49,8 +49,8 @@ extension View {
 }
 
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
-struct RingStack : Layout {
-    struct CacheData {
+public struct RingStack : Layout {
+    public struct CacheData {
         var extraSize: CGFloat
         var baseAngle: Angle
     }
@@ -67,7 +67,7 @@ struct RingStack : Layout {
         }
     }
     
-    func makeCache(subviews: Subviews) -> CacheData {
+    public func makeCache(subviews: Subviews) -> CacheData {
         let maxSubViewWidth = subviews.max {
             $0.sizeThatFits(.unspecified).width < $1.sizeThatFits(.unspecified).width
         }?.sizeThatFits(.unspecified).width ?? 0.0
@@ -78,7 +78,7 @@ struct RingStack : Layout {
         return CacheData(extraSize: extraSize, baseAngle: Angle(radians: Double.pi*2/Double(subviews.count)))
     }
     
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout CacheData) -> CGSize {
+    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout CacheData) -> CGSize {
         
         if proposal == .zero {
             return CGSize(width: radius*2, height: radius*2)
@@ -89,7 +89,7 @@ struct RingStack : Layout {
         return CGSize(width: proposal.width!, height: proposal.height!)
     }
     
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout CacheData) {
+    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout CacheData) {
         let sorted = subviews.sorted { a, b in
             a.priority > b.priority
         }
