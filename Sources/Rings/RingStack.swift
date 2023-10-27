@@ -99,7 +99,7 @@ public struct RingStack : Layout {
         }
     }
     
-    init(radius: CGFloat = 100.0, phase: Angle = .zero) {
+    public init(radius: CGFloat = 100.0, phase: Angle = .zero) {
         self.radius = radius
         self.phase = phase
     }
