@@ -45,7 +45,7 @@ public struct RingText : View, CompatibleForeground {
     @State private var sizes: [CGSize] = []
     private var showBlueprint: Bool = false
     
-    public init<T: BinaryFloatingPoint>(radius: T, @WordsBuilder _ builder: ()->[String], color: Color = Color.white, upsideDown: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil ) {
+    public init<T: BinaryFloatingPoint>(radius: T, color: Color = Color.white, upsideDown: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil, @WordsBuilder _ builder: ()->[String]) {
         self.radius = Double(radius)
         self.color = color
         self.style = color
@@ -69,9 +69,9 @@ public struct RingText : View, CompatibleForeground {
     }
     
     public init<T: BinaryFloatingPoint>(radius: T, text: String, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
-        self.init(radius: radius, {
+        self.init(radius: radius, color: color, upsideDown: upsideDown,  begin: begin) {
             text
-        }, color: color, upsideDown: upsideDown,  begin: begin)
+        }
     }
     
     private func _createTextPoints() -> [CGPolarPoint] {
@@ -214,12 +214,12 @@ struct RingTextPreviewWrapper: View {
             HStack {
                 VStack {
                     ZStack {
-                        RingText(radius: 40.0, {
+                        RingText(radius: 40.0, color: .blue, upsideDown: false) {
                             "✪"
                             for i in 1...10 {
                                 "\(i)"
                             }
-                        }, color: .blue, upsideDown: false).font(Font.custom("Apple Chancery", size: 16.0)).begining(atDegrees: begin_0).showingBlueprint(blueprint).contentShape(Circle())
+                        }.font(Font.custom("Apple Chancery", size: 16.0)).begining(atDegrees: begin_0).showingBlueprint(blueprint).contentShape(Circle())
                         #if !os(tvOS)
                             .onTapGesture(count: 2, perform: {
                             begin_0 = 0.0
