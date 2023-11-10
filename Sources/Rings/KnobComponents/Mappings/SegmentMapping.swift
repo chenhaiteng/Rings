@@ -10,7 +10,7 @@ import SwiftUI
 public struct KnobStop {
     var value: Double
     var degree: Double
-    init(_ v:Double, _ d: Double) {
+    public init(_ v:Double, _ d: Double) {
         value = v
         degree = d
     }
