@@ -53,7 +53,7 @@ public struct ArcKnobLayer : AngularLayer {
         }
     }
     
-    init(fixed: Bool = false) {
+    public init(fixed: Bool = false) {
         isFixed = fixed
     }
 }
