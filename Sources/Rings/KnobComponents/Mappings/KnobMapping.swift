@@ -35,7 +35,7 @@ public protocol KnobMapping : Adjustable {
 }
 
 extension KnobMapping {
-    func degreeRange(_ range: ClosedRange<Double>) -> Self {
+    public func degreeRange(_ range: ClosedRange<Double>) -> Self {
         setProperty { tmp in
             tmp.degreeRange = range
         }

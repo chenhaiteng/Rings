@@ -19,8 +19,14 @@ public struct LinearMapping : KnobMapping, Adjustable {
         }
     }
     public var degreeRange = Default.Degree.Min.rawValue...Default.Degree.Max.rawValue
-    var minValue: Double = Default.Value.Min.rawValue
-    var maxValue: Double = Default.Value.Max.rawValue
+    public var valueRange = Default.Value.Min.rawValue...Default.Value.Max.rawValue
+    
+    var minValue: Double {
+        valueRange.lowerBound
+    }
+    var maxValue: Double {
+        valueRange.upperBound
+    }
     
     public func newValue(_ record: KnobGestureRecord) -> Double {
         let deltaDegre = (record.current.angle - record.next.angle).degrees
@@ -49,7 +55,16 @@ public struct LinearMapping : KnobMapping, Adjustable {
     private func value(delta degree: Double) -> Double {
         return degree * (maxValue - minValue) / (maxDegree - minDegree)
     }
+    
     public init() {
         
+    }
+}
+
+extension LinearMapping {
+    public func valueRange<T: BinaryFloatingPoint>(_ range: ClosedRange<T>) -> Self {
+        setProperty { tmp in
+            tmp.valueRange = range.toDoubleRange()
+        }
     }
 }
