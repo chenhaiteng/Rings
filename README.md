@@ -1,6 +1,8 @@
 ![Screen Shot 2021-06-15 at 13 01 13](https://user-images.githubusercontent.com/1284944/121996229-c6fd8480-cdda-11eb-9c3e-345681b3e641.png)
 
-# Rings ![GitHub](https://img.shields.io/github/license/chenhaiteng/Rings?style=plastic) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/chenhaiteng/Rings)
+# Rings ![GitHub](https://img.shields.io/github/license/chenhaiteng/Rings?style=plastic) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/chenhaiteng/Rings) 
+
+<a href="https://www.buymeacoffee.com/chenhaiteng"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=chenhaiteng&button_colour=FFDD00&font_colour=000000&font_family=Bree&outline_colour=000000&coffee_colour=ffffff" /></a>
 
 **Rings** is a collection of controls which have similar shapes of ring, circle...
 
@@ -100,3 +102,5 @@ targets: [
 ---
 # License
 Rings is released under the [MIT License](LICENSE).
+
+<a href="https://www.buymeacoffee.com/chenhaiteng"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=chenhaiteng&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" /></a>
