@@ -106,12 +106,16 @@ public struct RingStack : Layout {
     
 }
 
-#Preview {
+@available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
+struct RingStackPreview: View {
     @State var phase = Angle(degrees: -90.0)
-    if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *) {
-        return VStack {
+    
+    @State var wordSlider = 12.0
+    @State var wordCount = 12
+    var body: some View {
+        VStack {
             RingStack(phase: phase) {
-                ForEach(1..<12) { num in
+                ForEach(1..<wordCount, id: \.self)  { num in
                     Text("\(num)")
                 }
                 Image(systemName: "star").layoutPriority(1.0)
@@ -119,15 +123,38 @@ public struct RingStack : Layout {
             Divider()
             #if os(tvOS)
             #else
-            Slider(value: $phase.radians)
+            Slider(value: $phase.radians, in: -Double.pi...Double.pi, step: Double.pi/10.0) {
+                Text("phase: \(phase.radians/Double.pi, specifier: "%.2f") π").frame(width: 100.0, alignment: .leading)
+            }.padding(EdgeInsets(top: 0.0, leading: 20.0, bottom: 0.0, trailing: 20.0))
+            Divider()
+            Slider(value: $wordSlider, in: 1...24, step: 1) {
+                Text("words: \(wordCount)").frame(width: 100.0, alignment: .leading)
+            }.padding(EdgeInsets(top: 0.0, leading: 20.0, bottom: 0.0, trailing: 20.0))
+            Spacer()
             #endif
+        }.onChange(of: wordSlider) {
+            wordCount = Int(wordSlider)
         }
-    } else {
-        return RingList(phase: phase) {
+    }
+}
+
+@available(iOS, introduced: 14.0, deprecated: 16.0, renamed: "RingStackPreview")
+struct RingListPreview : View {
+    @State var phase = Angle(degrees: -90.0)
+    var body: some View {
+        RingList(phase: phase) {
             Image(systemName: "star")
             ForEach(1..<12) { num in
                 Text("\(num)")
             }
         }
+    }
+}
+
+#Preview {
+    if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *) {
+        return RingStackPreview()
+    } else {
+        return RingListPreview()
     }
 }
