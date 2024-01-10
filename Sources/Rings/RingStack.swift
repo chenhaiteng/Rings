@@ -126,6 +126,7 @@ struct _RingStack : Layout {
 }
 
 extension View {
+    @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
     func layoutRotation(_ binding: Binding<Angle>) -> some View {
         self.layoutValue(key: _RingStack.RotationValue.self, value: binding)
     }
@@ -185,14 +186,23 @@ struct RingStackPreview: View {
                         information = "star tapped!"
                         center = .center
                         radius = 0.0
-                        withAnimation(.linear(duration: 2.0)) {
-                            phase = Angle(degrees: phase.degrees + 360.0)
-                            center = .center
-                            radius = 100.0
-                        } completion: {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                information = ""
-                                phase = Angle(degrees: phase.degrees - 360.0)
+                        
+                        if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
+                            withAnimation(.linear(duration: 2.0)) {
+                                phase = Angle(degrees: phase.degrees + 360.0)
+                                center = .center
+                                radius = 100.0
+                            } completion: {
+                                DispatchQueue.main.async {
+                                    information = ""
+                                    phase = Angle(degrees: phase.degrees - 360.0)
+                                }
+                            }
+                        } else {
+                            withAnimation(.linear(duration: 2.0)) {
+                                phase = Angle(degrees: phase.degrees + 360.0)
+                                center = .center
+                                radius = 100.0
                             }
                         }
                     }
@@ -210,8 +220,8 @@ struct RingStackPreview: View {
                 Text("trailng").tag(UnitPoint.trailing)
             }.pickerStyle(SegmentedPickerStyle()).padding(EdgeInsets(top: 0.0, leading: 20.0, bottom: 0.0, trailing: 20.0))
             Divider()
-            #if os(tvOS)
-            #else
+#if os(tvOS)
+#else
             Slider(value: $phase.radians, in: -Double.pi...Double.pi, step: Double.pi/10.0) {
                 Text("phase: \(phase.radians/Double.pi, specifier: "%.2f") π").frame(width: 100.0, alignment: .leading)
             }.padding(EdgeInsets(top: 0.0, leading: 20.0, bottom: 0.0, trailing: 20.0))
@@ -221,12 +231,12 @@ struct RingStackPreview: View {
             }.padding(EdgeInsets(top: 0.0, leading: 20.0, bottom: 0.0, trailing: 20.0))
             Divider()
             Spacer()
-            #endif
-        }.onChange(of: wordSlider) {
+#endif
+        }.onChange(of: wordSlider, perform: { value in
             DispatchQueue.main.async {
-                wordCount = Int(wordSlider)
+                wordCount = Int(value)
             }
-        }
+        })
     }
 }
 
