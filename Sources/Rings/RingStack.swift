@@ -132,6 +132,7 @@ extension View {
     }
 }
 
+@available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
 struct RingComponent<V: View>: View {
     @ViewBuilder let content: () -> V
     @State private var rotation: Angle = .zero
