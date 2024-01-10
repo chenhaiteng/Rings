@@ -8,6 +8,8 @@
 import SwiftUI
 import CoreGraphicsExtension
 
+
+// https://chris.eidhof.nl/post/variadic-views/
 struct Helper<Result: View>: _VariadicView_MultiViewRoot {
     var _body: (_VariadicView.Children) -> Result
 
@@ -48,9 +50,15 @@ extension View {
     }
 }
 
+// https://swiftui-lab.com/layout-protocol-part-1/
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
-public struct RingStack : Layout {
-    public struct CacheData {
+struct _RingStack : Layout {
+    
+    struct RotationValue : LayoutValueKey {
+        static let defaultValue: Binding<Angle>? = nil
+    }
+    
+    struct CacheData {
         var extraSize: CGFloat
         var baseAngle: Angle
     }
@@ -60,7 +68,7 @@ public struct RingStack : Layout {
     private var center: UnitPoint
     
     
-    public var animatableData: AnimatablePair<Double, CGFloat> {
+    var animatableData: AnimatablePair<Double, CGFloat> {
         get {
             AnimatablePair(phase.radians, radius)
         }
@@ -70,7 +78,7 @@ public struct RingStack : Layout {
         }
     }
     
-    public func makeCache(subviews: Subviews) -> CacheData {
+    func makeCache(subviews: Subviews) -> CacheData {
         let maxSubViewWidth = subviews.max {
             $0.sizeThatFits(.unspecified).width < $1.sizeThatFits(.unspecified).width
         }?.sizeThatFits(.unspecified).width ?? 0.0
@@ -81,7 +89,7 @@ public struct RingStack : Layout {
         return CacheData(extraSize: extraSize, baseAngle: Angle(radians: Double.pi*2/Double(subviews.count)))
     }
     
-    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout CacheData) -> CGSize {
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout CacheData) -> CGSize {
         
         if proposal == .zero {
             return CGSize(width: radius*2, height: radius*2)
@@ -92,7 +100,7 @@ public struct RingStack : Layout {
         return CGSize(width: proposal.width!, height: proposal.height!)
     }
     
-    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout CacheData) {
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout CacheData) {
         let sorted = subviews.sorted { a, b in
             a.priority > b.priority
         }
@@ -100,17 +108,62 @@ public struct RingStack : Layout {
         let midY = bounds.height * center.y + bounds.minY
         
         for (index, view) in sorted.enumerated() {
-            let polarPt = CGPolarPoint(radius: radius, angle: cache.baseAngle.radians*Double(index) + phase.radians)
+            let angle = cache.baseAngle.radians*Double(index) + phase.radians
+            
+            let polarPt = CGPolarPoint(radius: radius, angle: angle)
             view.place(at: CGPoint(x:polarPt.cgpoint.x + midX, y: polarPt.cgpoint.y + midY), anchor: .center, proposal: .unspecified)
+            DispatchQueue.main.async {
+                view[_RingStack.RotationValue.self]?.wrappedValue = .radians(angle + Double.pi/2.0)
+            }
         }
     }
     
-    public init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero) {
+    init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero) {
         self.radius = radius
         self.center = center
         self.phase = phase
+    }    
+}
+
+extension View {
+    func layoutRotation(_ binding: Binding<Angle>) -> some View {
+        self.layoutValue(key: _RingStack.RotationValue.self, value: binding)
+    }
+}
+
+struct RingComponent<V: View>: View {
+    @ViewBuilder let content: () -> V
+    @State private var rotation: Angle = .zero
+    var body: some View {
+        content().rotationEffect(rotation).layoutRotation($rotation)
+    }
+}
+
+@available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
+public struct RingStack<Content: View> : View {
+    let radius: CGFloat
+    let center: UnitPoint
+    let phase: Angle
+    var content: () -> Content
+    
+    public var body: some View {
+        _RingStack(radius: radius, center: center, phase: phase) {
+            content().variadic { children in
+                ForEach(0..<children.endIndex, id: \.self) { index in
+                    RingComponent {
+                        children[index]
+                    }
+                }
+            }
+        }
     }
     
+    public init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, @ViewBuilder content: @escaping () -> Content) {
+        self.radius = radius
+        self.center = center
+        self.phase = phase
+        self.content = content
+    }
 }
 
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
@@ -127,22 +180,26 @@ struct RingStackPreview: View {
         VStack {
             Text(information).frame(height: 20.0, alignment: .center)
             RingStack(radius: radius ,center: center, phase: phase) {
-                ForEach(1..<wordCount, id: \.self)  { num in
-                    Text("\(num)")
-                }
-                Image(systemName: "star").layoutPriority(1.0).onTapGesture {
-                    information = "star tapped!"
-                    center = .center
-                    radius = 0.0
-                    withAnimation(.linear(duration: 2.0)) {
-                        phase = Angle(degrees: phase.degrees + 360.0)
+                VStack {
+                    Image(systemName: "star").layoutPriority(1.0).onTapGesture {
+                        information = "star tapped!"
                         center = .center
-                        radius = 100.0
-                    } completion: {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            information = ""
+                        radius = 0.0
+                        withAnimation(.linear(duration: 2.0)) {
+                            phase = Angle(degrees: phase.degrees + 360.0)
+                            center = .center
+                            radius = 100.0
+                        } completion: {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                information = ""
+                                phase = Angle(degrees: phase.degrees - 360.0)
+                            }
                         }
                     }
+                    Text("click!")
+                }
+                ForEach(1..<wordCount, id: \.self)  { num in
+                    Text("\(num)")
                 }
             }.frame(width: 240.0, height: 240).border(.white).drawingGroup()
             Picker("Ring Center", selection: $center) {
@@ -166,10 +223,13 @@ struct RingStackPreview: View {
             Spacer()
             #endif
         }.onChange(of: wordSlider) {
-            wordCount = Int(wordSlider)
+            DispatchQueue.main.async {
+                wordCount = Int(wordSlider)
+            }
         }
     }
 }
+
 
 @available(iOS, introduced: 14.0, deprecated: 16.0, renamed: "RingStackPreview")
 struct RingListPreview : View {
