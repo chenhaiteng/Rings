@@ -57,13 +57,16 @@ public struct RingStack : Layout {
     
     private var radius: CGFloat
     private var phase: Angle
+    private var center: UnitPoint
     
-    var animatableData: Angle {
+    
+    public var animatableData: AnimatablePair<Double, CGFloat> {
         get {
-            phase
+            AnimatablePair(phase.radians, radius)
         }
         set {
-            phase = newValue
+            phase = Angle(radians:newValue.first)
+            radius = newValue.second
         }
     }
     
@@ -93,14 +96,18 @@ public struct RingStack : Layout {
         let sorted = subviews.sorted { a, b in
             a.priority > b.priority
         }
+        let midX = bounds.width * center.x + bounds.minX
+        let midY = bounds.height * center.y + bounds.minY
+        
         for (index, view) in sorted.enumerated() {
             let polarPt = CGPolarPoint(radius: radius, angle: cache.baseAngle.radians*Double(index) + phase.radians)
-            view.place(at: CGPoint(x:polarPt.cgpoint.x + bounds.midX, y: polarPt.cgpoint.y + bounds.midY), anchor: .center, proposal: .unspecified)
+            view.place(at: CGPoint(x:polarPt.cgpoint.x + midX, y: polarPt.cgpoint.y + midY), anchor: .center, proposal: .unspecified)
         }
     }
     
-    public init(radius: CGFloat = 100.0, phase: Angle = .zero) {
+    public init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero) {
         self.radius = radius
+        self.center = center
         self.phase = phase
     }
     
@@ -112,14 +119,39 @@ struct RingStackPreview: View {
     
     @State var wordSlider = 12.0
     @State var wordCount = 12
+    @State var radius = 100.0
+    @State var center: UnitPoint = .center
+    @State var information: String = ""
+    
     var body: some View {
         VStack {
-            RingStack(phase: phase) {
+            Text(information).frame(height: 20.0, alignment: .center)
+            RingStack(radius: radius ,center: center, phase: phase) {
                 ForEach(1..<wordCount, id: \.self)  { num in
                     Text("\(num)")
                 }
-                Image(systemName: "star").layoutPriority(1.0)
-            }.drawingGroup()
+                Image(systemName: "star").layoutPriority(1.0).onTapGesture {
+                    information = "star tapped!"
+                    center = .center
+                    radius = 0.0
+                    withAnimation(.linear(duration: 2.0)) {
+                        phase = Angle(degrees: phase.degrees + 360.0)
+                        center = .center
+                        radius = 100.0
+                    } completion: {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            information = ""
+                        }
+                    }
+                }
+            }.frame(width: 240.0, height: 240).border(.white).drawingGroup()
+            Picker("Ring Center", selection: $center) {
+                Text("center").tag(UnitPoint.center)
+                Text("top").tag(UnitPoint.top)
+                Text("bottom").tag(UnitPoint.bottom)
+                Text("leading").tag(UnitPoint.leading)
+                Text("trailng").tag(UnitPoint.trailing)
+            }.pickerStyle(SegmentedPickerStyle()).padding(EdgeInsets(top: 0.0, leading: 20.0, bottom: 0.0, trailing: 20.0))
             Divider()
             #if os(tvOS)
             #else
@@ -130,6 +162,7 @@ struct RingStackPreview: View {
             Slider(value: $wordSlider, in: 1...24, step: 1) {
                 Text("words: \(wordCount)").frame(width: 100.0, alignment: .leading)
             }.padding(EdgeInsets(top: 0.0, leading: 20.0, bottom: 0.0, trailing: 20.0))
+            Divider()
             Spacer()
             #endif
         }.onChange(of: wordSlider) {
