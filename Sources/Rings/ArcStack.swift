@@ -223,6 +223,7 @@ fileprivate struct ArcStackComponent<V: View>: View {
     }
 }
 
+@available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
 struct ArcStack<Content: View> : View {
     let radius: Double
     let anchor: UnitPoint
@@ -323,5 +324,9 @@ struct ArcStackPreview : View {
 }
 
 #Preview {
-    ArcStackPreview().frame(height: 450.0)
+    VStack {
+        if #available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *) {
+            ArcStackPreview().frame(height: 450.0)
+        }
+    }
 }
