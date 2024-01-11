@@ -256,6 +256,8 @@ struct ArcStack<Content: View> : View {
     }
 }
 
+
+@available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
 struct ArcStackPreview : View {
     
     let colors = [Color.red, Color.green, Color.blue, Color.yellow, Color.orange, Color.brown, Color.cyan]
@@ -278,7 +280,7 @@ struct ArcStackPreview : View {
                         clickedImage = "star"
                     } label: {
                         Image(systemName: "star")
-                    }.focusable(false)
+                    }
                     
                     ForEach(0..<colors.count, id: \.self) { index in
                         Text("\(index + 1)").frame(width: 20.0, height: 20.0).rounded(color: .white).background {
@@ -289,7 +291,7 @@ struct ArcStackPreview : View {
                         clickedImage = "moon"
                     } label: {
                         Image(systemName: "moon")
-                    }.focusable(false)
+                    }
                 }.border(.blue).animation(.easeInOut(duration: 1.0), value: anchor)
             }
             Divider()
