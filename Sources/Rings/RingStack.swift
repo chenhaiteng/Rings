@@ -112,7 +112,7 @@ struct _RingStack : Layout {
             let angle = cache.baseAngle.radians*Double(index) + phase.radians
             
             let polarPt = CGPolarPoint(radius: radius, angle: angle)
-            view.place(at: CGPoint(x:polarPt.cgpoint.x + midX, y: polarPt.cgpoint.y + midY), anchor: .center, proposal: .unspecified)
+            view.place(at: CGPoint(x:polarPt.cgpoint.x + midX, y: polarPt.cgpoint.y + midY), anchor: .center, proposal: proposal)
             DispatchQueue.main.async {
                 if case .none = direction {
                     view[_RingStack.RotationValue.self]?.wrappedValue = .zero
@@ -167,15 +167,16 @@ extension View {
 }
 
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
-public struct RingStack<Content: View> : View {
-    
-    private struct RingStackComponent<V: View>: View {
-        @ViewBuilder let content: () -> V
-        @State private var rotation: Angle = .zero
-        var body: some View {
-            content().rotationEffect(rotation).layoutRotation($rotation)
-        }
+fileprivate struct RingStackComponent<V: View>: View {
+    @ViewBuilder let content: () -> V
+    @State private var rotation: Angle = .zero
+    var body: some View {
+        content().rotationEffect(rotation).layoutRotation($rotation)
     }
+}
+
+@available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
+public struct RingStack<Content: View> : View {
 
     let radius: CGFloat
     let center: UnitPoint
@@ -209,7 +210,6 @@ public struct RingStack<Content: View> : View {
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
 struct RingStackPreview: View {
     @State var phase = Angle(degrees: -90.0)
-    
     @State var wordSlider = 12.0
     @State var wordCount = 12
     @State var radius = 100.0
@@ -251,7 +251,7 @@ struct RingStackPreview: View {
                 ForEach(1..<wordCount, id: \.self)  { num in
                     Text("\(num)").font(.title)
                 }
-            }.frame(width: 240.0, height: 240).border(.white).drawingGroup()
+            }.frame(width: 240.0, height: 240).border(.white).drawingGroup().animation(.linear, value: direction)
             Divider()
             Picker("Ring Center", selection: $center) {
                 Text("center").tag(UnitPoint.center)
