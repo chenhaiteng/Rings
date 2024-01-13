@@ -25,15 +25,6 @@ struct _ArcStack: Layout {
             direction = newValue
         }
     }
-//    var animatableData: AnimatablePair<Double, AnimatablePair<Double, Double>> {
-//        get {
-//            AnimatablePair(radius, AnimatablePair(anchor.x, anchor.y))
-//        }
-//        set {
-//            radius = newValue.first
-//            anchor = UnitPoint(x: newValue.second.first, y: newValue.second.second)
-//        }
-//    }
     
     struct RotationValue : LayoutValueKey {
         static let defaultValue: Binding<Angle>? = nil
@@ -85,21 +76,7 @@ struct _ArcStack: Layout {
     }
     
     func anchor(in bounds: CGRect, cache: CacheData) -> CGPoint {
-        var x = bounds.minX +  anchor.x*bounds.width
-        var y = bounds.minY + anchor.y*bounds.height
-        if anchor.y == 1.0 {
-            y -= cache.extraSize/2.0
-        }
-        if anchor.y == 0.0 {
-            y += cache.extraSize/2.0
-        }
-        if anchor.x == 1.0 {
-            x -= cache.extraSize/2.0
-        }
-        if anchor.x == 0.0 {
-            x += cache.extraSize/2.0
-        }
-        return CGPoint(x:x , y: y)
+        CGPoint(x:bounds.minX +  anchor.x*bounds.width , y: bounds.minY + anchor.y*bounds.height)
     }
     
     func beginAngle() -> Angle {
@@ -159,13 +136,13 @@ struct _ArcStack: Layout {
     }
     
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout CacheData) {
-        guard radius > 0.0 else { return }
-        let anchorPt = anchor(in: bounds, cache: cache)
         
+        let anchorPt = anchor(in: bounds, cache: cache)
+    
         for (index, view) in subviews.enumerated() {
             let currentRadians = cache.beginRadians + cache.stepRadians*Double(index)
-            let currentPolarPt = CGPolarPoint(radius: radius - cache.extraSize, angle: currentRadians)
-            view.place(at: currentPolarPt.cgpoint.offset(anchorPt), anchor: .center, proposal: proposal)
+            let currentPolarPt = CGPolarPoint(radius: radius > 0 ? radius - cache.extraSize : 0.0, angle: currentRadians)
+            view.place(at: currentPolarPt.cgpoint.offset(anchorPt), anchor: anchor, proposal: proposal)
             
             DispatchQueue.main.async {
                 var angle: Angle
