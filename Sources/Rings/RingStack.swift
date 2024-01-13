@@ -114,12 +114,11 @@ struct _RingStack : Layout {
             let polarPt = CGPolarPoint(radius: radius, angle: angle)
             view.place(at: CGPoint(x:polarPt.cgpoint.x + midX, y: polarPt.cgpoint.y + midY), anchor: .center, proposal: proposal)
             DispatchQueue.main.async {
-                if case .none = direction {
-                    view[_RingStack.RotationValue.self]?.wrappedValue = .zero
-                } else if case .fixed = direction {
+                switch direction {
+                case .fixed:
                     view[_RingStack.RotationValue.self]?.wrappedValue = Angle(radians: direction.radians)
-                } else {
-                    view[_RingStack.RotationValue.self]?.wrappedValue = .radians(angle + direction.radians)
+                case .related:
+                    view[_RingStack.RotationValue.self]?.wrappedValue = Angle(radians: angle + direction.radians)
                 }
             }
         }
@@ -134,29 +133,23 @@ struct _RingStack : Layout {
 }
 
 public enum RingStackDirection : Hashable {
-    case none
-    case toCenter
-    case fromCenter
-    case alongClockwise
-    case alongCounterClockwise
+    case related(degrees: Double)
     case fixed(degrees: Double)
     
-    var radians : Double {
+    var radians: Double {
         switch self {
-        case .none:
-            0.0
-        case .toCenter:
-            Double.pi/2.0
-        case .fromCenter:
-            -Double.pi/2.0
-        case .alongClockwise:
-            0.0
-        case .alongCounterClockwise:
-            -Double.pi
-        case .fixed(let value):
-            Angle(degrees: value).radians
+        case .fixed(let degrees):
+            degrees/180.0*Double.pi
+        case .related(let degrees):
+            degrees/180.0*Double.pi
         }
     }
+    
+    public static let none = Self.fixed(degrees: 0.0)
+    public static let toCenter = Self.related(degrees: 90.0)
+    public static let fromCenter = Self.related(degrees: 270.0)
+    public static let alongClockwise = Self.related(degrees: 0.0)
+    public static let alongCounterClockwise = Self.related(degrees: 180.0)
 }
 
 extension View {
@@ -251,7 +244,7 @@ struct RingStackPreview: View {
                 ForEach(1..<wordCount, id: \.self)  { num in
                     Text("\(num)").font(.title)
                 }
-            }.frame(width: 240.0, height: 240).border(.white).drawingGroup().animation(.linear, value: direction)
+            }.frame(width: 240.0, height: 240).border(.white)
             Divider()
             Picker("Ring Center", selection: $center) {
                 Text("center").tag(UnitPoint.center)
