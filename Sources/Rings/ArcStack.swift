@@ -228,43 +228,74 @@ struct ArcStack<Content: View> : View {
     }
 }
 
-
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
 struct ArcStackPreview : View {
     
     let colors = [Color.red, Color.green, Color.blue, Color.yellow, Color.orange, Color.brown, Color.cyan]
+    static let expandImage = "arrow.down.backward.and.arrow.up.forward.circle"
+    static let collapseImage = "arrow.up.forward.and.arrow.down.backward.circle"
+    static let arcSize = 300.0
     
     @State var clickedImage = "questionmark"
     @State var direction = ArcStackDirection.none
     @State var anchor = UnitPoint.bottom
     @State var range = 0.0...1.0
-    @State var radius = 150.0
+    @State var radius = ArcStackPreview.arcSize/2.0
+    @State var arcStateImage = expandImage
+    @State var expandRadius = 0.0
     
     var body: some View {
         VStack {
-            ZStack {
-                VStack {
-                    Text("\(Image(systemName: "star")) and \(Image(systemName: "moon")) \nis\n clickable").multilineTextAlignment(.center).padding()
-                    Image(systemName: clickedImage)
-                }
-                ArcStack(radius: radius, anchor: anchor, range: range, direction: direction) {
-                    Button {
-                        clickedImage = "star"
-                    } label: {
-                        Image(systemName: "star")
-                    }
-                    
-                    ForEach(0..<colors.count, id: \.self) { index in
-                        Text("\(index + 1)").frame(width: 20.0, height: 20.0).rounded(color: .white).background {
-                            RoundedRectangle(cornerRadius: 5.0).fill(colors[index])
+            HStack(alignment: .bottom) {
+                ZStack {
+                    VStack {
+                        Text("\(Image(systemName: "star")) and \(Image(systemName: "moon")) is clickable").multilineTextAlignment(.center).padding()
+                        Image(systemName: clickedImage)
+                        Spacer()
+                    }.frame(height: 300.0)
+                    ArcStack(radius: radius, anchor: anchor, range: range, direction: direction) {
+                        Button {
+                            clickedImage = "star"
+                        } label: {
+                            Image(systemName: "star")
                         }
-                    }
-                    Button {
-                        clickedImage = "moon"
-                    } label: {
-                        Image(systemName: "moon")
-                    }
-                }.border(.blue).animation(.easeInOut(duration: 1.0), value: anchor)
+                        
+                        ForEach(0..<colors.count, id: \.self) { index in
+                            Text("\(index + 1)").frame(width: 20.0, height: 20.0).rounded(color: .white).background {
+                                RoundedRectangle(cornerRadius: 5.0).fill(colors[index])
+                            }
+                        }
+                        Button {
+                            clickedImage = "moon"
+                        } label: {
+                            Image(systemName: "moon")
+                        }
+                    }.animation(.easeInOut(duration: 1.0), value: anchor).frame(width: Self.arcSize, height: Self.arcSize, alignment: .bottom)
+                }
+                ZStack(alignment:.leading) {
+                    ArcStack(radius: expandRadius, anchor: anchor, range: 0.0...1.0, direction: .none) {
+                        ForEach(0..<colors.count, id: \.self) { index in
+                            Text("\(index + 1)").frame(width: 20.0, height: 20.0).rounded(color: .white).background {
+                                RoundedRectangle(cornerRadius: 5.0).fill(colors[index])
+                            }
+                        }
+                        Button {
+                            DispatchQueue.main.async {
+                                withAnimation(.linear(duration: 1.0)) {
+                                    if arcStateImage == ArcStackPreview.expandImage {
+                                        arcStateImage = ArcStackPreview.collapseImage
+                                        expandRadius = radius
+                                    } else {
+                                        arcStateImage = ArcStackPreview.expandImage
+                                        expandRadius = 0.0
+                                    }
+                                }
+                            }
+                        } label: {
+                            Image(systemName: arcStateImage).resizable().frame(width: 20.0, height: 20.0)
+                        }.buttonStyle(.borderedProminent)
+                    }.frame(width: Self.arcSize, height: Self.arcSize, alignment: anchor.alignment)
+                }.border(.blue.opacity(0.5))
             }
             Divider()
             Picker("direction", selection: $direction) {
