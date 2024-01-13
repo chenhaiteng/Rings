@@ -6,13 +6,8 @@
 //
 
 import SwiftUI
+import Common
 import CoreGraphicsExtension
-
-extension CGPoint {
-    func offset(_ offset: CGPoint) -> CGPoint {
-        CGPoint(x: self.x + offset.x, y: self.y+offset.y)
-    }
-}
 
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
 struct _ArcStack: Layout {
