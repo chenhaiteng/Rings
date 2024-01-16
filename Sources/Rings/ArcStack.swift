@@ -15,9 +15,9 @@ struct _ArcStack: Layout {
     var radius: Double
     var anchor: UnitPoint
     var range: ClosedRange<Double>
-    var direction: ArcStackDirection
+    var direction: RingStackDirection
     
-    var animatableData: ArcStackDirection {
+    var animatableData: RingStackDirection {
         get {
             direction
         }
@@ -157,32 +157,12 @@ struct _ArcStack: Layout {
         }
     }
     
-    init(radius: Double, anchor: UnitPoint, range: ClosedRange<Double>, direction: ArcStackDirection) {
+    init(radius: Double, anchor: UnitPoint, range: ClosedRange<Double>, direction: RingStackDirection) {
         self.radius = radius
         self.anchor = anchor
         self.range = range
         self.direction = direction
     }
-}
-
-public enum ArcStackDirection : Hashable {
-    case related(degrees: Double)
-    case fixed(degrees: Double)
-    
-    var radians : Double {
-        switch self {
-        case .fixed(let value):
-            Angle(degrees: value).radians
-        case .related(let value):
-            Angle(degrees: value).radians
-        }
-    }
-    
-    static let none:ArcStackDirection = .fixed(degrees: 0.0)
-    
-    static let toCenter: ArcStackDirection = .related(degrees: 90.0)
-    
-    static let fromCenter: ArcStackDirection = .related(degrees: -90.0)
 }
 
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
@@ -200,7 +180,7 @@ struct ArcStack<Content: View> : View {
     let radius: Double
     let anchor: UnitPoint
     let range: ClosedRange<Double>
-    let direction: ArcStackDirection
+    let direction: RingStackDirection
     
     let content: () -> Content
     var body: some View {
@@ -218,7 +198,7 @@ struct ArcStack<Content: View> : View {
     init(radius: Double = 100.0,
          anchor: UnitPoint = .bottom,
          range: ClosedRange<Double> = 0.0...1.0,
-         direction: ArcStackDirection = .none,
+         direction: RingStackDirection = .none,
          @ViewBuilder content: @escaping () -> Content) {
         self.radius = radius
         self.anchor = anchor
@@ -237,7 +217,7 @@ struct ArcStackPreview : View {
     static let arcSize = 300.0
     
     @State var clickedImage = "questionmark"
-    @State var direction = ArcStackDirection.none
+    @State var direction = RingStackDirection.none
     @State var anchor = UnitPoint.bottom
     @State var range = 0.0...1.0
     @State var radius = ArcStackPreview.arcSize/2.0
@@ -299,11 +279,11 @@ struct ArcStackPreview : View {
             }
             Divider()
             Picker("direction", selection: $direction) {
-                Text("none").tag(ArcStackDirection.none)
-                Text("to Center").tag(ArcStackDirection.toCenter)
-                Text("from Center").tag(ArcStackDirection.fromCenter)
-                Text("fixed 45˚").tag(ArcStackDirection.fixed(degrees: 45))
-                Text("related 45˚").tag(ArcStackDirection.related(degrees: 45))
+                Text("none").tag(RingStackDirection.none)
+                Text("to Center").tag(RingStackDirection.toCenter)
+                Text("from Center").tag(RingStackDirection.fromCenter)
+                Text("fixed 45˚").tag(RingStackDirection.fixed(degrees: 45))
+                Text("related 45˚").tag(RingStackDirection.related(degrees: 45))
             }.pickerStyle(SegmentedPickerStyle()).padding(.horizontal, 20.0)
             Divider()
             Picker("anchor", selection: $anchor) {

@@ -9,6 +9,7 @@ import SwiftUI
 import ArchimedeanSpiral
 import CoreGraphicsExtension
 
+// deprecated
 public enum TextDirection {
     case Top, Bottom, Left, Right
     var cgangle: CGAngle {
@@ -25,13 +26,71 @@ public enum TextDirection {
     }
 }
 
+extension TextDirection {
+    var ringLayoutDirection : RingStackDirection {
+        switch self {
+        case .Top:
+            RingStackDirection.toCenter
+        case .Bottom:
+            RingStackDirection.fromCenter
+        case .Left:
+            RingStackDirection.alongClockwise
+        case .Right:
+            RingStackDirection.alongCounterClockwise
+        }
+    }
+}
+
+
+extension RingStackDirection {
+    var cgangle: CGAngle {
+        CGAngle.radians(self.radians)
+    }
+    
+    func cgangle(with angle: Angle) -> CGAngle {
+        switch self {
+        case .fixed(let degrees):
+            CGAngle.degrees(degrees)
+        case .related(let degrees):
+            CGAngle.degrees(degrees + angle.degrees)
+        }
+    }
+    
+    func cgangle(with cgangle: CGAngle) -> CGAngle {
+        switch self {
+        case .fixed(let fixed):
+            CGAngle.degrees(fixed)
+        case .related(let related):
+            CGAngle.degrees(related + cgangle.degrees)
+        }
+    }
+    
+    func cgangle<T: BinaryFloatingPoint>(relatedDegrees: T) -> CGAngle {
+        switch self {
+        case .fixed(let fixed):
+            CGAngle.degrees(fixed)
+        case .related(let related):
+            CGAngle.degrees(Double(relatedDegrees) + related)
+        }
+    }
+    
+    func cgangle<T: BinaryFloatingPoint>( relatedRadians: T) -> CGAngle {
+        switch self {
+        case .fixed:
+            CGAngle(self.radians)
+        case .related:
+            CGAngle(Double(relatedRadians) + self.radians)
+        }
+    }
+}
+
 public struct ArchimedeanSpiralText: View, CompatibleForeground {
     public typealias Content = Self
     
     private var radiusSpacing: Double
     private var innerRadius: Double
     private var gap: Double
-    private var textDirection: TextDirection = .Top
+    private var textDirection: RingStackDirection = .toCenter
     private var font = Font.system(size: 20.0)
     public var color: Color
     public var style: any ShapeStyle
@@ -72,13 +131,12 @@ public struct ArchimedeanSpiralText: View, CompatibleForeground {
                 ForEach(chars, id: \.self.offset) { (offset, element) in
                     let pt = self.textPoints[offset].cgpoint
                     let textPt = CGPoint(x: pt.x, y: pt.y)
-                    let rotation = (self.textPoints[offset].cgangle + textDirection.cgangle).toAngle()
+                    let rotation = textDirection.cgangle(with: self.textPoints[offset].cgangle).toAngle()
                     Text(String(element))
                         .compatibleForeground(self)
                         .rotationEffect(rotation)
                         .offset(x: textPt.x, y: textPt.y)
                         .font(font)
-                    
                 }
             }.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
         }
@@ -107,7 +165,13 @@ extension ArchimedeanSpiralText: Adjustable {
         }
     }
     
-    public func textDirection(_ direction: TextDirection) -> Self {
+    public func textDirection(_ direction: RingStackDirection) -> Self {
+        setProperty { tmp in
+            tmp.textDirection = direction
+        }
+    }
+    
+    public func textLayoutDirection(direction: RingStackDirection) -> Self {
         setProperty { tmp in
             tmp.textDirection = direction
         }
@@ -169,7 +233,7 @@ struct ArchimedeanSpiralText_Preview_macOS : View {
     @State var innerR: Double = 25.0
     @State var gap: Double = 25.0
     @State var textLength: Double = 15.0
-    @State var direction: TextDirection = TextDirection.Top
+    @State var direction: RingStackDirection = .toCenter
     @State var color: Color = .red
     @State var font: Font = .system(.body)
     
@@ -191,10 +255,10 @@ struct ArchimedeanSpiralText_Preview_macOS : View {
                 VStack {
                     Text("direction forward to center")
                     Picker("", selection: $direction) {
-                        Text("top").tag(TextDirection.Top)
-                        Text("bottom").tag(TextDirection.Bottom)
-                        Text("right").tag(TextDirection.Right)
-                        Text("left").tag(TextDirection.Left)
+                        Text("top").tag(RingStackDirection.toCenter)
+                        Text("bottom").tag(RingStackDirection.fromCenter)
+                        Text("right").tag(RingStackDirection.alongClockwise)
+                        Text("left").tag(RingStackDirection.alongCounterClockwise)
                     }.segmented()
                     Text("text color")
                     Picker("", selection: $color) {
@@ -231,7 +295,7 @@ struct ArchimedeanSpiralText_Preview_iOS : View {
     @State var innerR: Double = 25.0
     @State var gap: Double = 25.0
     @State var textLength: Double = 15.0
-    @State var direction: TextDirection = TextDirection.Top
+    @State var direction: RingStackDirection = .toCenter
     @State var color: Color = .red
     @State var font: Font = .system(.body)
     
@@ -257,10 +321,10 @@ struct ArchimedeanSpiralText_Preview_iOS : View {
                 VStack(alignment: .leading, spacing: 0.0) {
                     Text("direction forward to center")
                     Picker("", selection: $direction) {
-                        Text("top").tag(TextDirection.Top)
-                        Text("bottom").tag(TextDirection.Bottom)
-                        Text("right").tag(TextDirection.Right)
-                        Text("left").tag(TextDirection.Left)
+                        Text("to center").tag(RingStackDirection.toCenter)
+                        Text("from center").tag(RingStackDirection.fromCenter)
+                        Text("cw").tag(RingStackDirection.alongClockwise)
+                        Text("ccw").tag(RingStackDirection.alongCounterClockwise)
                     }.segmented()
                     Divider().padding()
                     HStack {
@@ -302,7 +366,7 @@ struct ArchimedeanSpiralText_Preview_tvOS : View {
     @State var innerR: Double = 50.0
     @State var gap: Double = 80.0
     @State var textLength: Double = 30.0
-    @State var direction: TextDirection = TextDirection.Top
+    @State var direction: RingStackDirection = .toCenter
     @State var color: Color = .red
     @State var font: Font = .system(.title)
     
