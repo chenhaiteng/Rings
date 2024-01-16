@@ -9,21 +9,6 @@ public extension CGAngle {
     }
 }
 
-private func _createCharacters(origin: [String], reversed:Bool = false) -> [String] {
-    var tmpWords = reversed ? origin.reversed() : origin
-    if(reversed) {
-        tmpWords = tmpWords.map({ word -> String in
-            String(word.reversed())
-        })
-    }
-    let text = (tmpWords.count == 1) ? tmpWords[0] : tmpWords.reduce(String()) {
-        result, element -> String in
-        result + element + " "
-    }
-    let characters = text.map(String.init)
-    return characters
-}
-
 @available(iOS 14.0, macOS 11.0, tvOS 13.0, watchOS 6.0, *)
 public struct RingText : View, CompatibleForegroundProxy {
     private var radius: Double
@@ -68,7 +53,7 @@ public struct RingText : View, CompatibleForegroundProxy {
         textPoints = _createTextPoints()
     }
     
-    public init<T: BinaryFloatingPoint>(radius: T, text: String, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
+    public init<T: BinaryFloatingPoint>(radius: T, text: String, color: Color = Color.white, upsideDown: Bool = false, begin: CGAngle = CGAngle.zero) {
         self.init(radius: radius, color: color, upsideDown: upsideDown,  begin: begin) {
             text
         }
