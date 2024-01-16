@@ -16,7 +16,7 @@ public extension CGPoint {
         CGPoint(x: x + offset.width, y: y + offset.height)
     }
     
-    func offset(x: CGFloat, y: CGFloat) -> CGPoint {
-        CGPoint(x: self.x + x, y: self.y + y)
+    func offset<T: BinaryFloatingPoint>(dx: T = 0.0, dy: T = 0.0) -> CGPoint {
+        CGPoint(x: x + CGFloat(dx), y: y + CGFloat(dy))
     }
 }

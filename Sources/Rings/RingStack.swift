@@ -66,7 +66,7 @@ struct _RingStack : Layout {
     private var radius: CGFloat
     private var phase: Angle
     private var center: UnitPoint
-    private var direction: RingStackDirection
+    private var direction: RingLayoutDirection
     
     
     var animatableData: AnimatablePair<Double, CGFloat> {
@@ -124,32 +124,12 @@ struct _RingStack : Layout {
         }
     }
     
-    init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, direction: RingStackDirection = .none) {
+    init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, direction: RingLayoutDirection = .none) {
         self.radius = radius
         self.center = center
         self.phase = phase
         self.direction = direction
     }
-}
-
-public enum RingStackDirection : Hashable {
-    case related(degrees: Double)
-    case fixed(degrees: Double)
-    
-    var radians: Double {
-        switch self {
-        case .fixed(let degrees):
-            degrees/180.0*Double.pi
-        case .related(let degrees):
-            degrees/180.0*Double.pi
-        }
-    }
-    
-    public static let none = Self.fixed(degrees: 0.0)
-    public static let toCenter = Self.related(degrees: 90.0)
-    public static let fromCenter = Self.related(degrees: 270.0)
-    public static let alongClockwise = Self.related(degrees: 0.0)
-    public static let alongCounterClockwise = Self.related(degrees: 180.0)
 }
 
 extension View {
@@ -174,7 +154,7 @@ public struct RingStack<Content: View> : View {
     let radius: CGFloat
     let center: UnitPoint
     let phase: Angle
-    let direction: RingStackDirection
+    let direction: RingLayoutDirection
     var content: () -> Content
     
     public var body: some View {
@@ -191,7 +171,7 @@ public struct RingStack<Content: View> : View {
         }
     }
     
-    public init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, direction: RingStackDirection = .none, @ViewBuilder content: @escaping () -> Content) {
+    public init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, direction: RingLayoutDirection = .none, @ViewBuilder content: @escaping () -> Content) {
         self.radius = radius
         self.center = center
         self.phase = phase
@@ -207,7 +187,7 @@ struct RingStackPreview: View {
     @State var wordCount = 12
     @State var radius = 100.0
     @State var center: UnitPoint = .center
-    @State var direction: RingStackDirection = .none
+    @State var direction: RingLayoutDirection = .none
     @State var information: String = ""
     
     var body: some View {
@@ -254,12 +234,12 @@ struct RingStackPreview: View {
                 Text("trailng").tag(UnitPoint.trailing)
             }.pickerStyle(SegmentedPickerStyle()).padding(EdgeInsets(top: 0.0, leading: 20.0, bottom: 0.0, trailing: 20.0))
             Picker("Stack Direction", selection: $direction) {
-                Text("none").tag(RingStackDirection.none)
-                Text("to center").tag(RingStackDirection.toCenter)
-                Text("from center").tag(RingStackDirection.fromCenter)
-                Text("cw").tag(RingStackDirection.alongClockwise)
-                Text("ccw").tag(RingStackDirection.alongCounterClockwise)
-                Text("fixed 45˚").tag(RingStackDirection.fixed(degrees: 45.0))
+                Text("none").tag(RingLayoutDirection.none)
+                Text("to center").tag(RingLayoutDirection.toCenter)
+                Text("from center").tag(RingLayoutDirection.fromCenter)
+                Text("cw").tag(RingLayoutDirection.alongClockwise)
+                Text("ccw").tag(RingLayoutDirection.alongCounterClockwise)
+                Text("fixed 45˚").tag(RingLayoutDirection.fixed(degrees: 45.0))
             }.pickerStyle(SegmentedPickerStyle()).padding(EdgeInsets(top: 0.0, leading: 20.0, bottom: 0.0, trailing: 20.0))
             Divider()
 #if os(tvOS)

@@ -13,7 +13,7 @@ public protocol CompatibleForeground {
     var color: Color { get }
 }
 
-extension Text {
+public extension Text {
     func compatibleForeground<T: CompatibleForeground>(_ compatibleObj: T) -> Text {
         if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
             return foregroundStyle(compatibleObj.style)
