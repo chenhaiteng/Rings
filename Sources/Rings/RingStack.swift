@@ -8,22 +8,6 @@
 import SwiftUI
 import CoreGraphicsExtension
 
-
-// https://chris.eidhof.nl/post/variadic-views/
-struct Helper<Result: View>: _VariadicView_MultiViewRoot {
-    var _body: (_VariadicView.Children) -> Result
-
-    func body(children: _VariadicView.Children) -> some View {
-        _body(children)
-    }
-}
-
-extension View {
-    func variadic<R: View>(@ViewBuilder process: @escaping (_VariadicView.Children) -> R) -> some View {
-        _VariadicView.Tree(Helper(_body: process), content: { self })
-    }
-}
-
 @available(iOS, introduced: 14.0, deprecated: 16.0, renamed: "RingStack")
 @MainActor public struct RingList<Content>: View  where Content : View {
 
