@@ -25,7 +25,7 @@ private func _createCharacters(origin: [String], reversed:Bool = false) -> [Stri
 }
 
 @available(iOS 14.0, macOS 11.0, tvOS 13.0, watchOS 6.0, *)
-public struct RingText : View, CompatibleForeground {
+public struct RingText : View, CompatibleForegroundProxy {
     private var radius: Double
     public var color: Color
     public var style: any ShapeStyle

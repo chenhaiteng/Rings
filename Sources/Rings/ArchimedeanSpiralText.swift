@@ -42,7 +42,7 @@ extension TextDirection {
     }
 }
 
-public struct ArchimedeanSpiralText: View, CompatibleForeground {
+public struct ArchimedeanSpiralText: View, CompatibleForegroundProxy {
     public typealias Content = Self
     
     private var radiusSpacing: Double
