@@ -15,9 +15,9 @@ struct _ArcStack: Layout {
     var radius: Double
     var anchor: UnitPoint
     var range: ClosedRange<Double>
-    var direction: RingStackDirection
+    var direction: RingLayoutDirection
     
-    var animatableData: RingStackDirection {
+    var animatableData: RingLayoutDirection {
         get {
             direction
         }
@@ -157,7 +157,7 @@ struct _ArcStack: Layout {
         }
     }
     
-    init(radius: Double, anchor: UnitPoint, range: ClosedRange<Double>, direction: RingStackDirection) {
+    init(radius: Double, anchor: UnitPoint, range: ClosedRange<Double>, direction: RingLayoutDirection) {
         self.radius = radius
         self.anchor = anchor
         self.range = range
@@ -180,7 +180,7 @@ struct ArcStack<Content: View> : View {
     let radius: Double
     let anchor: UnitPoint
     let range: ClosedRange<Double>
-    let direction: RingStackDirection
+    let direction: RingLayoutDirection
     
     let content: () -> Content
     var body: some View {
@@ -198,7 +198,7 @@ struct ArcStack<Content: View> : View {
     init(radius: Double = 100.0,
          anchor: UnitPoint = .bottom,
          range: ClosedRange<Double> = 0.0...1.0,
-         direction: RingStackDirection = .none,
+         direction: RingLayoutDirection = .none,
          @ViewBuilder content: @escaping () -> Content) {
         self.radius = radius
         self.anchor = anchor
@@ -217,7 +217,7 @@ struct ArcStackPreview : View {
     static let arcSize = 300.0
     
     @State var clickedImage = "questionmark"
-    @State var direction = RingStackDirection.none
+    @State var direction = RingLayoutDirection.none
     @State var anchor = UnitPoint.bottom
     @State var range = 0.0...1.0
     @State var radius = ArcStackPreview.arcSize/2.0
@@ -239,7 +239,6 @@ struct ArcStackPreview : View {
                         } label: {
                             Image(systemName: "star")
                         }
-                        
                         ForEach(0..<colors.count, id: \.self) { index in
                             Text("\(index + 1)").frame(width: 20.0, height: 20.0).rounded(color: .white).background {
                                 RoundedRectangle(cornerRadius: 5.0).fill(colors[index])
@@ -279,11 +278,11 @@ struct ArcStackPreview : View {
             }
             Divider()
             Picker("direction", selection: $direction) {
-                Text("none").tag(RingStackDirection.none)
-                Text("to Center").tag(RingStackDirection.toCenter)
-                Text("from Center").tag(RingStackDirection.fromCenter)
-                Text("fixed 45˚").tag(RingStackDirection.fixed(degrees: 45))
-                Text("related 45˚").tag(RingStackDirection.related(degrees: 45))
+                Text("none").tag(RingLayoutDirection.none)
+                Text("to Center").tag(RingLayoutDirection.toCenter)
+                Text("from Center").tag(RingLayoutDirection.fromCenter)
+                Text("fixed 45˚").tag(RingLayoutDirection.fixed(degrees: 45))
+                Text("related 45˚").tag(RingLayoutDirection.related(degrees: 45))
             }.pickerStyle(SegmentedPickerStyle()).padding(.horizontal, 20.0)
             Divider()
             Picker("anchor", selection: $anchor) {
