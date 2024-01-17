@@ -144,15 +144,16 @@ struct _ArcStack: Layout {
             let currentPolarPt = CGPolarPoint(radius: radius > 0 ? radius - cache.extraSize : 0.0, angle: currentRadians)
             view.place(at: currentPolarPt.cgpoint.offset(anchorPt), anchor: anchor, proposal: proposal)
             
-            DispatchQueue.main.async {
-                var angle: Angle
-                switch direction {
-                case .related:
-                    angle = Angle(radians: currentRadians + direction.radians)
-                case .fixed:
-                    angle = Angle(radians: direction.radians)
+            /* For bi-directional custom layout values, it would be safer to unwrap it before invoke async block. In some situation, for example, switching content stack view in navigation split view when animating, might cause unwrap statment crash due to invalid address. */
+            if let layoutValue = view[_ArcStack.RotationValue.self] {
+                DispatchQueue.main.async {
+                    switch direction {
+                    case .related:
+                        layoutValue.wrappedValue = Angle(radians: currentRadians + direction.radians)
+                    case .fixed:
+                        layoutValue.wrappedValue = Angle(radians: direction.radians)
+                    }
                 }
-                view[_ArcStack.RotationValue.self]?.wrappedValue = angle
             }
         }
     }

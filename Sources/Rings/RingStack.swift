@@ -96,13 +96,14 @@ struct _RingStack : Layout {
             
             let polarPt = CGPolarPoint(radius: radius, angle: angle)
             view.place(at: CGPoint(x:polarPt.cgpoint.x + midX, y: polarPt.cgpoint.y + midY), anchor: .center, proposal: proposal)
-            if let proxy = view[_RingStack.RotationValue.self] {
+            /* For bi-directional custom layout values, it would be safer to unwrap it before invoke async block. In some situation, for example, switching content stack view in navigation split view when animating, might cause unwrap statment crash due to invalid address. */
+            if let layoutValue = view[_RingStack.RotationValue.self] {
                 DispatchQueue.main.async {
                     switch direction {
                     case .fixed:
-                        proxy.wrappedValue = Angle(radians: direction.radians)
+                        layoutValue.wrappedValue = Angle(radians: direction.radians)
                     case .related:
-                        proxy.wrappedValue = Angle(radians: angle + direction.radians)
+                        layoutValue.wrappedValue = Angle(radians: angle + direction.radians)
                     }
                 }
             }
