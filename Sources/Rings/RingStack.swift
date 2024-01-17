@@ -52,7 +52,6 @@ struct _RingStack : Layout {
     private var center: UnitPoint
     private var direction: RingLayoutDirection
     
-    
     var animatableData: AnimatablePair<Double, CGFloat> {
         get {
             AnimatablePair(phase.radians, radius)
@@ -98,11 +97,14 @@ struct _RingStack : Layout {
             let polarPt = CGPolarPoint(radius: radius, angle: angle)
             view.place(at: CGPoint(x:polarPt.cgpoint.x + midX, y: polarPt.cgpoint.y + midY), anchor: .center, proposal: proposal)
             DispatchQueue.main.async {
-                switch direction {
-                case .fixed:
-                    view[_RingStack.RotationValue.self]?.wrappedValue = Angle(radians: direction.radians)
-                case .related:
-                    view[_RingStack.RotationValue.self]?.wrappedValue = Angle(radians: angle + direction.radians)
+                if let proxy = view[_RingStack.RotationValue.self] {
+                    
+                    switch direction {
+                    case .fixed:
+                        proxy.wrappedValue = Angle(radians: direction.radians)
+                    case .related:
+                        proxy.wrappedValue = Angle(radians: angle + direction.radians)
+                    }
                 }
             }
         }
