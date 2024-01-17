@@ -158,7 +158,7 @@ public struct RingStack<Content: View> : View {
         }
     }
     
-    public init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, direction: RingLayoutDirection = .none, trace:String = "",@ViewBuilder content: @escaping () -> Content) {
+    public init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, direction: RingLayoutDirection = .none, trace:String = "", @ViewBuilder content: @escaping () -> Content) {
         self.radius = radius
         self.center = center
         self.phase = phase
