@@ -37,7 +37,6 @@ import CoreGraphicsExtension
 // https://swiftui-lab.com/layout-protocol-part-1/
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
 struct _RingStack : Layout {
-    
     struct RotationValue : LayoutValueKey {
         static let defaultValue: Binding<Angle>? = nil
     }
@@ -51,6 +50,7 @@ struct _RingStack : Layout {
     private var phase: Angle
     private var center: UnitPoint
     private var direction: RingLayoutDirection
+    private let trace: String
     
     var animatableData: AnimatablePair<Double, CGFloat> {
         get {
@@ -96,9 +96,8 @@ struct _RingStack : Layout {
             
             let polarPt = CGPolarPoint(radius: radius, angle: angle)
             view.place(at: CGPoint(x:polarPt.cgpoint.x + midX, y: polarPt.cgpoint.y + midY), anchor: .center, proposal: proposal)
-            DispatchQueue.main.async {
-                if let proxy = view[_RingStack.RotationValue.self] {
-                    
+            if let proxy = view[_RingStack.RotationValue.self] {
+                DispatchQueue.main.async {
                     switch direction {
                     case .fixed:
                         proxy.wrappedValue = Angle(radians: direction.radians)
@@ -110,11 +109,12 @@ struct _RingStack : Layout {
         }
     }
     
-    init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, direction: RingLayoutDirection = .none) {
+    init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, direction: RingLayoutDirection = .none, traceName: String = "") {
         self.radius = radius
         self.center = center
         self.phase = phase
         self.direction = direction
+        self.trace = traceName
     }
 }
 
@@ -142,10 +142,11 @@ public struct RingStack<Content: View> : View {
     let phase: Angle
     let direction: RingLayoutDirection
     var content: () -> Content
+    let trace: String
     
     public var body: some View {
         GeometryReader { geo in
-            _RingStack(radius: radius, center: center, phase: phase, direction: direction) {
+            _RingStack(radius: radius, center: center, phase: phase, direction: direction, traceName: trace) {
                 content().variadic { children in
                     ForEach(0..<children.endIndex, id: \.self) { index in
                         RingStackComponent {
@@ -157,12 +158,13 @@ public struct RingStack<Content: View> : View {
         }
     }
     
-    public init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, direction: RingLayoutDirection = .none, @ViewBuilder content: @escaping () -> Content) {
+    public init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, direction: RingLayoutDirection = .none, trace:String = "",@ViewBuilder content: @escaping () -> Content) {
         self.radius = radius
         self.center = center
         self.phase = phase
         self.direction = direction
         self.content = content
+        self.trace = trace
     }
 }
 
