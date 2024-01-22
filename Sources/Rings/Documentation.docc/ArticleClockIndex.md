@@ -1,10 +1,10 @@
-##  ClockIndex
+# ClockIndex
+
+## Overview:
 
 ![ClockIndex Demo Classic](https://user-images.githubusercontent.com/1284944/116664495-26d6d200-a9cb-11eb-906c-7ffe659dcfbc.gif)
 
-<img width="598" alt="earchly_clock_demo" src="https://user-images.githubusercontent.com/1284944/116664737-73baa880-a9cb-11eb-97e1-afcb49dfcfcd.png">
-
-### Usage:
+## Usage:
 
 ```Swift
   // Default clock index with radius 50.0

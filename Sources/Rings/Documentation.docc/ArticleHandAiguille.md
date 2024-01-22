@@ -1,9 +1,10 @@
-## HandAiguille
+# HandAiguille
 
-### Preview
+## Overview:
+
 https://user-images.githubusercontent.com/1284944/117106480-83aeff80-adb2-11eb-8e82-d77d9569dcca.mov
 
-### Usage: 
+## Usage: 
 ```swift
   // Create empty hand aiguille with default size.
   // When there is no embedded view in hand aiguille, it shows gray rectangle as placeholder.

@@ -1,8 +1,9 @@
-## SphericText
+# SphericText
 
+## Overview:
 ![Spheric Text Demo](https://user-images.githubusercontent.com/1284944/118671827-60f8fe00-b82a-11eb-9f0f-821841867cba.gif)
 
-### Usage
+## Usage:
 
 ```swift
 // Create SphericText with String

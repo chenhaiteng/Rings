@@ -1,10 +1,10 @@
 #  ArchimedeanSpiralText
 
-## Preview:
+## Overview:
 
 ![ArchimedeanSpiralTextDemo](https://user-images.githubusercontent.com/1284944/117950922-3ef10e80-b346-11eb-9da1-50b0f87990a2.gif)
 
-### Usage:
+## Usage:
 ```swift
 // Create text along archimedean spiral
 ArchimedeanSpiralText("My Archimedean Spiral")
