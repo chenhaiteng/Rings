@@ -21,7 +21,7 @@ and following functions are in progress:
 
 ---
 ## Installation:
-Rings is published with Swift Package Manager, you can get more information at ![Swift Package Manager(GitHub)](https://github.com/apple/swift-package-manager), ![Package Manager(swift.org)](https://swift.org/package-manager/), and ![Swift Packages(Apple)](https://developer.apple.com/documentation/swift_packages)
+Rings is published with Swift Package Manager, you can get more information at [Swift Package Manager(GitHub)](https://github.com/apple/swift-package-manager), [Package Manager(swift.org)](https://swift.org/package-manager/), and [Swift Packages(Apple)](https://developer.apple.com/documentation/swift_packages)
 
 ### Install Rings Step by Step
 #### - Add to Xcode(To use this package in your application):
@@ -57,7 +57,7 @@ targets: [
 ## RingText
 
 ### What it looks like
-![RingDemo](Markdown/Rings/RingTextDemo.gif)
+![RingDemo](Sources/Rings/Documentation.docc/Resources/RingTextDemo.gif)
 
 ### ![How to use it](Markdown/Rings/RingText.md)
 

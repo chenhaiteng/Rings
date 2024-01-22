@@ -2,7 +2,7 @@
 
 ### Preview
 
-![Demo](ArcKnobDemo.gif)
+![Demo](../../../../Sources/Rings/Documentation.docc/Resources/ArcKnobDemo.gif)
 
 From left to right, those are fixed arc with gradient, non-fixed arc with gradient, and fixed arc with custom style and gradient color.
 

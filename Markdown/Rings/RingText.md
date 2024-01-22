@@ -1,6 +1,6 @@
 ##  RingText
 
-![RingDemo](RingTextDemo.gif)
+![RingDemo](../../../Sources/Rings/Documentation.docc/Resources/RingTextDemo.gif)
 
 ### Usage:
 
