@@ -1,4 +1,4 @@
-##  RingText
+## RingText
 
 ![RingDemo](../../../Sources/Rings/Documentation.docc/Resources/RingTextDemo.gif)
 

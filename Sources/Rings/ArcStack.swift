@@ -177,14 +177,14 @@ fileprivate struct ArcStackComponent<V: View>: View {
 }
 
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
-struct ArcStack<Content: View> : View {
+public struct ArcStack<Content: View> : View {
     let radius: Double
     let anchor: UnitPoint
     let range: ClosedRange<Double>
     let direction: RingLayoutDirection
     
     let content: () -> Content
-    var body: some View {
+    public var body: some View {
         _ArcStack(radius: radius, anchor: anchor, range: range, direction: direction) {
             content().variadic { children in
                 ForEach(0..<children.endIndex, id: \.self) { index in
@@ -196,7 +196,7 @@ struct ArcStack<Content: View> : View {
         }
     }
     
-    init(radius: Double = 100.0,
+    public init(radius: Double = 100.0,
          anchor: UnitPoint = .bottom,
          range: ClosedRange<Double> = 0.0...1.0,
          direction: RingLayoutDirection = .none,
