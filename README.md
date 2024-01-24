@@ -75,45 +75,44 @@ targets: [
 ### What it looks like
 ![RingDemo](Sources/Rings/Documentation.docc/Resources/RingTextDemo.gif)
 
-### ![How to use it](Markdown/Rings/RingText.md)
+### [How to use it](Markdown/Rings/RingText.md)
 
 ## ClockIndex
 
 ### What it looks like
-![ClockIndex Demo Classic](https://user-images.githubusercontent.com/1284944/116664495-26d6d200-a9cb-11eb-906c-7ffe659dcfbc.gif)
+![Demo](Sources/Rings/Documentation.docc/Resources/ClockIndex.gif)
 
-<img width="598" alt="earchly_clock_demo" src="https://user-images.githubusercontent.com/1284944/116664737-73baa880-a9cb-11eb-97e1-afcb49dfcfcd.png">
+![Demo](Sources/Rings/Documentation.docc/Resources/EarchlyClock.png)
 
-### ![How to use it](Markdown/Rings/ClockIndex.md)
+### [How to use it](Markdown/Rings/ClockIndex.md)
 
 ## HandAiguille
 
 ### What it looks like:
-![HandAguille](https://user-images.githubusercontent.com/1284944/118101511-47128200-b40a-11eb-870f-90ac2f2a302a.gif)
+![Demo](Sources/Rings/Documentation.docc/Resources/HandAiguille.gif)
 
-### ![How to use it](Markdown/Rings/HandAiguille.md)
+### [How to use it](Markdown/Rings/HandAiguille.md)
 
 ## ArchimedeanSpiralText
 
 ### What it looks like:
-![ArchimedeanSpiralTextDemo](https://user-images.githubusercontent.com/1284944/117950922-3ef10e80-b346-11eb-9da1-50b0f87990a2.gif)
+![Demo](Sources/Rings/Documentation.docc/Resources/ArchimedeanSpiralText.gif)
 
-### ![How to use it](Markdown/Rings/ArchimedeanSpiralText.md)
+### [How to use it](Markdown/Rings/ArchimedeanSpiralText.md)
 
 ## SphericText
 
 ### What it looks like:
-![Spheric Text Demo](https://user-images.githubusercontent.com/1284944/118671827-60f8fe00-b82a-11eb-9f0f-821841867cba.gif)
+![Demo](Sources/Rings/Documentation.docc/Resources/SphericText.gif)
 
-### ![How to use it](Markdown/Rings/SphericText.md)
+### [How to use it](Markdown/Rings/SphericText.md)
 
 ## Knob
 
 ### What it looks like:
-![Knob Demo](https://user-images.githubusercontent.com/1284944/120065810-e2138900-c0a5-11eb-8324-2fe340bb578f.gif)
+![Demo](Sources/Rings/Documentation.docc/Resources/Knob.gif)
 
-
-### ![How to use it](Markdown/Rings/Knob.md)
+### [How to use it](Markdown/Rings/Knob.md)
 
 ---
 # License
