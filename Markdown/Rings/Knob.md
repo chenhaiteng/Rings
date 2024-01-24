@@ -1,10 +1,10 @@
-##  Knob
+## Knob
 
-### Preview
+### Preview:
 
-![Knob Demo](https://user-images.githubusercontent.com/1284944/120065810-e2138900-c0a5-11eb-8324-2fe340bb578f.gif)
+![Demo](../../../Sources/Rings/Documentation.docc/Resources/Knob.gif)
 
-### Usage
+### Usage:
 
 Following shows a basic Knob drawing value along the circumference.
 ```swift

@@ -1,6 +1,8 @@
 ## RingText
 
-![RingDemo](../../../Sources/Rings/Documentation.docc/Resources/RingTextDemo.gif)
+### Preview:
+
+![Demo](../../../Sources/Rings/Documentation.docc/Resources/RingTextDemo.gif)
 
 ### Usage:
 

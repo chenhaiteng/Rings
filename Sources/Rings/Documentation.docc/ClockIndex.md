@@ -2,7 +2,9 @@
 
 ## Overview:
 
-![ClockIndex Demo Classic](ClockIndex.gif)
+![Demo](ClockIndex.gif)
+
+![Demo](EarchlyClock.png)
 
 ## Usage:
 
