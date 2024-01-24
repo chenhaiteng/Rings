@@ -2,7 +2,7 @@
 
 ### Preview:
 
-![Demo](../../../Sources/Rings/Documentation.docc/Resources/SphericText.gif)
+![Demo](../../Sources/Rings/Documentation.docc/Resources/SphericText.gif)
 
 ### Usage:
 

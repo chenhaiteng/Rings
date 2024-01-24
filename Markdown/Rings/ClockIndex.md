@@ -1,9 +1,9 @@
 ## ClockIndex
 
 ### Preview:
-![Demo](../../../Sources/Rings/Documentation.docc/Resources/ClockIndex.gif)
+![Demo](../../Sources/Rings/Documentation.docc/Resources/ClockIndex.gif)
 
-![Demo](../../../Sources/Rings/Documentation.docc/Resources/EarchlyClock.png)
+![Demo](../../Sources/Rings/Documentation.docc/Resources/EarchlyClock.png)
 
 ### Usage:
 

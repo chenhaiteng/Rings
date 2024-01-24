@@ -2,7 +2,7 @@
 
 ### Preview:
 
-![Demo](../../../Sources/Rings/Documentation.docc/Resources/ArchimedeanSpiralText.gif)
+![Demo](../../Sources/Rings/Documentation.docc/Resources/ArchimedeanSpiralText.gif)
 
 ### Usage:
 ```swift

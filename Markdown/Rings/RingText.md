@@ -2,7 +2,7 @@
 
 ### Preview:
 
-![Demo](../../../Sources/Rings/Documentation.docc/Resources/RingTextDemo.gif)
+![Demo](../../Sources/Rings/Documentation.docc/Resources/RingTextDemo.gif)
 
 ### Usage:
 

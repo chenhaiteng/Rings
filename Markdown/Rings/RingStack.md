@@ -3,7 +3,7 @@
 ### Preview:
 RingStack is based on the [Layout](https://developer.apple.com/documentation/swiftui/layout) protocol. It arranges views along a circle.
 
-![Demo](../../../Sources/Rings/Documentation.docc/Resources/RingStack.gif)
+![Demo](../../Sources/Rings/Documentation.docc/Resources/RingStack.gif)
 
 ### Usage:
 Following code snippets placing views in a circle which radius depends on its frame:

@@ -2,7 +2,7 @@
 
 ### Preview:
 
-![Demo](../../../Sources/Rings/Documentation.docc/Resources/Knob.gif)
+![Demo](../../Sources/Rings/Documentation.docc/Resources/Knob.gif)
 
 ### Usage:
 
@@ -17,7 +17,7 @@ Following shows a basic Knob drawing value along the circumference.
             }
     }.frame(width: 100.0, height: 100.0)    // setup knob size
 ```
-![Demo1](../../../Sources/Rings/Documentation.docc/Resources/KnobDemo1.gif)
+![Demo1](../../Sources/Rings/Documentation.docc/Resources/KnobDemo1.gif)
 
 ---
 
@@ -37,7 +37,7 @@ By adding a ring layer, it makes a Knob which has a circular track.
             }
     }.frame(width: 100.0, height: 100.0)
 ```
-![Demo2](../../../Sources/Rings/Documentation.docc/Resources/KnobDemo2.gif)
+![Demo2](../../Sources/Rings/Documentation.docc/Resources/KnobDemo2.gif)
 
 Also, it can make the knob and its track much richer by adjusting each layer. For more detail, see [ArcKnobLayer](KnobComponents/Layers/ArcKnobLayer.md)
 

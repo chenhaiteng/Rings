@@ -3,7 +3,7 @@
 ### Preview:
 ArcStack is based on the [Layout](https://developer.apple.com/documentation/swiftui/layout) protocol. It arranges views along the given arc.
 
-![Demo](../../../Sources/Rings/Documentation.docc/Resources/ArcStack.gif)
+![Demo](../../Sources/Rings/Documentation.docc/Resources/ArcStack.gif)
 
 ### Usage:
 Create an ArcStack
