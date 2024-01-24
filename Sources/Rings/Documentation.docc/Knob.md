@@ -50,10 +50,10 @@ Finally, it can apply images on knob.
         ImageKnobLayer(Image("SimpleKnob"))
     }.frame(width: 150, height: 150)    
 ```
-<img src="https://user-images.githubusercontent.com/1284944/120066082-61ee2300-c0a7-11eb-97e5-4a64b0bd4e8e.gif" alt="drawing" width="200"/>
+![Demo](ImageKnob.gif)
 
 And the image sample is following:
 
-<img src="https://user-images.githubusercontent.com/1284944/120066145-ac6f9f80-c0a7-11eb-9a46-20245ca15933.png" alt="drawing" width="200"/>
+![Demo](ImageKnobBG.png)
 
 

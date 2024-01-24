@@ -62,7 +62,7 @@ In additional, you can apply different layout based on some state:
 ```
 
 4. Debug layout with RingText's blue print:
-```
+```swift
   RingText(radius: 40.0, text: "1234567890").showBlueprint(true)
 ```
 
