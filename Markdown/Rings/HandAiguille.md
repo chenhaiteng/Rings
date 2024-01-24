@@ -1,7 +1,7 @@
 ## HandAiguille
 
 ### Preview
-![Demo](../../../Sources/Rings/Documentation.docc/Resources/HandAiguille.gif)
+![Demo](../../Sources/Rings/Documentation.docc/Resources/HandAiguille.gif)
 
 ### Usage: 
 ```swift
