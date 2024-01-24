@@ -10,7 +10,7 @@ import ArchimedeanSpiral
 import CoreGraphicsExtension
 import Common
 
-// deprecated
+@available(*, deprecated, renamed: "RingLayoutDirection", message: "deprectaed at version 0.4.0")
 public enum TextDirection {
     case Top, Bottom, Left, Right
     var cgangle: CGAngle {
@@ -27,6 +27,7 @@ public enum TextDirection {
     }
 }
 
+@available(*, deprecated, renamed: "RingLayoutDirection", message: "deprectaed at version 0.4.0")
 extension TextDirection {
     var ringLayoutDirection : RingLayoutDirection {
         switch self {
@@ -123,6 +124,7 @@ extension ArchimedeanSpiralText: Adjustable {
         }
     }
     
+    @available(*, deprecated, renamed: "textLayoutDirection", message: "deprectaed at version 0.4.0")
     public func textDirection(_ direction: TextDirection) -> Self {
         setProperty { tmp in
             tmp.textDirection = direction.ringLayoutDirection
