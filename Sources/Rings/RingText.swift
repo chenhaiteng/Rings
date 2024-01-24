@@ -253,7 +253,7 @@ struct RingTextPreviewWrapper: View {
                         .textColor(.blue).showingBlueprint(blueprint)
                     }
                     VStack(alignment: .leading) {
-                        Text("char spacing : \(spacing)")
+                        Text("char kerning : \(spacing)")
                         Slider(value: $spacing, in: 0.0...30.0)
                         Text("begin degrees: \(begin)")
                         Slider(value: $begin, in: 0.0...360.0)

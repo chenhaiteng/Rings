@@ -177,26 +177,35 @@ fileprivate struct ArcStackComponent<V: View>: View {
 }
 
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
-struct ArcStack<Content: View> : View {
+public struct ArcStack<Content: View> : View {
     let radius: Double
     let anchor: UnitPoint
     let range: ClosedRange<Double>
     let direction: RingLayoutDirection
     
     let content: () -> Content
-    var body: some View {
-        _ArcStack(radius: radius, anchor: anchor, range: range, direction: direction) {
-            content().variadic { children in
-                ForEach(0..<children.endIndex, id: \.self) { index in
-                    ArcStackComponent {
-                        children[index]
+    public var body: some View {
+        GeometryReader { geo in
+            _ArcStack(radius: radius >= 0 ? radius : max(min(geo.width, geo.height), 0.0)/2.0, anchor: anchor, range: range, direction: direction) {
+                content().variadic { children in
+                    ForEach(0..<children.endIndex, id: \.self) { index in
+                        ArcStackComponent {
+                            children[index]
+                        }
                     }
                 }
-            }
-        }
+            }.frame(width: geo.width, height: geo.height, alignment: anchor.alignment).border(.white)
+        }.border(.gray)
     }
-    
-    init(radius: Double = 100.0,
+    /// Creates an instance with the given radius, anchor point, arc range, and layout direction.
+    ///
+    /// - Parameters:
+    ///   - radius: The radius of the circle which the subviews are arranged around. If the radius `<` 0.0, or it's not specified, the arc size depends on its frame.
+    ///   - anchor: Specifies the anchor location of the arc. If the anchor is not on the boundary, it layouts views similiar to ``RingStack``
+    ///   - range: The range to plcae views in the arc.
+    ///   - direction: The guide for placing the subviews in this stack.
+    ///   - content: A view builder that creates the content of this stack.
+    public init(radius: Double = -1.0,
          anchor: UnitPoint = .bottom,
          range: ClosedRange<Double> = 0.0...1.0,
          direction: RingLayoutDirection = .none,
@@ -250,7 +259,7 @@ struct ArcStackPreview : View {
                         } label: {
                             Image(systemName: "moon")
                         }
-                    }.animation(.easeInOut(duration: 1.0), value: anchor).frame(width: Self.arcSize, height: Self.arcSize, alignment: .bottom)
+                    }.animation(.easeInOut(duration: 1.0), value: anchor).frame(width: Self.arcSize, height: Self.arcSize)
                 }
                 ZStack(alignment:.leading) {
                     ArcStack(radius: expandRadius, anchor: anchor, range: 0.0...1.0, direction: .none) {
@@ -274,7 +283,7 @@ struct ArcStackPreview : View {
                         } label: {
                             Image(systemName: arcStateImage).resizable().frame(width: 20.0, height: 20.0)
                         }.buttonStyle(.borderedProminent)
-                    }.frame(width: Self.arcSize, height: Self.arcSize, alignment: anchor.alignment)
+                    }.frame(width: Self.arcSize, height: Self.arcSize)
                 }.border(.blue.opacity(0.5))
             }
             Divider()

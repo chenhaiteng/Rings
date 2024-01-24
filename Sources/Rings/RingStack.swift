@@ -94,7 +94,7 @@ struct _RingStack : Layout {
         for (index, view) in sorted.enumerated() {
             let angle = cache.baseAngle.radians*Double(index) + phase.radians
             
-            let polarPt = CGPolarPoint(radius: radius, angle: angle)
+            let polarPt = CGPolarPoint(radius: radius - cache.extraSize/2.0, angle: angle)
             view.place(at: CGPoint(x:polarPt.cgpoint.x + midX, y: polarPt.cgpoint.y + midY), anchor: .center, proposal: proposal)
             /* For bi-directional custom layout values, it would be safer to unwrap it before invoke async block. In some situation, for example, switching content stack view in navigation split view when animating, might cause unwrap statment crash due to invalid address. */
             if let layoutValue = view[_RingStack.RotationValue.self] {
@@ -147,7 +147,7 @@ public struct RingStack<Content: View> : View {
     
     public var body: some View {
         GeometryReader { geo in
-            _RingStack(radius: radius, center: center, phase: phase, direction: direction, traceName: trace) {
+            _RingStack(radius: radius > 0 ? radius : max(min(geo.height, geo.width), 0.0)/2.0, center: center, phase: phase, direction: direction, traceName: trace) {
                 content().variadic { children in
                     ForEach(0..<children.endIndex, id: \.self) { index in
                         RingStackComponent {
@@ -159,6 +159,14 @@ public struct RingStack<Content: View> : View {
         }
     }
     
+    /// Creates an instance with the given radius, center, rotation phase, and layout direction.
+    ///
+    /// - Parameters:
+    ///   - radius: The radius of the circle which the subviews are arranged around.
+    ///   - center: Specifies the center of the circle.
+    ///   - phase: The radians that the first view start with. Default is zero.
+    ///   - direction: The guide for placing the subviews in this stack.
+    ///   - content: A view builder that creates the content of this stack.
     public init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, direction: RingLayoutDirection = .none, trace:String = "", @ViewBuilder content: @escaping () -> Content) {
         self.radius = radius
         self.center = center
@@ -174,7 +182,7 @@ struct RingStackPreview: View {
     @State var phase = Angle(degrees: -90.0)
     @State var wordSlider = 12.0
     @State var wordCount = 12
-    @State var radius = 100.0
+    @State var radius = 0.0
     @State var center: UnitPoint = .center
     @State var direction: RingLayoutDirection = .none
     @State var information: String = ""
