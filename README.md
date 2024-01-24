@@ -1,4 +1,4 @@
-![Screen Shot 2021-06-15 at 13 01 13](https://user-images.githubusercontent.com/1284944/121996229-c6fd8480-cdda-11eb-9c3e-345681b3e641.png)
+![Icon](Sources/Rings/Documentation.docc/Resources/RingsIcon.png)
 
 # Rings ![GitHub](https://img.shields.io/github/license/chenhaiteng/Rings?style=plastic) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/chenhaiteng/Rings) 
 
@@ -29,7 +29,7 @@ Rings is published with Swift Package Manager, you can get more information at [
 1. File > Swift Packages > Add Package Dependency...
 2. Choose Project you want to add Rings
 3. Paste repository https://github.com/chenhaiteng/Rings.git
-4. Rules > Version: Up to Next Major 0.1.0
+4. Rules > Version: Up to Next Major 0.4.0
 It's can also apply Rules > Branch : main to access latest code.
 If you want try some experimental features, you can also apply Rules > Branch : develop
 
@@ -42,7 +42,7 @@ If you want try some experimental features, you can also apply Rules > Branch : 
 #### - Add to SPM package(To use this package in your library/framework):
 ```swift
 dependencies: [
-    .package(name: "Rings", url: "https://github.com/chenhaiteng/Rings.git", from: "0.1.0")
+    .package(name: "Rings", url: "https://github.com/chenhaiteng/Rings.git", from: "0.4.0")
     // To specify branch, use following statement to instead of.
     // .package(name: "Rings", url: "https://github.com/chenhaiteng/Rings.git", .branch("branch_name"))
 ],
