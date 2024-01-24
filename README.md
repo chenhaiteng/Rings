@@ -8,6 +8,8 @@
 
 It includes following controls, click to see what it looks like:
 
+* **[RingStack](#ringstack)**
+* **[ArcStack](#arcstack)**
 * **[RingText](#ringtext)**
 * **[ClockIndex](#clockindex)**
 * **[HandAiguille](#handaiguille)**
@@ -53,6 +55,20 @@ targets: [
 ]
 ```
 ---
+
+## RingStack
+
+### What it looks like
+![Demo](Sources/Rings/Documentation.docc/Resources/RingStack.gif)
+
+### [How to use it](Markdown/Rings/RingStack.md)
+
+## ArcStack
+
+### What it looks like
+![Demo](Sources/Rings/Documentation.docc/Resources/ArcStack.gif)
+
+### [How to use it](Markdown/Rings/ArcStack.md)
 
 ## RingText
 
