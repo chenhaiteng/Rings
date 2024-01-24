@@ -2,32 +2,18 @@ import SwiftUI
 import CoreGraphicsExtension
 import Common
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 13.0, watchOS 6.0, *)
 public extension CGAngle {
     func toAngle(offset radians: CGFloat = 0.0) -> Angle {
         Angle(radians: Double(self.radians + radians))
     }
 }
 
-private func _createCharacters(origin: [String], reversed:Bool = false) -> [String] {
-    var tmpWords = reversed ? origin.reversed() : origin
-    if(reversed) {
-        tmpWords = tmpWords.map({ word -> String in
-            String(word.reversed())
-        })
-    }
-    let text = (tmpWords.count == 1) ? tmpWords[0] : tmpWords.reduce(String()) {
-        result, element -> String in
-        result + element + " "
-    }
-    let characters = text.map(String.init)
-    return characters
-}
-
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-public struct RingText : View {
+@available(iOS 14.0, macOS 11.0, tvOS 13.0, watchOS 6.0, *)
+public struct RingText : View, CompatibleForegroundProxy {
     private var radius: Double
-    private var textColor: Color
+    public var color: Color
+    public var style: any ShapeStyle
     private var textUpsideDown: Bool
     
     private var char_spacing: Double
@@ -44,9 +30,10 @@ public struct RingText : View {
     @State private var sizes: [CGSize] = []
     private var showBlueprint: Bool = false
     
-    public init<T: BinaryFloatingPoint>(radius: T, @WordsBuilder _ builder: ()->[String], color: Color = Color.white, upsideDown: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil ) {
+    public init<T: BinaryFloatingPoint>(radius: T, color: Color = Color.white, upsideDown: Bool = false, begin: CGAngle = CGAngle.zero, end: CGAngle? = nil, @WordsBuilder _ builder: ()->[String]) {
         self.radius = Double(radius)
-        self.textColor = color
+        self.color = color
+        self.style = color
         self.textUpsideDown = upsideDown
         self.originwords = []
         
@@ -66,10 +53,10 @@ public struct RingText : View {
         textPoints = _createTextPoints()
     }
     
-    public init<T: BinaryFloatingPoint>(radius: T, text: String, color: Color = Color.white, upsideDown: Bool = false, reversed: Bool = false, begin: CGAngle = CGAngle.zero) {
-        self.init(radius: radius, {
+    public init<T: BinaryFloatingPoint>(radius: T, text: String, color: Color = Color.white, upsideDown: Bool = false, begin: CGAngle = CGAngle.zero) {
+        self.init(radius: radius, color: color, upsideDown: upsideDown,  begin: begin) {
             text
-        }, color: color, upsideDown: upsideDown,  begin: begin)
+        }
     }
     
     private func _createTextPoints() -> [CGPolarPoint] {
@@ -90,7 +77,7 @@ public struct RingText : View {
                     let pt = polarPt.cgpoint
                     let textPt = CGPoint(x: pt.x, y: pt.y)
                     Sizing {
-                        Text(item).font(font).foregroundColor(textColor).if(showBlueprint) { content in
+                        Text(item).font(font).compatibleForeground(self).if(showBlueprint) { content in
                             content.border(Color.blue.opacity(0.5), width:1)
                         }
                     }.rotationEffect(polarPt.cgangle.toAngle(offset: CGFloat.pi/2) + Angle.degrees(textUpsideDown ? 180 : 0)).offset(x: textPt.x, y: textPt.y)
@@ -112,9 +99,21 @@ extension RingText {
         return result
     }
     
+    @available(iOS, introduced: 14.0, deprecated: 100000.0, renamed: "foregroundStyle(_:)")
+    @available(macOS, introduced: 11.0, deprecated: 100000.0, renamed: "foregroundStyle(_:)")
+    @available(tvOS, introduced: 13.0, deprecated: 100000.0, renamed: "foregroundStyle(_:)")
+    @available(watchOS, introduced: 6.0, deprecated: 100000.0, renamed: "foregroundStyle(_:)")
+    @available(visionOS, introduced: 1.0, deprecated: 100000.0, renamed: "foregroundStyle(_:)")
     public func textColor(_ color: Color) -> Self {
         setProperty { tmp in
-            tmp.textColor = color
+            tmp.color = color
+        }
+    }
+    
+    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+    public func foregroundStyle<S>(_ style: S) -> Self where S : ShapeStyle {
+        setProperty { tmp in
+            tmp.style = style
         }
     }
     
@@ -128,11 +127,11 @@ extension RingText {
         }
     }
     
-    public func begin(degrees: Double) -> Self {
-        return begin(radians: Double(CGAngle.degrees(degrees)))
+    public func begining(atDegrees: Double) -> Self {
+        return begining(at: Double(CGAngle.degrees(atDegrees)))
     }
     
-    public func begin(radians: Double) -> Self {
+    public func begining(at radians: Double) -> Self {
         setProperty { tmp in
             let range = tmp.endRadians - tmp.beginRadians
             tmp.beginRadians = radians
@@ -143,11 +142,11 @@ extension RingText {
         }
     }
     
-    public func end(degrees: Double) -> Self {
-        return end(radians: Double(CGAngle.degrees(degrees)))
+    public func ending(atDegrees: Double) -> Self {
+        return ending(at: Double(CGAngle.degrees(atDegrees)))
     }
     
-    public func end(radians: Double) -> Self {
+    public func ending(at radians: Double) -> Self {
         setProperty { tmp in
             tmp.endRadians = radians
             tmp.char_spacing = (tmp.endRadians - tmp.beginRadians)/Double(tmp.characters.count-1)
@@ -155,9 +154,9 @@ extension RingText {
         }
     }
     
-    public func upsideDown(_ yes: Bool) -> Self {
+    public func upsideDowning(_ upsideDown: Bool) -> Self {
         setProperty { tmp in
-            tmp.textUpsideDown = yes
+            tmp.textUpsideDown = upsideDown
         }
     }
     
@@ -167,20 +166,25 @@ extension RingText {
         }
     }
     
-    public func showBlueprint(_ show: Bool) -> Self {
+    public func showingBlueprint(_ show: Bool) -> Self {
         setProperty { tmp in
             tmp.showBlueprint = show
         }
     }
 }
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 13.0, watchOS 6.0, *)
 struct RingText_Previews: PreviewProvider {
     static var previews: some View {
+        #if os(tvOS)
+        Text("No Preview Yet")
+        #else
         RingTextPreviewWrapper()
+        #endif
     }
 }
 
+@available(tvOS, unavailable)
 struct RingTextPreviewWrapper: View {
     @State var spacing: Double = 0.0
     @State var begin: Double = 0.0
@@ -195,16 +199,19 @@ struct RingTextPreviewWrapper: View {
             HStack {
                 VStack {
                     ZStack {
-                        RingText(radius: 40.0, {
+                        RingText(radius: 40.0, color: .blue, upsideDown: false) {
                             "✪"
                             for i in 1...10 {
                                 "\(i)"
                             }
-                        }, color: .blue, upsideDown: false).font(Font.custom("Apple Chancery", size: 16.0)).begin(degrees: begin_0).showBlueprint(blueprint).contentShape(Circle()).onTapGesture(count: 2, perform: {
+                        }.font(Font.custom("Apple Chancery", size: 16.0)).begining(atDegrees: begin_0).showingBlueprint(blueprint).contentShape(Circle())
+                        #if !os(tvOS)
+                            .onTapGesture(count: 2, perform: {
                             begin_0 = 0.0
                             font_size = 20.0
                         })
-                        RingText(radius: 80.0, text: "0987654321", color: .green).font(.system(size: CGFloat(font_size))).showBlueprint(blueprint)
+                        #endif
+                        RingText(radius: 80.0, text: "0987654321", color: .green).font(.system(size: CGFloat(font_size))).showingBlueprint(blueprint)
                     }
                     Text("begin degrees: \(begin_0)")
                     Slider(value: $begin_0, in: -360.0...360)
@@ -216,10 +223,10 @@ struct RingTextPreviewWrapper: View {
                         "a23"
                         "b56"
                         "c89"
-                    }.showBlueprint(blueprint)
+                    }.showingBlueprint(blueprint)
                     RingText(radius: 80.0) {
                         "1234567890"
-                    }.showBlueprint(blueprint)
+                    }.showingBlueprint(blueprint)
                 }
                 VStack {
                     ZStack {
@@ -231,10 +238,10 @@ struct RingTextPreviewWrapper: View {
                                 "12345"
                                 "67890"
                             }
-                        }.begin(degrees: begin)
-                        .end(degrees: end)
-                        .upsideDown(upside_down)
-                        .textColor(.red).showBlueprint(blueprint)
+                        }.begining(atDegrees: begin)
+                        .ending(atDegrees: end)
+                        .upsideDowning(upside_down)
+                        .textColor(.red).showingBlueprint(blueprint)
                         RingText(radius: 40.0){
                             if reverse_text {
                                 String("1234567890".reversed())
@@ -242,11 +249,11 @@ struct RingTextPreviewWrapper: View {
                                 "1234567890"
                             }
                         }.kerning(spacing)
-                        .upsideDown(upside_down)
-                        .textColor(.blue).showBlueprint(blueprint)
+                        .upsideDowning(upside_down)
+                        .textColor(.blue).showingBlueprint(blueprint)
                     }
                     VStack(alignment: .leading) {
-                        Text("char spacing : \(spacing)")
+                        Text("char kerning : \(spacing)")
                         Slider(value: $spacing, in: 0.0...30.0)
                         Text("begin degrees: \(begin)")
                         Slider(value: $begin, in: 0.0...360.0)

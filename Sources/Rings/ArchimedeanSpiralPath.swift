@@ -61,60 +61,75 @@ extension ArchimedeanSpiralPath : Adjustable {
     }
 }
 
-struct ArchimedeanSpiralPathDemo : View {
+@available(tvOS, unavailable)
+struct ArchimedeanSpiralPath_Preview : View {
     @State var radiusSpacing: Double = 10.0
     @State var innerR: Double = 5.0
     @State var spacing: Double = 25.0
     @State var count: Double = 100.0
     @State var startAt: Double = 0.0
-    @State var showInner: Bool = false
-    @State var showRadius: Bool = false
+    var body: some View {
+        VStack {
+            ArchimedeanSpiralPath(innerR, spacing: radiusSpacing, gap: spacing, count: Int(count)).start(CGAngle.degrees(startAt))
+            Divider()
+            ScrollView {
+                HStack {
+                    Text("start at")
+                    Slider(value: $startAt, in: 0.0...360.0)
+                    Text("\(String(format: "%.2f", startAt))")
+                }
+                HStack {
+                    Text("radius spacing")
+                    Slider(value: $radiusSpacing, in: 10.0...50.0)
+                    Text("\(String(format: "%.2f", radiusSpacing))")
+                }
+                HStack {
+                    Text("inner radius")
+                    Slider(value: $innerR, in: 10.0...50.0)
+                    Text("\(String(format: "%.2f", innerR))")
+                }
+                HStack {
+                    Text("points spacing")
+                    Slider(value: $spacing, in: 10.0...50.0)
+                    Text("\(String(format: "%.2f", spacing))")
+                }
+                HStack {
+                    
+                    Text("node count")
+                    Slider(value: $count, in: 100.0...200.0, step: 10.0)
+                    Text("\(String(format: "%d", Int(count)))")
+                }
+            }
+        }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+    }
+}
+
+#if os(tvOS)
+struct ArchimedeanSpiralPath_Preview_tvOS : View {
+    @State var radiusSpacing: Double = 50.0
+    @State var innerR: Double = 10.0
+    @State var spacing: Double = 30.0
+    @State var count: Double = 100.0
+    @State var startAt: Double = 0.0
     var body: some View {
         VStack {
             ZStack {
                 GeometryReader { geo in
-                    let midX = geo.size.width/2
-                    let midY = geo.size.height/2
                     ArchimedeanSpiralPath(innerR, spacing: radiusSpacing, gap: spacing, count: Int(count)).start(CGAngle.degrees(startAt))
-                    Group {
-                        if (showInner) {
-                            Path { p in
-                                p.move(to: CGPoint(x: midX, y: midY))
-                                p.addLine(to: CGPoint(x: midX + CGFloat(innerR), y: midY))
-                            }.stroke(style: StrokeStyle(lineWidth: 2.0, lineCap: .butt, lineJoin: .miter, miterLimit: 0, dash: [3,1], dashPhase: 0))
-                        }
-                        if(showRadius) {
-                            Path { p in
-                                p.move(to: CGPoint(x: midX + CGFloat(innerR), y: midY))
-                                p.addLine(to: CGPoint(x: midX + CGFloat(innerR) + CGFloat(radiusSpacing), y: midY))
-                            }.stroke(Color.blue, style: StrokeStyle(lineWidth: 2.0, lineCap: .butt, lineJoin: .miter, miterLimit: 0, dash: [3,1], dashPhase: 0))
-                        }
-                    }
                 }
             }
-            Slider(value: $startAt, in: 0.0...360.0) {
-                Text("start at (\(startAt))")
-            }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-            Slider(value: $radiusSpacing, in: 10.0...50.0) {
-                Toggle("", isOn: $showRadius)
-                Text("radius spacing (\(radiusSpacing))")
-            }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-            Slider(value: $innerR, in: 10.0...50.0) {
-                Toggle("", isOn: $showInner)
-                Text("inner radius(\(innerR))")
-            }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-            Slider(value: $spacing, in: 10.0...50.0) {
-                Text("points spacing(\(spacing))")
-            }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-            Slider(value: $count, in: 100.0...200.0, step: 10.0) {
-                Text("count(\(Int(count)))")
-            }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
         }
     }
 }
 
+#endif
+
 struct ArchimedeanSpiralPath_Previews: PreviewProvider {
     static var previews: some View {
-        ArchimedeanSpiralPathDemo()
+#if os(tvOS)
+        ArchimedeanSpiralPath_Preview_tvOS()
+#else
+        ArchimedeanSpiralPath_Preview()
+#endif
     }
 }

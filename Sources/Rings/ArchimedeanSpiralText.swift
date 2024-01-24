@@ -8,7 +8,9 @@
 import SwiftUI
 import ArchimedeanSpiral
 import CoreGraphicsExtension
+import Common
 
+@available(*, deprecated, renamed: "RingLayoutDirection", message: "deprectaed at version 0.4.0")
 public enum TextDirection {
     case Top, Bottom, Left, Right
     var cgangle: CGAngle {
@@ -25,13 +27,32 @@ public enum TextDirection {
     }
 }
 
-public struct ArchimedeanSpiralText: View {
+@available(*, deprecated, renamed: "RingLayoutDirection", message: "deprectaed at version 0.4.0")
+extension TextDirection {
+    var ringLayoutDirection : RingLayoutDirection {
+        switch self {
+        case .Top:
+            RingLayoutDirection.toCenter
+        case .Bottom:
+            RingLayoutDirection.fromCenter
+        case .Left:
+            RingLayoutDirection.alongCounterClockwise
+        case .Right:
+            RingLayoutDirection.alongClockwise
+        }
+    }
+}
+
+public struct ArchimedeanSpiralText: View, CompatibleForegroundProxy {
+    public typealias Content = Self
+    
     private var radiusSpacing: Double
     private var innerRadius: Double
     private var gap: Double
-    private var textDirection: TextDirection = .Top
+    private var textDirection: RingLayoutDirection = .fromCenter
     private var font = Font.system(size: 20.0)
-    private var textColor: Color = Color.red
+    public var color: Color
+    public var style: any ShapeStyle
     
     private var text: String {
         didSet {
@@ -47,12 +68,14 @@ public struct ArchimedeanSpiralText: View {
     
     private var textPoints: [CGPolarPoint] = []
     
-    public init(_ innerRadius: Double = 12.0, spacing: Double = 10.0, gap: Double = 5.0, text: String = "") {
-        self.radiusSpacing = spacing
+    public init(_ innerRadius: Double = 12.0, radiusSpacing: Double = 10.0, gap: Double = 5.0, text: String = "") {
+        self.radiusSpacing = radiusSpacing
         self.innerRadius = innerRadius
         self.gap = gap
         self.text = text
         self.chars = Array(text.enumerated())
+        self.color = .white
+        self.style = .white
         updateTextPoints()
     }
     
@@ -67,13 +90,12 @@ public struct ArchimedeanSpiralText: View {
                 ForEach(chars, id: \.self.offset) { (offset, element) in
                     let pt = self.textPoints[offset].cgpoint
                     let textPt = CGPoint(x: pt.x, y: pt.y)
-                    let rotation = (self.textPoints[offset].cgangle + textDirection.cgangle).toAngle()
+                    let rotation = textDirection.cgangle(with: self.textPoints[offset].cgangle).toAngle()
                     Text(String(element))
+                        .compatibleForeground(self)
                         .rotationEffect(rotation)
                         .offset(x: textPt.x, y: textPt.y)
-                        .foregroundColor(textColor)
                         .font(font)
-                    
                 }
             }.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
         }
@@ -81,7 +103,7 @@ public struct ArchimedeanSpiralText: View {
 }
 
 extension ArchimedeanSpiralText: Adjustable {
-    public func spacing<T: BinaryFloatingPoint>(_ space: T) -> Self {
+    public func radiusSpacing<T: BinaryFloatingPoint>(_ space: T) -> Self {
         setProperty { tmp in
             tmp.radiusSpacing = Double(space)
             tmp.updateTextPoints()
@@ -102,15 +124,14 @@ extension ArchimedeanSpiralText: Adjustable {
         }
     }
     
-    public func text(_ text: String) -> Self {
+    @available(*, deprecated, renamed: "textLayoutDirection", message: "deprectaed at version 0.4.0")
+    public func textDirection(_ direction: TextDirection) -> Self {
         setProperty { tmp in
-            tmp.text = text
-            tmp.chars = Array(text.enumerated())
-            tmp.updateTextPoints()
+            tmp.textDirection = direction.ringLayoutDirection
         }
     }
     
-    public func textDirection(_ direction: TextDirection) -> Self {
+    public func textLayoutDirection(_ direction: RingLayoutDirection) -> Self {
         setProperty { tmp in
             tmp.textDirection = direction
         }
@@ -124,7 +145,8 @@ extension ArchimedeanSpiralText: Adjustable {
     
     public func textColor(_ color: Color) -> Self {
         setProperty { tmp in
-            tmp.textColor = color
+            tmp.color = color
+            tmp.style = color
         }
     }
 }
@@ -164,26 +186,26 @@ extension Picker {
     }
 }
 
-struct ArchimedeanSpiralTextDemo : View {
+#if !os(tvOS)
+struct ArchimedeanSpiralText_Preview_macOS : View {
     private let demoText = "1234567890abcdefgABCDEFG♩♪♫♬"
     @State var radiusSpacing: Double = 20.0
     @State var innerR: Double = 25.0
     @State var gap: Double = 25.0
     @State var textLength: Double = 15.0
-    @State var direction: TextDirection = TextDirection.Top
-    @State var color: Color = .white
+    @State var direction: RingLayoutDirection = .fromCenter
+    @State var color: Color = .red
     @State var font: Font = .system(.body)
     
     public var body: some View {
         VStack {
             let enabled = String(demoText.prefix(Int(textLength)))
             let disabled = String(demoText.suffix(demoText.count - Int(textLength)))
-            ArchimedeanSpiralText()
+            ArchimedeanSpiralText(text: enabled)
                 .gap(gap)
                 .innerRadius(innerR)
-                .spacing(radiusSpacing)
-                .text(enabled)
-                .textDirection(direction)
+                .radiusSpacing(radiusSpacing)
+                .textLayoutDirection( direction)
                 .textColor(color)
                 .font(font)
             Slider(value: $textLength, in: 1.0...28.0, step: 1.0) {
@@ -191,12 +213,12 @@ struct ArchimedeanSpiralTextDemo : View {
             }.padding(EdgeInsets(top: 0.0, leading: 10.0, bottom: 0.0, trailing: 10.0))
             HStack {
                 VStack {
-                    Text("direction forward to center")
+                    Text("text direction")
                     Picker("", selection: $direction) {
-                        Text("top").tag(TextDirection.Top)
-                        Text("bottom").tag(TextDirection.Bottom)
-                        Text("right").tag(TextDirection.Right)
-                        Text("left").tag(TextDirection.Left)
+                        Text("to Center").tag(RingLayoutDirection.toCenter)
+                        Text("from center").tag(RingLayoutDirection.fromCenter)
+                        Text("cw").tag(RingLayoutDirection.alongClockwise)
+                        Text("ccw").tag(RingLayoutDirection.alongCounterClockwise)
                     }.segmented()
                     Text("text color")
                     Picker("", selection: $color) {
@@ -227,8 +249,109 @@ struct ArchimedeanSpiralTextDemo : View {
     }
 }
 
+struct ArchimedeanSpiralText_Preview_iOS : View {
+    private let demoText = "1234567890abcdefgABCDEFG♩♪♫♬"
+    @State var radiusSpacing: Double = 20.0
+    @State var innerR: Double = 25.0
+    @State var gap: Double = 25.0
+    @State var textLength: Double = 15.0
+    @State var direction: RingLayoutDirection = .toCenter
+    @State var color: Color = .red
+    @State var font: Font = .system(.body)
+    
+    public var body: some View {
+        VStack {
+            let enabled = String(demoText.prefix(Int(textLength)))
+            let disabled = String(demoText.suffix(demoText.count - Int(textLength)))
+            ArchimedeanSpiralText(text: enabled)
+                .gap(gap)
+                .innerRadius(innerR)
+                .radiusSpacing(radiusSpacing)
+                .textLayoutDirection(direction)
+                .textColor(color)
+                .font(font)
+            Divider()
+            VStack(alignment: .leading, spacing: 0.0) {
+                HStack {
+                    Text(enabled).foregroundColor(color) + Text(disabled).foregroundColor(.gray)
+                }
+                Slider(value: $textLength, in: 1.0...Double(demoText.count), step: 1.0)
+            }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0.0) {
+                    Text("direction forward to center")
+                    Picker("", selection: $direction) {
+                        Text("to center").tag(RingLayoutDirection.toCenter)
+                        Text("from center").tag(RingLayoutDirection.fromCenter)
+                        Text("cw").tag(RingLayoutDirection.alongClockwise)
+                        Text("ccw").tag(RingLayoutDirection.alongCounterClockwise)
+                    }.segmented()
+                    Divider().padding()
+                    HStack {
+                        Text("text color")
+                        Picker("", selection: $color) {
+                            Text("White").tag(Color.white)
+                            Text("Red").tag(Color.red)
+                            Text("Blue").tag(Color.blue)
+                            Text("Green").tag(Color.green)
+                        }.colorPicker($color)
+                    }
+                    Divider().padding()
+                    Text("font")
+                    Picker("Font", selection: $font) {
+                        Text(".body").tag(Font.system(.body))
+                        Text(".caption").tag(Font.system(.caption))
+                        Text("Zapfino(10)").tag(Font.custom("Zapfino", size: 10.0))
+                    }.segmented()
+                    Divider().padding()
+                    VStack(alignment: .leading, spacing: 0.0) {
+                        Text("Inner Radius: \(innerR)")
+                        Slider(value: $innerR, in: 0.0...30.0, step: 5.0)
+                        Text("Radius Spacing: \(radiusSpacing)")
+                        Slider(value: $radiusSpacing, in: 10.0...80.0, step: 5.0)
+                        Text("Gap:\(gap)")
+                        Slider(value: $gap, in: 10.0...40.0, step: 3.0)
+                    }
+                }
+            }
+        }.padding(EdgeInsets(top: 0.0, leading: 10.0, bottom: 0.0, trailing: 10.0))
+    }
+}
+#endif
+
+@available(tvOS, introduced: 6.0)
+struct ArchimedeanSpiralText_Preview_tvOS : View {
+    private let demoText = "1234567890abcdefgABCDEFG♩♪♫♬"
+    @State var radiusSpacing: Double = 100.0
+    @State var innerR: Double = 50.0
+    @State var gap: Double = 80.0
+    @State var textLength: Double = 30.0
+    @State var direction: RingLayoutDirection = .toCenter
+    @State var color: Color = .red
+    @State var font: Font = .system(.title)
+    
+    public var body: some View {
+        VStack {
+            ArchimedeanSpiralText(text: demoText)
+                .gap(gap)
+                .innerRadius(innerR)
+                .radiusSpacing(radiusSpacing)
+                .textLayoutDirection(direction)
+                .textColor(color)
+                .font(font)
+        }
+    }
+}
+
 struct ArchimedeanSpiralText_Previews: PreviewProvider {
     public static var previews: some View {
-        ArchimedeanSpiralTextDemo()
+#if os(tvOS)
+        ArchimedeanSpiralText_Preview_tvOS()
+#elseif os(macOS)
+        ArchimedeanSpiralText_Preview_macOS()
+#elseif os(iOS)
+        ArchimedeanSpiralText_Preview_iOS()
+#elseif os(watchOS)
+#endif
     }
 }

@@ -72,7 +72,8 @@ extension GeometryProxy {
     }
 }
 
-public struct Knob<Layers:Sequence>: View where Layers.Element: AngularLayer{
+@available(tvOS, unavailable)
+public struct Knob<Layers:Sequence>: View where Layers.Element: AngularLayer {
     //    private var contentBuilder: (Double, KnobMapping)->Content
     private var layers: Layers
     
@@ -174,6 +175,7 @@ public struct Knob<Layers:Sequence>: View where Layers.Element: AngularLayer{
     }
 }
 
+@available(tvOS, unavailable)
 extension Knob : Adjustable {
     
     public func mapping<T: KnobMapping>(with mapping: T) -> Self {
@@ -189,9 +191,11 @@ extension Knob : Adjustable {
     }
 }
 
+@available(tvOS, unavailable)
 struct KnobDemo: View {
+    private static let demoRange: ClosedRange<CGFloat> = -50.0...50.0
     @State var valueSegmented: CGFloat = 0
-    @State var valueContiune: CGFloat = 0
+    @State var valueContiune: CGFloat = demoRange.lowerBound
     @State var ringWidth: CGFloat = 5
     @State var arcWidth: CGFloat = 5
     @State var showBlueprint: Bool = false
@@ -201,19 +205,19 @@ struct KnobDemo: View {
             Spacer(minLength: 40)
             HStack {
                 VStack {
-                    Knob($valueContiune) {
+                    Knob($valueContiune, LinearMapping().valueRange(KnobDemo.demoRange).degreeRange(-145.0...(-35.0))) {
                         RingKnobLayer()
                             .color {
-                                Color.red
+//                                Color.red
                                 Color.blue
-                                Color.yellow
-                            }
+//                                Color.yellow
+                            }.ringWidth(ringWidth)
                         ArcKnobLayer()
                             .arcColor {
                                 .red
-                            }
+                            }.arcWidth(ringWidth)
                     }.blueprint(showBlueprint)
-                    Slider(value: $valueContiune, in: 0.0...1.0) {
+                    Slider(value: $valueContiune, in: KnobDemo.demoRange) {
                         Text(String(format: "value: %.2f", valueContiune))
                     }
                 }
@@ -255,6 +259,7 @@ struct KnobDemo: View {
     }
 }
 
+@available(tvOS, unavailable)
 struct Knob_Previews: PreviewProvider {
     static var previews: some View {
         KnobDemo()

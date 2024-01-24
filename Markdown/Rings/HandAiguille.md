@@ -1,7 +1,7 @@
 ## HandAiguille
 
 ### Preview
-https://user-images.githubusercontent.com/1284944/117106480-83aeff80-adb2-11eb-8e82-d77d9569dcca.mov
+![Demo](../../Sources/Rings/Documentation.docc/Resources/HandAiguille.gif)
 
 ### Usage: 
 ```swift

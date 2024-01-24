@@ -47,7 +47,7 @@ extension WordsBuilder {
             [String(c)]
         }
         
-        if component.count == 1 {
+        if component.count == 2 {
             return result.dropLast()
         } else {
             return result
