@@ -50,7 +50,7 @@ public struct ArcKnobLayer : AngularLayer {
                 GeometryReader { geo in
                     Path { p in
                         p.addArc(center: CGPoint(x: geo.size.width/2, y: geo.size.height/2), radius: radius, startAngle: Angle.degrees(degreeRange.lowerBound), endAngle: isFixed ? Angle.degrees(degreeRange.upperBound) : Angle.degrees(Double(degree)), clockwise: false)
-                    }.offsetBy(dx: offset.x, dy: offset.y).stroke(AngularGradient(gradient: gradient, center: .center, startAngle: Angle.degrees(degreeRange.lowerBound)), style:style.width(arcWidth))
+                    }.offsetBy(dx: offset.x, dy: offset.y).stroke(AngularGradient(gradient: gradient, center: UnitPoint(x:0.5 + offset.x/geo.width, y:0.5 + offset.y/geo.height), startAngle: Angle.degrees(degreeRange.lowerBound)), style:style.width(arcWidth))
                 }
             }
         }
