@@ -16,12 +16,15 @@ public struct RingKnobLayer : AngularLayer {
     
     public var degreeRange: ClosedRange<Double>
     
+    public var offset: CGPoint = .zero
+    public var radius: CGFloat = 100.0
+    
     private var gradient: AngularGradient
     var ringWidth: Double
     
     public var body: some View {
         get {
-            Circle().stroke(gradient, lineWidth: CGFloat(ringWidth)).padding(EdgeInsets(top: CGFloat(ringWidth/2.0), leading: CGFloat(ringWidth/2.0), bottom: CGFloat(ringWidth/2.0), trailing: CGFloat(ringWidth/2.0)))
+            Circle().stroke(gradient, lineWidth: CGFloat(ringWidth)).frame(width: radius*2.0, height: radius*2.0).padding(EdgeInsets(top: CGFloat(ringWidth/2.0), leading: CGFloat(ringWidth/2.0), bottom: CGFloat(ringWidth/2.0), trailing: CGFloat(ringWidth/2.0)))
         }
     }
     
@@ -40,15 +43,20 @@ public struct RingKnobLayer : AngularLayer {
 
 extension RingKnobLayer : Adjustable {
     public func color(@GradientBuilder _ builder: ()->AngularGradient ) -> Self {
-        var tmp = self
-        tmp.gradient = builder()
-        return tmp
+        setProperty { adjustObject in
+            adjustObject.gradient = builder()
+        }
     }
     
     public func ringWidth<T>(_ width: T) -> Self where T: BinaryFloatingPoint {
-        var tmp = self
-        tmp.ringWidth = Double(width)
-        return tmp
+        setProperty { adjustObject in
+            adjustObject.ringWidth = Double(width)
+        }
     }
     
+    public func radius<R: BinaryFloatingPoint>(_ newValue: R) -> Self {
+        setProperty { adjustObject in
+            adjustObject.radius = CGFloat(newValue)
+        }
+    }
 }

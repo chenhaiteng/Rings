@@ -49,10 +49,12 @@ public protocol AngularLayer {
     var degreeRange: ClosedRange<Double> { get set }
 
     var body: Self.Body { get }
+    var offset: CGPoint { get set }
+    var radius: CGFloat { get set }
 }
 
 extension AngularLayer {
-    func setBaseProperty(_ setBlock: (_ text: inout Self) -> Void) -> Self {
+    func setBaseProperty(_ setBlock: (_ tmp: inout Self) -> Void) -> Self {
         let result = _setProperty(content: self) { (tmp :inout Self) in
             setBlock(&tmp)
             return tmp
@@ -76,6 +78,16 @@ extension AngularLayer {
         setBaseProperty { tmp in
             tmp.degreeRange = mapping.degreeRange
             tmp.degree = mapping.degree(from: Double(value))
+        }
+    }
+    public func offset<F>(dx: F, dy: F) -> Self where F: BinaryFloatingPoint {
+        setBaseProperty { tmp in
+            tmp.offset = CGPoint(x: Double(dx), y: Double(dy))
+        }
+    }
+    public func radius<R: BinaryFloatingPoint>(_ newValue: R) -> Self {
+        setBaseProperty { tmp in
+            tmp.radius = CGFloat(newValue)
         }
     }
 }
