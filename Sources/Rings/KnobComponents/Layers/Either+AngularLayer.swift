@@ -51,6 +51,7 @@ extension Either : AngularLayer where Left:AngularLayer, Right: AngularLayer {
             }
         }
     }
+    
     public var degreeRange: ClosedRange<Double> {
         get {
             switch self {
@@ -68,6 +69,50 @@ extension Either : AngularLayer where Left:AngularLayer, Right: AngularLayer {
                 self = .left(layer)
             case .right(var layer):
                 layer.degreeRange = newValue
+                self = .right(layer)
+            }
+        }
+    }
+    
+    public var offset: CGPoint {
+        get {
+            switch self {
+            case .left(let layer):
+                return layer.offset
+            case .right(let layer):
+                return layer.offset
+            }
+        }
+        
+        mutating set {
+            switch self {
+            case .left(var layer):
+                layer.offset = newValue
+                self = .left(layer)
+            case .right(var layer):
+                layer.offset = newValue
+                self = .right(layer)
+            }
+        }
+    }
+    
+    public var radius: CGFloat {
+        get {
+            switch self {
+            case .left(let layer):
+                return layer.radius
+            case .right(let layer):
+                return layer.radius
+            }
+        }
+        
+        mutating set {
+            switch self {
+            case .left(var layer):
+                layer.radius = newValue
+                self = .left(layer)
+            case .right(var layer):
+                layer.radius = newValue
                 self = .right(layer)
             }
         }
