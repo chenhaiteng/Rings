@@ -106,6 +106,12 @@ extension ArcKnobLayer : Adjustable {
         }
     }
     
+    public func arcGradient(_ g: Gradient) -> Self {
+        setProperty { adjustObject in
+            adjustObject.gradient = g
+        }
+    }
+    
     /**
      Create and return a new layer with custom storke style.
      
