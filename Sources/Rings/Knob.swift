@@ -108,7 +108,7 @@ public struct Knob<Layers:Sequence>: View where Layers.Element: AngularLayer {
             let startPt = CGPoint(x: center.x + startVector.dx, y: center.y - startVector.dy)
             ZStack(alignment: .center){
                 ForEach(sequence: layers) { (index, layer) in
-                    layer.mappingValue(value, with: mappingObj).body.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+                    layer.mappingValue(value, with: mappingObj).radius(radius).body.frame(width: geo.size.width, height: geo.size.height, alignment: .center)
                 }
                 
                 if blueprint {
@@ -216,6 +216,9 @@ struct KnobDemo: View {
                             .arcColor {
                                 .red
                             }.arcWidth(ringWidth)
+                        ImageKnobLayer {
+                            Image(nsImage: Bundle.module.image(forResource: "ImageKnobBG")!).resizable()
+                        }
                     }.blueprint(showBlueprint)
                     Slider(value: $valueContiune, in: KnobDemo.demoRange) {
                         Text(String(format: "value: %.2f", valueContiune))
@@ -239,6 +242,10 @@ struct KnobDemo: View {
                             }
                             .arcWidth(arcWidth)
                             .style(StrokeStyle(lineWidth: arcWidth,lineCap: .butt, lineJoin: .bevel, miterLimit: 10.0, dash: [5,2], dashPhase: 10.0))
+                        ImageKnobLayer {
+                            Image(nsImage: Bundle.module.image(forResource: "ImageKnobBG")!).resizable()
+                        }
+                        
                     }.blueprint(showBlueprint).mapping(with: SegmentMapping().stops([KnobStop(0.0, -225.0), KnobStop(1.0, 45.0), KnobStop(0.5, -90.0), KnobStop(0.2, 0.0), KnobStop(0.8, -180.0), KnobStop(0.3, -135)]))
                     Slider(value: $valueSegmented, in: 0.0...1.0, step: 0.1) {
                         Text(String(format: "value: %.2f", valueSegmented))
