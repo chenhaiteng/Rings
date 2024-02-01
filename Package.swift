@@ -20,8 +20,8 @@ let package = Package(
         // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/chenhaiteng/CoreGraphicsExtension.git", from: "0.2.0"),
         .package(url: "https://github.com/chenhaiteng/ArchimedeanSpiral.git", from: "1.0.12"),
-        .package(url: "https://github.com/chenhaiteng/GradientBuilder.git", branch: "main"),
-        .package(url: "https://github.com/andtie/SequenceBuilder.git", branch: "main"),
+        .package(url: "https://github.com/chenhaiteng/GradientBuilder.git", from: "1.0.0"),
+        .package(url: "https://github.com/andtie/SequenceBuilder.git", from: "0.0.7"),
         .package(url: "https://github.com/GeorgeElsham/ViewExtractor", from: "2.0.0")
     ],
     targets: [
