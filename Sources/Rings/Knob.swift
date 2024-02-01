@@ -217,7 +217,11 @@ struct KnobDemo: View {
                                 .red
                             }.arcWidth(ringWidth)
                         ImageKnobLayer {
+#if os(macOS)
                             Image(nsImage: Bundle.module.image(forResource: "ImageKnobBG")!).resizable()
+#else
+                            Image(systemName: "sparkle")
+#endif
                         }
                     }.blueprint(showBlueprint)
                     Slider(value: $valueContiune, in: KnobDemo.demoRange) {
@@ -243,7 +247,11 @@ struct KnobDemo: View {
                             .arcWidth(arcWidth)
                             .style(StrokeStyle(lineWidth: arcWidth,lineCap: .butt, lineJoin: .bevel, miterLimit: 10.0, dash: [5,2], dashPhase: 10.0))
                         ImageKnobLayer {
+#if os(macOS)
                             Image(nsImage: Bundle.module.image(forResource: "ImageKnobBG")!).resizable()
+#else
+                            Image(systemName: "sparkle")
+#endif
                         }
                         
                     }.blueprint(showBlueprint).mapping(with: SegmentMapping().stops([KnobStop(0.0, -225.0), KnobStop(1.0, 45.0), KnobStop(0.5, -90.0), KnobStop(0.2, 0.0), KnobStop(0.8, -180.0), KnobStop(0.3, -135)]))
