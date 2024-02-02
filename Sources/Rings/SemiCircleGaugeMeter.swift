@@ -47,7 +47,7 @@ struct SemiCircleGaugeMeter<V: BinaryFloatingPoint, N: View, S: ShapeStyle>: Vie
                     needle()
                 }
                 GaugeValueMarkLayer(valueMarkSize) {
-                    Circle().fill(valueMarkStyle)
+                    Circle().fill(valueMarkStyle).shadow(radius: min(valueMarkSize/4.0, 5.0))
                 }
             }.frame(width: 2.0*r, height: 2.0*r).offset(x:arcWidth, y: geo.height - r - arcWidth)
         }
@@ -111,5 +111,5 @@ fileprivate struct Demo : View {
 }
 
 #Preview {
-    Demo()
+    Demo().background(Color.blue)
 }
