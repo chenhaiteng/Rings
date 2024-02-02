@@ -31,7 +31,6 @@ struct GaugeValueMarkLayer<V> : AngularLayer where V : View {
         get {
             ZStack {
                 GeometryReader { geo in
-                    let radius = min(geo.size.height, geo.size.width)/2.0
                     let polar = CGPolarPoint(radius: radius, angle: CGAngle.degrees(degree))
                     let point = polar.cgpoint.offset(dx: geo.size.width/2.0 + offset.x, dy: geo.size.height/2.0 + offset.y)
                     markBuilder().frame(width: markLength, height: markLength).rotationEffect(Angle(degrees: degree + 90.0))

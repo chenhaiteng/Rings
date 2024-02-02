@@ -17,14 +17,13 @@ public struct GaugeMeter<Layers:Sequence>: View where Layers.Element: AngularLay
     private var mappingObj: KnobMapping
     
     public var offset: CGPoint = .zero
-    
+    private var radius: Double
     @Binding var value: Double
-//    
-//    private var blueprint: Bool = false
-
+    
     @State private var startValue: Double = .nan
     
-    public init<F:BinaryFloatingPoint>(_ value: Binding<F>, _ mapping: KnobMapping = LinearMapping(degreeRange: -180.0...0.0), @SequenceBuilder _ builder: ()->Layers) {
+    public init<F:BinaryFloatingPoint>( radius: Double = 100.0, value: Binding<F>, mapping: KnobMapping = LinearMapping(degreeRange: -180.0...0.0), @SequenceBuilder _ builder: ()->Layers) {
+        self.radius = radius
         _value = Binding<Double>(get: {
             Double(value.wrappedValue)
         }, set: { v in
@@ -36,8 +35,6 @@ public struct GaugeMeter<Layers:Sequence>: View where Layers.Element: AngularLay
     
     public var body: some View {
         GeometryReader { geo in
-            let radius = min(geo.width, geo.height)/2.0
-            
             ZStack(alignment: .center){
                 ForEach(sequence: layers) { (index, layer) in
                     layer.mappingValue(value, with: mappingObj).radius(radius).offset(dx: offset.x, dy: offset.y).body.frame(width: geo.size.width, height: geo.size.height)
@@ -56,7 +53,7 @@ extension GaugeMeter: Adjustable {
     }
 }
 
-struct GaugeMeterDemo: View {
+fileprivate struct Demo: View {
     private static let demoRange: ClosedRange<CGFloat> = 0.0...50.0
     @State var valueContiune: CGFloat = 0.0 /*demoRange.lowerBound*/
     @State var ringWidth: CGFloat = 5
@@ -64,13 +61,12 @@ struct GaugeMeterDemo: View {
     @State var showBlueprint: Bool = true
     @State var needleBase: UnitPoint = .center
     
-    let gradient = AngularGradient(gradient: Gradient(colors: [Color.red, Color.blue]), center: .center)
     var body: some View {
         VStack {
             Spacer(minLength: 40)
             HStack {
                 VStack {
-                    GaugeMeter($valueContiune, LinearMapping(degreeRange: -180.0...0.0, valueRange: GaugeMeterDemo.demoRange.toDoubleRange())) {
+                    GaugeMeter(value: $valueContiune, mapping: LinearMapping(degreeRange: -180.0...0.0, valueRange: Demo.demoRange.toDoubleRange())) {
                         ArcKnobLayer(fixed: true)
                             .arcColor {
                                 Color.green.opacity(0.3)
@@ -98,7 +94,7 @@ struct GaugeMeterDemo: View {
                 }
             }
             Group {
-                Slider(value: $valueContiune, in: GaugeMeterDemo.demoRange) {
+                Slider(value: $valueContiune, in: Demo.demoRange) {
                     Text(String(format: "Value: %.2f", valueContiune))
                 }
                 HStack {
@@ -119,5 +115,6 @@ struct GaugeMeterDemo: View {
 }
 
 #Preview {
-    GaugeMeterDemo()
+    Demo()
 }
+
