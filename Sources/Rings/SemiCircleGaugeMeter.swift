@@ -31,6 +31,7 @@ struct SemiCircleGaugeMeter<V: BinaryFloatingPoint, N: View, S: ShapeStyle>: Vie
     private var arcWidth = 10.0
     private var needle: ()->N
     private var valueMarkStyle: S
+    private var valueMarkSize: Double = 12.0
     
     var body: some View {
         GeometryReader { geo in
@@ -45,7 +46,7 @@ struct SemiCircleGaugeMeter<V: BinaryFloatingPoint, N: View, S: ShapeStyle>: Vie
                 GauageNeedleLayer(center: needleAnchor) {
                     needle()
                 }
-                GaugeValueMarkLayer(arcWidth) {
+                GaugeValueMarkLayer(valueMarkSize) {
                     Circle().fill(valueMarkStyle)
                 }
             }.frame(width: 2.0*r, height: 2.0*r).offset(x:arcWidth, y: geo.height - r - arcWidth)
@@ -78,6 +79,12 @@ extension SemiCircleGaugeMeter: Adjustable {
             adjustObject.arcWidth = Double(value)
         }
     }
+    
+    func valueMarkSize<F: BinaryFloatingPoint>(_ size: F) -> Self {
+        setProperty { adjustObject in
+            adjustObject.valueMarkSize = Double(size)
+        }
+    }
 }
 
 fileprivate struct Demo : View {
@@ -97,7 +104,7 @@ fileprivate struct Demo : View {
         VStack {
             SemiCircleGaugeMeter($value, valueMarkStyle: Color.white) {
                 NeedleShape().frame(width: 10.0, height: 80.0)
-            }.arcWidth(30.0).frame(width: 300.0, height: 200.0)
+            }.arcWidth(15.0).valueMarkSize(25.0).frame(width: 300.0, height: 200.0)
             Slider(value: $value, in: 0.0...100.0)
         }
     }
