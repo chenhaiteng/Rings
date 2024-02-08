@@ -39,6 +39,7 @@ public struct ArcKnobLayer : AngularLayer {
     public var offset: CGPoint = .zero
     
     public var radius: CGFloat = 100.0
+    public var inset: CGFloat = 0.0
     
     private var arcWidth: CGFloat = 5.0
     private var gradient: Gradient = Gradient(colors: [.white])
@@ -49,8 +50,8 @@ public struct ArcKnobLayer : AngularLayer {
             ZStack {
                 GeometryReader { geo in
                     Path { p in
-                        p.addArc(center: CGPoint(x: geo.size.width/2, y: geo.size.height/2), radius: radius, startAngle: Angle.degrees(degreeRange.lowerBound), endAngle: isFixed ? Angle.degrees(degreeRange.upperBound) : Angle.degrees(Double(degree)), clockwise: false)
-                    }.offsetBy(dx: offset.x, dy: offset.y).stroke(AngularGradient(gradient: gradient, center: UnitPoint(x:0.5 + offset.x/geo.width, y:0.5 + offset.y/geo.height), startAngle: Angle.degrees(degreeRange.lowerBound)), style:style.width(arcWidth))
+                        p.addArc(center: geo.localCenter, radius: radius - inset, startAngle: Angle.degrees(degreeRange.lowerBound), endAngle: isFixed ? Angle.degrees(degreeRange.upperBound) : Angle.degrees(Double(degree)), clockwise: false)
+                    }.offsetBy(dx: offset.x, dy: offset.y).stroke(AngularGradient(gradient: gradient, center: UnitPoint(x:0.5 + offset.x/geo.width, y:0.5 + offset.y/geo.height), startAngle: Angle.degrees(degreeRange.lowerBound), endAngle: Angle.degrees(degreeRange.upperBound)), style:style.width(arcWidth))
                 }
             }
         }
@@ -135,6 +136,12 @@ extension ArcKnobLayer : Adjustable {
     public func style(_ style: StrokeStyle) -> Self {
         setProperty { tmp in
             tmp.style = style
+        }
+    }
+    
+    public func inset(_ value: CGFloat) -> Self {
+        setProperty { adjustObject in
+            adjustObject.inset = value
         }
     }
 }
