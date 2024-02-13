@@ -61,7 +61,6 @@ extension GaugeMeter: Adjustable {
 fileprivate struct Demo: View {
     private static let demoRange: ClosedRange<CGFloat> = 0.0...50.0
     @State var valueContiune: CGFloat = 0.0 /*demoRange.lowerBound*/
-    @State var ringWidth: CGFloat = 5
     @State var arcWidth: CGFloat = 5
     @State var showBlueprint: Bool = true
     @State var needleBase: UnitPoint = .center
@@ -77,7 +76,7 @@ fileprivate struct Demo: View {
                                 Color.green
                                 Color.yellow
                                 Color.red
-                            }.arcWidth(ringWidth).style(StrokeStyle(dash:[3.0, 3.0]))
+                            }.arcWidth(arcWidth).style(StrokeStyle(dash:[3.0, 3.0]))
                         GauageNeedleLayer(center: needleBase) {
                             VStack(spacing:0.0) {
                                 Circle().frame(width: 12.0, height: 12.0)
@@ -100,9 +99,6 @@ fileprivate struct Demo: View {
                     Text("Needle base")
                     Slider(value: $needleBase.x, in: 0.0...1.0, step: 0.1) { Text(String(format:"x: %.2f", needleBase.x))}
                     Slider(value: $needleBase.y, in: 0.0...1.0, step: 0.1){ Text(String(format:"y: %.2f", needleBase.y))}
-                }
-                Slider(value: $ringWidth, in: 5.0...25.0, step: 1.0) {
-                    Text(String(format: "Track Width: %.2f", ringWidth))
                 }
                 Slider(value: $arcWidth, in: 5.0...25.0, step: 1.0) {
                     Text(String(format: "Indicator Width: %.2f", arcWidth))
