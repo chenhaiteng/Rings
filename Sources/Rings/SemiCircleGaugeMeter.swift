@@ -23,28 +23,29 @@ func progressColor() -> Gradient {
     gaugeColors()
 }
 
-struct SemiCircleGaugeMeter<V: BinaryFloatingPoint, N: View, S: ShapeStyle>: View {
+/// An easy gauge meter with semi-circular shape.
+public struct SemiCircleGaugeMeter<V: BinaryFloatingPoint, N: View, S: ShapeStyle>: View {
     
     @Binding private var value: V
     private let range: ClosedRange<Double>
     private var needleAnchor: UnitPoint
     private var arcWidth = 10.0
-    private var needle: ()->N
+    private var indicator: ()->N
     private var valueMarkStyle: S
     private var valueMarkSize: Double = 12.0
+    private var trackStyle: StrokeStyle = StrokeStyle(dash:[3.0, 3.0])
     
-    var body: some View {
+    public var body: some View {
         GeometryReader { geo in
             let r = geo.width/2.0 - arcWidth
-            GaugeMeter(radius: r,
-                value: $value,
+            GaugeMeter(value: value, radius: r,
                        mapping: LinearMapping(degreeRange: -180.0...0.0, valueRange: range)) {
                 ArcKnobLayer(fixed: true)
-                    .arcColor (trackColor).arcWidth(arcWidth).style(StrokeStyle(dash:[3.0, 3.0]))
+                    .arcColor (trackColor).arcWidth(arcWidth).style(trackStyle)
                 ArcKnobLayer()
-                    .arcColor(progressColor).arcWidth(arcWidth).style(StrokeStyle(dash:[3.0, 3.0]))
+                    .arcColor(progressColor).arcWidth(arcWidth).style(trackStyle)
                 GauageNeedleLayer(center: needleAnchor) {
-                    needle()
+                    indicator()
                 }
                 GaugeValueMarkLayer(valueMarkSize) {
                     Circle().fill(valueMarkStyle).shadow(radius: min(valueMarkSize/4.0, 5.0))
@@ -53,7 +54,14 @@ struct SemiCircleGaugeMeter<V: BinaryFloatingPoint, N: View, S: ShapeStyle>: Vie
         }
     }
     
-    init(_ value: Binding<V>, range: ClosedRange<Double> = 0.0...100.0, needleAnchor: UnitPoint = .center, valueMarkStyle: S = Color.clear, @ViewBuilder _ needle: @escaping () -> N = {
+    /// Create a semi-circular gauge meter to diplay value in given range with customizable needle indicator.
+    /// - Parameters:
+    ///   - value: The value to show in gauge meter.
+    ///   - range: The range of value. Default between 0.0...100.0
+    ///   - needleAnchor: The unit point to specified where the needle indicator located. The default value is [center](https://developer.apple.com/documentation/swiftui/unitpoint/center)
+    ///   - valueMarkStyle: The style of value mark.
+    ///   - indicator: The builder of customizable indicator. The default shape is a triangle with fixed size {10.0, 15.0}
+    public init(_ value: Binding<V>, range: ClosedRange<Double> = 0.0...100.0, needleAnchor: UnitPoint = .center, valueMarkStyle: S = Color.clear, @ViewBuilder _ indicator: @escaping () -> N = {
         VStack(spacing:0.0) {
             Image(systemName: "triangleshape.fill").resizable().frame(width: 10.0, height: 15.0)
         Rectangle().frame(width: 2.0, height: 50.0)
@@ -62,27 +70,45 @@ struct SemiCircleGaugeMeter<V: BinaryFloatingPoint, N: View, S: ShapeStyle>: Vie
         self._value = value
         self.range = range
         self.needleAnchor = needleAnchor
-        self.needle = needle
+        self.indicator = indicator
         self.valueMarkStyle = valueMarkStyle
     }
-
 }
 
 extension SemiCircleGaugeMeter: Adjustable {
-    func needleAnchor(_ anchor: UnitPoint) -> Self {
+    /// Adjust the location of the needle indicator.
+    /// - Parameter anchor: The unit point to specified where the needle indicator located.
+    /// - Returns: A semi circular gauge meter
+    public func needleAnchor(_ anchor: UnitPoint) -> Self {
         setProperty { adjustObject in
             adjustObject.needleAnchor = anchor
         }
     }
-    func arcWidth<F: BinaryFloatingPoint>(_ value: F) -> Self {
+    
+    /// Adjust the track width with specified value.
+    /// - Parameter value: The width of track
+    /// - Returns: A semi circular gauge meter
+    public func trackWidth<F: BinaryFloatingPoint>(_ value: F) -> Self {
         setProperty { adjustObject in
             adjustObject.arcWidth = Double(value)
         }
     }
     
-    func valueMarkSize<F: BinaryFloatingPoint>(_ size: F) -> Self {
+    /// Specifies the size of value mark.
+    /// - Parameter size: The size of value mark.
+    /// - Returns: A semi circular gauge meter
+    public func valueMarkSize<F: BinaryFloatingPoint>(_ size: F) -> Self {
         setProperty { adjustObject in
             adjustObject.valueMarkSize = Double(size)
+        }
+    }
+    
+    /// Specifies how the track is draw.
+    /// - Parameter style: The stroke style of track. Refer to [stroke style](https://developer.apple.com/documentation/swiftui/strokestyle) for more detail.
+    /// - Returns: A semi circular gauge meter
+    public func trackStyle(_ style: StrokeStyle) -> Self {
+        setProperty { adjustObject in
+            adjustObject.trackStyle = style
         }
     }
 }
@@ -104,7 +130,7 @@ fileprivate struct Demo : View {
         VStack {
             SemiCircleGaugeMeter($value, valueMarkStyle: Color.white) {
                 NeedleShape().frame(width: 10.0, height: 80.0)
-            }.arcWidth(15.0).valueMarkSize(25.0).frame(width: 300.0, height: 200.0)
+            }.trackWidth(15.0).valueMarkSize(25.0).frame(width: 300.0, height: 200.0)
             Slider(value: $value, in: 0.0...100.0)
         }
     }
