@@ -147,7 +147,9 @@ fileprivate struct SemiGaugeDemo : View {
 
 #Preview {
     VStack {
-        GaugeDemo()
-        SemiGaugeDemo()
+        if #available(iOS 16.0, macOS 13.0, watchOS 7.0, *) {
+            GaugeDemo()
+            SemiGaugeDemo()
+        }
     }
 }
