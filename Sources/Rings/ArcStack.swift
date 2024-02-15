@@ -177,11 +177,11 @@ fileprivate struct ArcStackComponent<V: View>: View {
 }
 
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
-public struct ArcStack<Content: View> : View {
-    let radius: Double
-    let anchor: UnitPoint
-    let range: ClosedRange<Double>
-    let direction: RingLayoutDirection
+public struct ArcStack<Content: View> : View, Adjustable {
+    var radius: Double
+    var anchor: UnitPoint
+    var range: ClosedRange<Double>
+    var direction: RingLayoutDirection
     
     let content: () -> Content
     public var body: some View {
@@ -215,6 +215,44 @@ public struct ArcStack<Content: View> : View {
         self.range = range
         self.direction = direction
         self.content = content
+    }
+    
+    /// Sets the radius of the arc stack.
+    /// - Parameter radius: The radius.
+    /// - Returns: arc stack with the radius you specify.
+    public func radius<F: BinaryFloatingPoint>(_ radius: F) -> Self {
+        setProperty { adjustObject in
+            adjustObject.radius = Double(radius)
+        }
+    }
+    
+    /// Sets the anchor of the arc stack.
+    /// - Parameter anchor: The unit point that defines where the center of arc stack is within its bounds.
+    /// - Returns: arc stack with the anchor you specify.
+    public func anchor(_ anchor: UnitPoint) -> Self {
+        setProperty { adjustObject in
+            adjustObject.anchor = anchor
+        }
+    }
+    
+    /// Sets the range of the arc stack to place subviews.
+    /// - Parameter range: the range to specify where to place subviews.
+    /// The full range depends on the what the anchor defined. If the anchor is `.top`, `.bottom`, `.leading`, or `.trailing`, the full range maps to semi-circle. If the anchor is `.topLeading`, `.topTrailing`, `.bottomLeading`, or `bottomTrailing`, the full range maps to quarter-circle.
+    /// Otherwise, the arc stack place its subviews as ``RingStack``
+    /// - Returns: arc stack with the anchor you specify.
+    public func range(_ range: ClosedRange<Double>) -> Self {
+        setProperty { adjustObject in
+            adjustObject.range = range
+        }
+    }
+    
+    /// Sets the layout direction of sub views in arc stack.
+    /// - Parameter direction: The layout direction to define how sub views placed. The direction shows where the top of each sub views is towarding.
+    /// - Returns: arc stack with the layout direction you specify.
+    public func direction(_ direction: RingLayoutDirection) -> Self {
+        setProperty { adjustObject in
+            adjustObject.direction = direction
+        }
     }
 }
 
@@ -262,7 +300,7 @@ struct ArcStackPreview : View {
                     }.animation(.easeInOut(duration: 1.0), value: anchor).frame(width: Self.arcSize, height: Self.arcSize)
                 }
                 ZStack(alignment:.leading) {
-                    ArcStack(radius: expandRadius, anchor: anchor, range: 0.0...1.0, direction: .none) {
+                    ArcStack(anchor: anchor, range: 0.0...1.0, direction: .none) {
                         ForEach(0..<colors.count, id: \.self) { index in
                             Text("\(index + 1)").frame(width: 20.0, height: 20.0).rounded(color: .white).background {
                                 RoundedRectangle(cornerRadius: 5.0).fill(colors[index])
@@ -283,7 +321,7 @@ struct ArcStackPreview : View {
                         } label: {
                             Image(systemName: arcStateImage).resizable().frame(width: 20.0, height: 20.0)
                         }.buttonStyle(.borderedProminent)
-                    }.frame(width: Self.arcSize, height: Self.arcSize)
+                    }.radius(expandRadius).frame(width: Self.arcSize, height: Self.arcSize)
                 }.border(.blue.opacity(0.5))
             }
             Divider()
