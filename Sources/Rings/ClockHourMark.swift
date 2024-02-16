@@ -10,6 +10,10 @@ import SwiftUI
 import CoreGraphicsExtension
 import ViewExtractor
 
+@available(iOS, introduced: 14.0, deprecated: 16.0, message: "Use RingStack to instead of.")
+@available(macOS, deprecated: 13.0, message: "Use RingStack to instead of.")
+@available(watchOS, deprecated: 9.0, message: "Use RingStack to instead of.")
+@available(tvOS, deprecated: 16.0, message: "Use RingStack to instead of.")
 public struct ClockHourMark<Mark: View>: View, Adjustable {
     
     private let markers: Mark
