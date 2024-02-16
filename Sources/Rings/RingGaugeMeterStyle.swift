@@ -23,7 +23,9 @@ struct GaugePointer: Shape {
 
 @available(iOS 16.0, macOS 13.0, watchOS 7.0, *)
 @available(tvOS, unavailable)
+/// Group of GaugeStyles that can apply to SwiftUI built-in Gauge control directly.
 enum RingGaugeMeterStyle {
+    /// A custom gauage style which contains several layers to composites a gauage.
     public struct CustomStyle<Layers:Sequence>: GaugeStyle where Layers.Element : AngularLayer {
         private var radius: Double
         let degreeRange: ClosedRange<Double>
@@ -50,7 +52,7 @@ enum RingGaugeMeterStyle {
             self.degreeRange = degreeRange
         }
     }
-    
+    /// A semi-circular gauage style which has a needle, a value mark, and colorful tracker.
     public struct SemiCircleStyle<V, M> : GaugeStyle where V : View, M : View {
         private let trackerSize: Double
         private let trackerStyle: StrokeStyle
