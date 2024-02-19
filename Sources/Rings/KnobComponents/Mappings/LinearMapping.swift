@@ -18,8 +18,8 @@ public struct LinearMapping : KnobMapping, Adjustable {
             degreeRange.upperBound
         }
     }
-    public var degreeRange = Default.Degree.Min.rawValue...Default.Degree.Max.rawValue
-    public var valueRange = Default.Value.Min.rawValue...Default.Value.Max.rawValue
+    public var degreeRange: ClosedRange<Double>
+    public var valueRange: ClosedRange<Double>
     
     var minValue: Double {
         valueRange.lowerBound
@@ -56,8 +56,10 @@ public struct LinearMapping : KnobMapping, Adjustable {
         return degree * (maxValue - minValue) / (maxDegree - minDegree)
     }
     
-    public init() {
-        
+    public init<T: BinaryFloatingPoint>(degreeRange: ClosedRange<T> = Default.degreeRange,
+                valueRange: ClosedRange<T> = Default.valueRange) {
+        self.degreeRange = degreeRange.toDoubleRange()
+        self.valueRange = valueRange.toDoubleRange()
     }
 }
 

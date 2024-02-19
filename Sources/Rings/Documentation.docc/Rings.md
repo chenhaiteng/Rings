@@ -15,6 +15,8 @@ A collection of controls which have similar shapes of ring, circle...
 * **``ArchimedeanSpiralText``**
 * **``SphericText``**
 * **``Knob``**
+* **``GaugeMeter``**
+* **``RingGaugeMeterStyle``**
 
 To install **Rings**, please refer to the article <doc:ArticleInstallation>.
 

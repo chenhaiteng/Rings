@@ -36,6 +36,11 @@ public struct ArcKnobLayer : AngularLayer {
         }
     }
     
+    public var offset: CGPoint = .zero
+    
+    public var radius: CGFloat = 100.0
+    public var inset: CGFloat = 0.0
+    
     private var arcWidth: CGFloat = 5.0
     private var gradient: Gradient = Gradient(colors: [.white])
     private var style: StrokeStyle = StrokeStyle()
@@ -44,10 +49,9 @@ public struct ArcKnobLayer : AngularLayer {
         get {
             ZStack {
                 GeometryReader { geo in
-                    let radius = min(geo.size.height, geo.size.width)/2.0 - arcWidth/2.0
                     Path { p in
-                        p.addArc(center: CGPoint(x: geo.size.width/2, y: geo.size.height/2), radius: radius, startAngle: Angle.degrees(degreeRange.lowerBound), endAngle: isFixed ? Angle.degrees(degreeRange.upperBound) : Angle.degrees(Double(degree)), clockwise: false)
-                    }.stroke(AngularGradient(gradient: gradient, center: .center, startAngle: Angle.degrees(degreeRange.lowerBound)), style:style.width(arcWidth))
+                        p.addArc(center: geo.localCenter, radius: radius - inset, startAngle: Angle.degrees(degreeRange.lowerBound), endAngle: isFixed ? Angle.degrees(degreeRange.upperBound) : Angle.degrees(Double(degree)), clockwise: false)
+                    }.offsetBy(dx: offset.x, dy: offset.y).stroke(AngularGradient(gradient: gradient, center: UnitPoint(x:0.5 + offset.x/geo.width, y:0.5 + offset.y/geo.height), startAngle: Angle.degrees(degreeRange.lowerBound), endAngle: Angle.degrees(degreeRange.upperBound)), style:style.width(arcWidth))
                 }
             }
         }
@@ -103,6 +107,12 @@ extension ArcKnobLayer : Adjustable {
         }
     }
     
+    public func arcGradient(_ g: Gradient) -> Self {
+        setProperty { adjustObject in
+            adjustObject.gradient = g
+        }
+    }
+    
     /**
      Create and return a new layer with custom storke style.
      
@@ -128,6 +138,12 @@ extension ArcKnobLayer : Adjustable {
             tmp.style = style
         }
     }
+    
+    public func inset(_ value: CGFloat) -> Self {
+        setProperty { adjustObject in
+            adjustObject.inset = value
+        }
+    }
 }
 
 @available(tvOS, unavailable)
@@ -141,14 +157,14 @@ struct ArcLayerDemo: View {
                     (Color.yellow.opacity(0.3), 0.7)
                     (Color.yellow.opacity(0.3), 0.9)
                     (Color.red.opacity(0.3), 0.95)
-                }.degree(degree).body
+                }.degree(degree).offset(dx: 0.0, dy: 20.0).radius(80.0).body.mask(Rectangle()).border(.white)
                 
                 ArcKnobLayer().arcWidth(5.0).arcColor {
                     (Color.green, 0.6)
                     (Color.yellow, 0.7)
                     (Color.yellow, 0.9)
                     (Color.red, 0.95)
-                }.degree(degree).body
+                }.degree(degree).radius(80.0).body
                 
                 ArcKnobLayer(fixed:true).arcWidth(5.0).arcColor {
                     (Color.green, 0.6)
@@ -156,7 +172,7 @@ struct ArcLayerDemo: View {
                     (Color.yellow, 0.9)
                     (Color.red, 0.95)
                 }.style(StrokeStyle(lineCap: .butt, lineJoin: .miter, miterLimit: 1.0, dash: [5.0,2.0], dashPhase: 1.0)).arcWidth(30.0).degree(degree).body
-            }.padding()
+            }.padding().border(.white)
             Slider(value: $degree, in: -225.0...45.0, label: {
                 Text("Degree")
             }).padding()

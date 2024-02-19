@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum Default {
+public enum Default {
     enum Degree: Double {
         case Min = -225.0
         case Max = 45.0
@@ -16,6 +16,10 @@ enum Default {
         case Min = 0.0
         case Max = 1.0
     }
+    
+    public static var degreeRange: ClosedRange<Double> = Degree.Min.rawValue...Degree.Max.rawValue
+    
+    public static var valueRange: ClosedRange<Double> = Value.Min.rawValue...Value.Max.rawValue
 }
 
 public struct KnobGestureRecord {

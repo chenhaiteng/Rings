@@ -136,7 +136,7 @@ fileprivate struct RingStackComponent<V: View>: View {
 }
 
 @available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
-public struct RingStack<Content: View> : View {
+@MainActor public struct RingStack<Content: View> : View {
 
     let radius: CGFloat
     let center: UnitPoint
@@ -167,7 +167,7 @@ public struct RingStack<Content: View> : View {
     ///   - phase: The radians that the first view start with. Default is zero.
     ///   - direction: The guide for placing the subviews in this stack.
     ///   - content: A view builder that creates the content of this stack.
-    public init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, direction: RingLayoutDirection = .none, trace:String = "", @ViewBuilder content: @escaping () -> Content) {
+    @MainActor public init(radius: CGFloat = 100.0, center: UnitPoint = .center, phase: Angle = .zero, direction: RingLayoutDirection = .none, trace:String = "", @ViewBuilder content: @escaping () -> Content) {
         self.radius = radius
         self.center = center
         self.phase = phase
@@ -201,11 +201,12 @@ struct RingStackPreview: View {
                             withAnimation(.linear(duration: 2.0)) {
                                 phase = Angle(degrees: phase.degrees + 360.0)
                                 center = .center
-                                radius = 100.0
+                                radius = 75.0
                             } completion: {
                                 DispatchQueue.main.async {
                                     information = ""
                                     phase = Angle(degrees: phase.degrees - 360.0)
+                                    radius = 0.0
                                 }
                             }
                         } else {

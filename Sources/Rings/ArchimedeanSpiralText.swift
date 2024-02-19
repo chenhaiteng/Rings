@@ -43,6 +43,7 @@ extension TextDirection {
     }
 }
 
+/// A view that displays read-only text along archimedean spiral.
 public struct ArchimedeanSpiralText: View, CompatibleForegroundProxy {
     public typealias Content = Self
     
@@ -68,6 +69,12 @@ public struct ArchimedeanSpiralText: View, CompatibleForegroundProxy {
     
     private var textPoints: [CGPolarPoint] = []
     
+    /// Creates a archimedean spiral text.
+    /// - Parameters:
+    ///   - innerRadius: the distance between the center and the innerest char.
+    ///   - radiusSpacing: the distance between each radius at the same phase.
+    ///   - gap: specifies the distance between adjacent charcters.
+    ///   - text: the text displayed.
     public init(_ innerRadius: Double = 12.0, radiusSpacing: Double = 10.0, gap: Double = 5.0, text: String = "") {
         self.radiusSpacing = radiusSpacing
         self.innerRadius = innerRadius
@@ -103,6 +110,9 @@ public struct ArchimedeanSpiralText: View, CompatibleForegroundProxy {
 }
 
 extension ArchimedeanSpiralText: Adjustable {
+    /// Sets the space between adjacent points at the same phase.
+    /// - Parameter space: The distance between adjacent points at the same phase.
+    /// - Returns: Archimedean spiral text use the space you specify.
     public func radiusSpacing<T: BinaryFloatingPoint>(_ space: T) -> Self {
         setProperty { tmp in
             tmp.radiusSpacing = Double(space)
@@ -110,6 +120,9 @@ extension ArchimedeanSpiralText: Adjustable {
         }
     }
     
+    /// Sets the space between the first character and the center
+    /// - Parameter radius: The radius of the first character.
+    /// - Returns: Archimedean spiral text use the inner radius you specify.
     public func innerRadius<T: BinaryFloatingPoint>(_ radius: T) -> Self {
         setProperty { tmp in
             tmp.innerRadius = Double(radius)
@@ -117,6 +130,9 @@ extension ArchimedeanSpiralText: Adjustable {
         }
     }
     
+    /// Sets the gap between the
+    /// - Parameter gap: The gap between adjacent characters.
+    /// - Returns: Archimedean spiral text use the gap you specify.
     public func gap<T: BinaryFloatingPoint>(_ gap: T) -> Self {
         setProperty { tmp in
             tmp.gap = Double(gap)
@@ -125,64 +141,41 @@ extension ArchimedeanSpiralText: Adjustable {
     }
     
     @available(*, deprecated, renamed: "textLayoutDirection", message: "deprectaed at version 0.4.0")
+    /// Sets how to layout each character along the archimedean spiral.
+    /// - Parameter direction: Text direction
+    /// - Returns: Archimedean spiral text use the text direction you specify.
     public func textDirection(_ direction: TextDirection) -> Self {
         setProperty { tmp in
             tmp.textDirection = direction.ringLayoutDirection
         }
     }
     
+    /// Sets how to layout each character along the archimedean spiral.
+    /// - Parameter direction: The layout direction which depends on the top of each character.
+    /// - Returns: Archimedean spiral text use the layout direction you specify.
     public func textLayoutDirection(_ direction: RingLayoutDirection) -> Self {
         setProperty { tmp in
             tmp.textDirection = direction
         }
     }
     
+    /// Sets the font for text in the view
+    /// - Parameter font: The font to use when displaying this text.
+    /// - Returns: Archimedean spiral text use the font you specify.
     public func font(_ font: Font) -> Self {
         setProperty { tmp in
             tmp.font = font
         }
     }
     
+    /// Sets the color for text in the view
+    /// - Parameter font: The color to use when displaying this text.
+    /// - Returns: Archimedean spiral text use the color you specify.
     public func textColor(_ color: Color) -> Self {
         setProperty { tmp in
             tmp.color = color
             tmp.style = color
         }
-    }
-}
-
-struct SegmentedPicker: ViewModifier {
-    func body(content: Content) -> some View {
-        #if os(watchOS)
-        content
-        #else
-        content.pickerStyle(SegmentedPickerStyle()).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 7))
-        #endif
-    }
-}
-
-struct ColoredPicker: ViewModifier {
-    @Binding var selection: Color
-    func body(content: Content) -> some View {
-        #if os(macOS) || os(iOS)
-        if #available(macOS 11.0, iOS 14.0, macCatalyst 14.0, *) {
-            ColorPicker("", selection: _selection)
-        } else {
-            content.modifier(SegmentedPicker())
-        }
-        #else
-        content.modifier(SegmentedPicker())
-        #endif
-    }
-}
-
-extension Picker {
-    func segmented() -> some View {
-        modifier(SegmentedPicker())
-    }
-    
-    func colorPicker(_ selection: Binding<Color>) -> some View {
-        modifier(ColoredPicker(selection: selection))
     }
 }
 

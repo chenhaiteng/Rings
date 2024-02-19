@@ -6,24 +6,15 @@
 //
 
 import SwiftUI
-import Common
 
-public struct ImageKnobLayer : AngularLayer {
-    var image: Image
-    public var isFixed: Bool = false
-    
-    @Clamping(0.0...0.0) public var degree: Double = 0.0
-    public var degreeRange: ClosedRange<Double> = 0.0...0.0
-    
-    public var body: some View {
-        get {
-            image.resizable().if(!isFixed, content: { content in
-                content.rotationEffect(Angle.degrees(Double(degree)))
-            })
-        }
-    }
-    
-    public init(_ image: Image) {
-        self.image = image
-    }
+typealias ImageKnobLayer = CustomViewLayer<Image>
+
+#Preview {
+    ImageKnobLayer {
+#if os(macOS)
+        Image(nsImage: Bundle.module.image(forResource: "ImageKnobBG")!).resizable()
+#else
+        Image(systemName: "sparkle")
+#endif
+    }.radius(100.0).body
 }
