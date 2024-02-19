@@ -1,10 +1,10 @@
 # ClockIndex
+A view to show clock index.
 
 ## Overview:
+> Important: Deprecated at Rings 0.5.0. Use ``ClockIndexShape`` and ``RingStack`` instead of.
 
 ![Demo](ClockIndex.gif)
-
-![Demo](EarchlyClock.png)
 
 ## Usage:
 
@@ -14,11 +14,5 @@
   
   // Modify hour index style with radius.
   ClockIndex().hourIndexStyle(StrokeStyle(lineWidth: 5.0).hourStyle(with: indexRadius))
-   
-  // Custom hour marker text
-  ClockIndex(textMarkers: ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"])
-  
-  // Show/Hide hour index and minutes track
-  ClockIndex().showIndex(shouldShowIndex)
 ```
 

@@ -283,7 +283,8 @@ struct ClockIndexPreview_MacOS : View {
         VStack {
             Spacer(minLength: 10.0)
             Text("Clock Index")
-            VStack { ClockIndex().minuteIndex(markSize: CGSize(width: minIndexWidth, height: minIndexHeight)).minuteIndex(radius: minRadius).hourIndex(style: StrokeStyle.hourStyle(markWidth: hourIndexWidth, markHeight: hourIndexHeight, radius: hourRadius), color: .red).hourIndex(radius: hourRadius).minuteIndexColor {
+            VStack {
+                ClockIndex().minuteIndex(markSize: CGSize(width: minIndexWidth, height: minIndexHeight)).minuteIndex(radius: minRadius).hourIndex(style: StrokeStyle.hourStyle(markWidth: hourIndexWidth, markHeight: hourIndexHeight, radius: hourRadius), color: .red).hourIndex(radius: hourRadius).minuteIndexColor {
                 Color.red
                 Color.blue
                 Color.yellow
