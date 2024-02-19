@@ -16,10 +16,10 @@ It includes following controls, click to see what it looks like:
 * **[ArchimedeanSpiralText](#archimedeanspiraltext)**
 * **[SphericText](#spherictext)**
 * **[Knob](#knob)**
+* **[GaugeMeter](#gaugemeter)**
+* **[RingGaugeMeterStyle](#ringgaugemeterstyle)**
 
-and following functions are in progress:
-
-* Swing
+For more detail please refer to the [documentation](https://chenhaiteng.github.io/Docs/Rings/documentation/rings/) 
 
 ---
 ## Installation:
@@ -57,62 +57,34 @@ targets: [
 ---
 
 ## RingStack
-
-### What it looks like
 ![Demo](Sources/Rings/Documentation.docc/Resources/RingStack.gif)
 
-### [How to use it](Markdown/Rings/RingStack.md)
-
 ## ArcStack
-
-### What it looks like
 ![Demo](Sources/Rings/Documentation.docc/Resources/ArcStack.gif)
 
-### [How to use it](Markdown/Rings/ArcStack.md)
-
 ## RingText
-
-### What it looks like
 ![RingDemo](Sources/Rings/Documentation.docc/Resources/RingTextDemo.gif)
 
-### [How to use it](Markdown/Rings/RingText.md)
-
 ## ClockIndex
-
-### What it looks like
 ![Demo](Sources/Rings/Documentation.docc/Resources/ClockIndex.gif)
 
-![Demo](Sources/Rings/Documentation.docc/Resources/EarchlyClock.png)
-
-### [How to use it](Markdown/Rings/ClockIndex.md)
-
 ## HandAiguille
-
-### What it looks like:
 ![Demo](Sources/Rings/Documentation.docc/Resources/HandAiguille.gif)
 
-### [How to use it](Markdown/Rings/HandAiguille.md)
-
 ## ArchimedeanSpiralText
-
-### What it looks like:
 ![Demo](Sources/Rings/Documentation.docc/Resources/ArchimedeanSpiralText.gif)
 
-### [How to use it](Markdown/Rings/ArchimedeanSpiralText.md)
-
 ## SphericText
-
-### What it looks like:
 ![Demo](Sources/Rings/Documentation.docc/Resources/SphericText.gif)
 
-### [How to use it](Markdown/Rings/SphericText.md)
-
 ## Knob
-
-### What it looks like:
 ![Demo](Sources/Rings/Documentation.docc/Resources/Knob.gif)
 
-### [How to use it](Markdown/Rings/Knob.md)
+## GaugeMeter
+![Demo](Sources/Rings/Documentation.docc/Resources/GaugeMeterDemo.gif)
+
+## RingGaugeMeterStyle
+![Demo](Sources/Rings/Documentation.docc/Resources/RingGaugeMeterStyle.png)
 
 ---
 # License
