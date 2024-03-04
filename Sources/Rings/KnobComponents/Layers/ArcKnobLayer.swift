@@ -8,6 +8,7 @@
 import SwiftUI
 import Common
 import GradientBuilder
+import SwiftClamping
 
 extension StrokeStyle {
     func width(_ w: CGFloat) -> Self {

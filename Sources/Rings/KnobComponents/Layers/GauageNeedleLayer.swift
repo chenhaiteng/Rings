@@ -9,6 +9,7 @@ import SwiftUI
 import Common
 import CoreGraphics
 import CoreGraphicsExtension
+import SwiftClamping
 
 public struct GauageNeedleLayer<V> : AngularLayer where V: View {
     var content: () -> V
@@ -34,20 +35,21 @@ public struct GauageNeedleLayer<V> : AngularLayer where V: View {
     public var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
+                let geoCenter = geo.localCenter
                 let polar = CGPolarPoint(radius: radius, angle: CGAngle.degrees(degree))
-                let a = geo.width/2.0 - radius*(1.0 - 2.0*center.x)
+                let a = geoCenter.x - radius*(1.0 - 2.0*center.x)
                 let anchor = CGPoint(x: a + offset.x, y: geo.height*center.y + offset.y)
-                let center = geo.localCenter.offset(offset)
-                let pt = polar.cgpoint.offset(center)
+                let adjustedCenter = geoCenter >> offset
+                let pt = polar.cgpoint >> adjustedCenter
                 let dx = pt.x - anchor.x
                 let dy = pt.y - anchor.y
                 let angular: CGAngle = CGVector.adjustedAtan2(y: dy, x: dx) + CGAngle.pi*0.5
                 // blue print
                 Path { coordinate in
-                    coordinate.move(to: CGPoint(x: geo.width/2.0 - radius + offset.x, y:anchor.y))
-                    coordinate.addLine(to: CGPoint(x: geo.width/2.0 + radius + offset.x, y:anchor.y))
-                    coordinate.move(to: CGPoint(x: anchor.x, y: geo.height/2.0 - radius + offset.y))
-                    coordinate.addLine(to: CGPoint(x: anchor.x, y:geo.height/2.0 + radius + offset.y))
+                    coordinate.move(to: CGPoint(x: geoCenter.x - radius + offset.x, y:anchor.y))
+                    coordinate.addLine(to: CGPoint(x: geoCenter.x + radius + offset.x, y:anchor.y))
+                    coordinate.move(to: CGPoint(x: anchor.x, y: geoCenter.y - radius + offset.y))
+                    coordinate.addLine(to: CGPoint(x: anchor.x, y:geoCenter.y + radius + offset.y))
                 }.stroke(Color.blue.opacity(blueprint ? 0.7 : 0.0))
                 Path { p in
                     p.move(to: anchor)
@@ -57,7 +59,7 @@ public struct GauageNeedleLayer<V> : AngularLayer where V: View {
                     content().frame(alignment: .bottom).if(!isFixed) { view in
                         view.rotationEffect(Angle.degrees(Double(angular.degrees)), anchor: .bottom)
                     }
-                }.offset(x: (anchor.x - geo.width/2.0) - contentSize.width/2.0, y: anchor.y - geo.height)
+                }.offset(x: (anchor.x - geoCenter.x) - contentSize.width/2.0, y: anchor.y - geo.height)
             }.onPreferenceChange(ViewSizeKey.self, perform: { value in
                 if let v = value.first {
                     contentSize = v
