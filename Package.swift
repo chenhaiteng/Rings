@@ -23,7 +23,8 @@ let package = Package(
         .package(url: "https://github.com/chenhaiteng/GradientBuilder.git", from: "1.0.0"),
         .package(url: "https://github.com/andtie/SequenceBuilder.git", from: "0.0.7"),
         .package(url: "https://github.com/GeorgeElsham/ViewExtractor", from: "2.0.0"),
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0")
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
+        .package(url: "https://github.com/chenhaiteng/SwiftClamping", from: "1.0.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -32,7 +33,7 @@ let package = Package(
                 dependencies: []),
         .target(
             name: "Rings",
-            dependencies: ["CoreGraphicsExtension", "Common", "ArchimedeanSpiral", "GradientBuilder", "SequenceBuilder", "ViewExtractor"]),
+            dependencies: ["CoreGraphicsExtension", "Common", "ArchimedeanSpiral", "GradientBuilder", "SequenceBuilder", "ViewExtractor", "SwiftClamping"]),
         .testTarget(
             name: "RingsTests",
             dependencies: ["Rings",

@@ -8,6 +8,7 @@
 import SwiftUI
 import Common
 import GradientBuilder
+import SwiftClamping
 
 public struct RingKnobLayer : AngularLayer {
     public var isFixed: Bool

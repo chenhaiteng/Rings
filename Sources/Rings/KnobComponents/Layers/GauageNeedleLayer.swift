@@ -9,6 +9,7 @@ import SwiftUI
 import Common
 import CoreGraphics
 import CoreGraphicsExtension
+import SwiftClamping
 
 public struct GauageNeedleLayer<V> : AngularLayer where V: View {
     var content: () -> V

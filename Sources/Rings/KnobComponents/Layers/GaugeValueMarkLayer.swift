@@ -8,6 +8,7 @@
 import SwiftUI
 import Common
 import CoreGraphicsExtension
+import SwiftClamping
 
 struct GaugeValueMarkLayer<V> : AngularLayer where V : View {
     public var isFixed = false

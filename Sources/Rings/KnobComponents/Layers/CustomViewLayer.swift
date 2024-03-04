@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Common
+import SwiftClamping
 
 struct CustomViewLayer<V: View>: AngularLayer {
     private var content: () -> V
