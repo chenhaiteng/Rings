@@ -14,6 +14,9 @@ let package = Package(
         .library(
             name: "Rings",
             targets: ["Rings"]),
+        .library(
+            name: "RingsSamples",
+            targets: ["RingsSamples"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -34,6 +37,9 @@ let package = Package(
         .target(
             name: "Rings",
             dependencies: ["CoreGraphicsExtension", "Common", "ArchimedeanSpiral", "GradientBuilder", "SequenceBuilder", "ViewExtractor", "SwiftClamping"]),
+        .target(
+            name: "RingsSamples",
+            dependencies: ["Rings","CoreGraphicsExtension", "Common", "ArchimedeanSpiral", "GradientBuilder", "SequenceBuilder", "ViewExtractor", "SwiftClamping"]),
         .testTarget(
             name: "RingsTests",
             dependencies: ["Rings",

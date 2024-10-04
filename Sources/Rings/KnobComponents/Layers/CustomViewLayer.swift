@@ -9,7 +9,7 @@ import SwiftUI
 import Common
 import SwiftClamping
 
-struct CustomViewLayer<V: View>: AngularLayer {
+public struct CustomViewLayer<V: View>: AngularLayer {
     private var content: () -> V
     public var isFixed: Bool = false
     public var offset: CGPoint = .zero

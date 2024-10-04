@@ -9,25 +9,44 @@ import SwiftUI
 import GradientBuilder
 
 public struct GaugeTrackLayer : AngularLayer {
-    public var radius: CGFloat = 100.0
+    public var radius: CGFloat
     
-    public var offset: CGPoint = .zero
+    public var offset: CGPoint
     
-    public var degreeRange: ClosedRange<Double> = -180...0.0
+    public var degreeRange: ClosedRange<Double>
     
-    public var degree: Double = -90.0
+    public var degree: Double
     
-    public var isFixed: Bool = true
+    public var isFixed: Bool
     
-    private var arcWidth: CGFloat = 5.0
-    private var gradient = Gradient(colors: [.white])
-    private var style: StrokeStyle = StrokeStyle()
-    private var inset: CGFloat = 0.0
+    private var arcWidth: CGFloat
+    private var gradient: Gradient
+    private var style: StrokeStyle
+    private var inset: CGFloat
     public var body: some View {
         ZStack {
             ArcKnobLayer(fixed: true).radius(radius).offset(dx: offset.x, dy: offset.y).arcWidth(arcWidth).arcGradient(gradient).style(style).inset(inset).degreeRange(degreeRange).body.opacity(0.5)
             ArcKnobLayer(fixed: false).radius(radius).offset(dx: offset.x, dy: offset.y).arcWidth(arcWidth).arcGradient(gradient).style(style).inset(inset).degreeRange(degreeRange).degree(degree).body
         }
+    }
+    public init(radius: CGFloat = 100.0,
+                offset: CGPoint = .zero,
+                degreeRange: ClosedRange<Double> = -180...0.0,
+                degree: Double = -90.0,
+                isFixed: Bool = true,
+                arcWidth: CGFloat = 5.0,
+                gradient: Gradient = Gradient(colors: [.white]),
+                style: StrokeStyle = StrokeStyle(),
+                inset: CGFloat = 0.0) {
+        self.radius = radius
+        self.offset = offset
+        self.degreeRange = degreeRange
+        self.degree = degree
+        self.isFixed = isFixed
+        self.arcWidth = arcWidth
+        self.gradient = gradient
+        self.style = style
+        self.inset = inset
     }
 }
 
@@ -113,8 +132,4 @@ extension GaugeTrackLayer : Adjustable {
             adjustObject.inset = value
         }
     }
-}
-
-#Preview {
-    GaugeTrackLayer().body
 }
