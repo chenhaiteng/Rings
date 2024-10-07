@@ -43,53 +43,9 @@ public struct ClockHourMark<Mark: View>: View, Adjustable {
         }
     }
     
-    func radius<T: BinaryFloatingPoint>(_ value: T) -> Self {
+    public func radius<T: BinaryFloatingPoint>(_ value: T) -> Self {
         setProperty { adjustObject in
             adjustObject.radius = CGFloat(value)
-        }
-    }
-}
-
-
-struct ClockHourMarkPreview: View {
-    
-#if os(watchOS)
-    let margin: CGFloat = 0.0
-#else
-#if targetEnvironment(macCatalyst)
-    let margin: CGFloat = 100.0
-#else
-    let margin: CGFloat = 20.0
-#endif
-#endif
-    
-#if os(watchOS) || os(macOS) || os(tvOS)
-    let invertColor = false
-#else
-#if targetEnvironment(macCatalyst)
-    let invertColor = false
-#else
-    let invertColor = true
-#endif
-#endif
-    
-    var body: some View {
-        GeometryReader { geo in
-            let radius = min(geo.height, geo.width)/2.0 - margin
-            ClockHourMark {
-                ForEach(1..<13) { idx in
-                    Text("\(idx)").if(invertColor) { $0.colorInvert() }.font(.title.italic().bold())
-                }
-            }.radius(radius).frame(width: geo.size.width, height: geo.size.height)
-        }
-    }
-}
-
-struct ClockHourMark_Preview: PreviewProvider {
-    
-    static var previews: some View {
-        Group {
-            ClockHourMarkPreview().background(Color.black)
         }
     }
 }

@@ -112,30 +112,3 @@ extension SemiCircleGaugeMeter: Adjustable {
         }
     }
 }
-
-fileprivate struct Demo : View {
-    struct NeedleShape : Shape {
-        func path(in rect: CGRect) -> Path {
-            Path { p in
-                p.move(to: CGPoint(x: rect.midX, y: rect.minY))
-                p.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-                p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-                p.closeSubpath()
-            }
-        }
-    }
-    
-    @State var value: Double = 0.0
-    var body: some View {
-        VStack {
-            SemiCircleGaugeMeter($value, valueMarkStyle: Color.white) {
-                NeedleShape().frame(width: 10.0, height: 80.0)
-            }.trackWidth(15.0).valueMarkSize(25.0).frame(width: 300.0, height: 200.0)
-            Slider(value: $value, in: 0.0...100.0)
-        }
-    }
-}
-
-#Preview {
-    Demo().background(Color.blue)
-}

@@ -10,7 +10,7 @@ import Common
 import CoreGraphicsExtension
 import SwiftClamping
 
-struct GaugeValueMarkLayer<V> : AngularLayer where V : View {
+public struct GaugeValueMarkLayer<V> : AngularLayer where V : View {
     public var isFixed = false
     
     @Clamping(-225.0...45.0) public var degree: Double = 120.0

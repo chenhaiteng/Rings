@@ -93,7 +93,7 @@ extension AngularLayer {
 }
 
 extension ClosedRange where Bound:BinaryFloatingPoint {
-    func toDoubleRange() -> ClosedRange<Double> {
+    public func toDoubleRange() -> ClosedRange<Double> {
         Double(lowerBound)...Double(upperBound)
     }
 }

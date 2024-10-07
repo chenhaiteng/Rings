@@ -55,17 +55,17 @@ extension CGVector {
 }
 
 extension GeometryProxy {
-    var width : CGFloat {
+    public var width : CGFloat {
         get {
             self.size.width
         }
     }
-    var height: CGFloat {
+    public var height: CGFloat {
         get {
             self.size.height
         }
     }
-    var localCenter: CGPoint {
+    public var localCenter: CGPoint {
         get {
             CGPoint(x: width/2.0, y: height/2.0)
         }

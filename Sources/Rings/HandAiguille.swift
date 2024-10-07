@@ -125,7 +125,7 @@ struct RoundedBorder: ViewModifier {
 }
 
 extension View {
-    func rounded(_ cornerRadius:CGFloat = 5, color:Color = .white, width:CGFloat = 1) -> some View {
+    public func rounded(_ cornerRadius:CGFloat = 5, color:Color = .white, width:CGFloat = 1) -> some View {
         modifier(RoundedBorder(cornerRadius: cornerRadius, color: color, lineWidth: width))
     }
 }
