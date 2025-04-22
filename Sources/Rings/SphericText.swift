@@ -183,6 +183,34 @@ extension SphericText : Adjustable {
 
 @available(tvOS, unavailable)
 struct SphericTextDemo: View {
+    var demoData: [TextComponent] {
+        let font = Font.system(size: 48)
+        if #available(iOS 15.0, *) {
+            return [
+                TextComponent(text: "A", color: .red, font: font),
+                TextComponent(text: "B", color: .green, font: font),
+                TextComponent(text: "C", color: .blue, font: font),
+                TextComponent(text: "D", color: .yellow, font: font),
+                TextComponent(text: "E", color: .pink, font: font),
+                TextComponent(text: "F", color: .gray, font: font),
+                TextComponent(text: "G", color: .purple, font: font),
+                TextComponent(text: "H", color: .cyan, font: font),
+                TextComponent(text: "I", color: .white, font: font)
+            ]
+        } else {
+            // Fallback on earlier versions
+            return [
+                TextComponent(text: "A", color: .red, font: font),
+                TextComponent(text: "B", color: .green, font: font),
+                TextComponent(text: "C", color: .blue, font: font),
+                TextComponent(text: "D", color: .yellow, font: font),
+                TextComponent(text: "E", color: .pink, font: font),
+                TextComponent(text: "F", color: .gray, font: font),
+                TextComponent(text: "G", color: .purple, font: font),
+                TextComponent(text: "I", color: .white, font: font)
+            ]
+        }
+    }
     @State var rotateDeg: CGFloat = 0.0
     @State var showModifier: Bool = false
     @State var radius: CGFloat = 40.0
@@ -211,22 +239,13 @@ struct SphericTextDemo: View {
                     let width = geo.size.width/2
                     VStack {
                         ZStack {
-                            SphericText([
-                                TextComponent(text: "A", color: .red, font: .system(size:48)),
-                                TextComponent(text: "B", color: .green, font: .system(size:48)),
-                                TextComponent(text: "C", color: .blue, font: .system(size:48)),
-                                TextComponent(text: "D", color: .yellow, font: .system(size:48)),
-                                TextComponent(text: "E", color: .pink, font: .system(size:48)),
-                                TextComponent(text: "F", color: .gray, font: .system(size:48)),
-                                TextComponent(text: "G", color: .purple, font: .system(size:48)),
-                                TextComponent(text: "H", color: .cyan, font: .system(size:48)),
-                                TextComponent(text: "I", color: .white, font: .system(size:48))
-                            ], rotateDegree: rotateDeg).rangeOfOpposite(in: 145...210)
-//                            SphericText(characters, $rotateDeg).rangeOfOpposite(in: 145...210)
+                            SphericText(demoData, rotateDegree: rotateDeg)
+                                .rangeOfOpposite(in: 145...210)
                                 .perspective(perspective)
                                 .blurMinors(blurMinors)
                                 .hideOpposite(hideOpposite)
-                                .frame(width: width).border(Color.blue, width: 1.0)
+                                .frame(width: width)
+                                .border(Color.blue, width: 1.0)
                         }
                         HStack {
                             Spacer()
