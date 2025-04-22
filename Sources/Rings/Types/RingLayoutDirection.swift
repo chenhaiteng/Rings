@@ -9,7 +9,7 @@ import Foundation
 import CoreGraphicsExtension
 import SwiftUI
 
-public enum RingLayoutDirection : Hashable {
+public enum RingLayoutDirection : Hashable, Sendable {
     case related(degrees: Double)
     case fixed(degrees: Double)
     

@@ -11,7 +11,8 @@ import CoreGraphics
 import CoreGraphicsExtension
 import SwiftClamping
 
-public struct GauageNeedleLayer<V> : AngularLayer where V: View {
+@MainActor
+public struct GauageNeedleLayer<V> : @preconcurrency AngularLayer where V: View {
     var content: () -> V
     public var isFixed: Bool = false
     private var blueprint: Bool = false

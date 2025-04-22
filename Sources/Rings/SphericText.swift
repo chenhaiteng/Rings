@@ -12,35 +12,49 @@ public enum WritingDirection {
     case LeftToRight, RightToLeft
 }
 
+public struct TextComponent {
+    let text: String
+    let color: Color
+    let font: Font?
+}
+
 public struct SphericText<T:BinaryFloatingPoint>: View {
     
-    @Binding var offsetDegree: T
+    let rotateDegree: T
+    private let textComponents: [TextComponent]
     
-    private let stringTable: [(offset: Int, element:String)]
-    private var wordSpacing: Double = 30.0
+    private var textSpacing: Double = 30.0
     private var font: Font?
     private var wordColor = Color.white
     private var wordBackground = Color.clear
     private var hideOpposite = false
     private var blurMinors = false
-    private var oppositeRange = 150...210
+    private var oppositeRange = -90...90
     private var frontMostRange = -10...10
     private var perspective: CGFloat = 0.0
-    private var anchorZ: CGFloat = 100.0
+    private var radius: CGFloat = 0.0
     private var writingDirection: WritingDirection = .LeftToRight
     @State private var estHeight: CGFloat = 30.0
     @State private var estWidth: CGFloat = 30.0
     
+    
+    public init(_ components: [TextComponent], rotateDegree: T) {
+        textComponents = components
+        font = .system(size: 40.0)
+        self.rotateDegree = rotateDegree
+    }
+    
     public init(words: [String], word_spacing: T = 30.0 , font: Font? = nil, word_color: Color = Color.white, word_background: Color = Color.clear, hide_opposite: Bool = false, degree_offset: Binding<T> = .constant(0)) {
-        stringTable = words.enumerated().map { (i, e) in
-            return (i, e)
-        }
-        _offsetDegree = degree_offset
-        wordSpacing = Double(word_spacing)
-        self.font = font ?? .system(size: 20.0)
+        textSpacing = Double(word_spacing)
+        let defaultFont = font ?? .system(size: 40.0)
+        self.font = defaultFont
         wordColor = word_color
         wordBackground = word_background
         hideOpposite = hide_opposite
+        self.textComponents = words.map { word in
+            TextComponent(text: word,color: word_color, font:defaultFont)
+        }
+        self.rotateDegree = degree_offset.wrappedValue
     }
     
     public init(_ text: String, _ rotateDegree: Binding<T> = .constant(0)) {
@@ -69,35 +83,32 @@ public struct SphericText<T:BinaryFloatingPoint>: View {
             let frameL = geo.frame(in: .local)
             ZStack(alignment: .center) {
                 //hide text to caculate height
-                Sizing {
-                    Text("A").font(font).opacity(0.0)
-                }
-                ForEach(stringTable, id: \.self.offset) { i, element in
-                    let positionInDegree =  Double(offsetDegree) + (writingDirection == .LeftToRight ? -1.0 : 1.0)*Double(i)*wordSpacing
-                    let _ = print("degrees: \(positionInDegree)")
+                let anchorZ = radius > 0 ? radius : w/2.0
+                ForEach(0..<textComponents.count, id:\.self) { index in
+                    let component = textComponents[index]
+                    let positionInDegree =  Double(rotateDegree) + (writingDirection == .LeftToRight ? 1.0 : -1.0)*Double(index)*textSpacing
                     let normalizedD = Int(positionInDegree)%360
                     let shouldBlur = blurMinors ? !(frontMostRange ~= abs(normalizedD)) : false
                     let shouldHide = hideOpposite ? (oppositeRange ~= abs(normalizedD)) : false
 
-                    let text = writingDirection == .RightToLeft ? String(element.reversed()) : element
-                    Text(text).frame(width: estWidth*CGFloat(text.count), height: 50, alignment: Alignment(horizontal: .center, vertical: .center))
-                        .font(font)
-                        .foregroundColor(wordColor)
-                        .background(wordBackground)
-                        .rotation3DEffect(
+                    let text = writingDirection == .RightToLeft ? String(component.text.reversed()) : component.text
+                    VStack {
+                        Text(text)
+                            .font(component.font)
+                            .foregroundColor(component.color)
+                            .border(Color.blue)
+                        Text("\(positionInDegree)")
+                    }.rotation3DEffect(
                             .degrees(positionInDegree),
                             axis: (x: 0.0, y: 1.0, z: 0.0),
                             anchor: .center,
                             anchorZ: anchorZ,
                             perspective: perspective
                         ).opacity(shouldHide ? 0.0 : (shouldBlur ? 0.5 : 1.0))
-                        .blur(radius: (shouldBlur ? 1.0 : 0.0))
-                }.frame(width: w, height: estHeight, alignment: .center)
-
-            }.frame(width: frameL.size.width, height: frameL.size.height).onPreferenceChange(ViewSizeKey.self) { sizes in
-                estHeight = (sizes.reduce(0, {$0 + $1.height}))/CGFloat(sizes.count)*CGFloat(1.1)
-                estWidth = (sizes.reduce(0, {$0 + $1.width}))/CGFloat(sizes.count)
-            }
+                        .blur(radius: (shouldBlur ? 1.0 : 0.0)).frame(alignment: .center)
+                    
+                }
+            }.frame(width: frameL.size.width, height: frameL.size.height).clipped()
 
         }
     }
@@ -106,7 +117,7 @@ public struct SphericText<T:BinaryFloatingPoint>: View {
 extension SphericText : Adjustable {
     public func wordSpacing(_ spacing: T) -> SphericText {
         setProperty { tmp in
-            tmp.wordSpacing = Double(spacing)
+            tmp.textSpacing = Double(spacing)
         }
     }
     
@@ -154,7 +165,7 @@ extension SphericText : Adjustable {
     
     public func radius(_ value: T) -> SphericText {
         setProperty { tmp in
-            tmp.anchorZ = CGFloat(value)
+            tmp.radius = CGFloat(value)
         }
     }
     
@@ -176,7 +187,7 @@ struct SphericTextDemo: View {
     @State var showModifier: Bool = false
     @State var radius: CGFloat = 40.0
     @State var perspective: CGFloat = 0.0
-    @State var characters = "ABCDE"
+    @State var characters = "ABCDEGMS"
     @State var wordsInput = "Test\n100"
     @State var words = ["Test", "100"]
     @State var blurMinors: Bool = false
@@ -200,12 +211,22 @@ struct SphericTextDemo: View {
                     let width = geo.size.width/2
                     VStack {
                         ZStack {
-                            SphericText(characters, $rotateDeg).rangeOfOpposite(in: 145...210)
-                                .radius(radius)
+                            SphericText([
+                                TextComponent(text: "A", color: .red, font: .system(size:48)),
+                                TextComponent(text: "B", color: .green, font: .system(size:48)),
+                                TextComponent(text: "C", color: .blue, font: .system(size:48)),
+                                TextComponent(text: "D", color: .yellow, font: .system(size:48)),
+                                TextComponent(text: "E", color: .pink, font: .system(size:48)),
+                                TextComponent(text: "F", color: .gray, font: .system(size:48)),
+                                TextComponent(text: "G", color: .purple, font: .system(size:48)),
+                                TextComponent(text: "H", color: .cyan, font: .system(size:48)),
+                                TextComponent(text: "I", color: .white, font: .system(size:48))
+                            ], rotateDegree: rotateDeg).rangeOfOpposite(in: 145...210)
+//                            SphericText(characters, $rotateDeg).rangeOfOpposite(in: 145...210)
                                 .perspective(perspective)
                                 .blurMinors(blurMinors)
                                 .hideOpposite(hideOpposite)
-                                .frame(width: width)
+                                .frame(width: width).border(Color.blue, width: 1.0)
                         }
                         HStack {
                             Spacer()
@@ -219,7 +240,7 @@ struct SphericTextDemo: View {
                     }
                     Divider().background(Color.white)
                     VStack {
-                        SphericText(words: words, degree_offset: $rotateDeg).wordSpacing(wordSpacing).font( .system(size: 32.0)).wordColor(textColor).wordBackground(backgroundColor).hideOpposite(false).perspective(perspective).radius(radius).frame(width: width)
+                        SphericText(words: words, degree_offset: $rotateDeg).wordSpacing(wordSpacing).font( .system(size: 32.0)).wordColor(textColor).wordBackground(backgroundColor).hideOpposite(false).perspective(perspective).frame(width: width).border(Color.blue, width: 1.0)
                         #if os(iOS)
                         if #available(macOS 11.0, iOS 14.0, *) {
                             TextEditor(text: wordsInputBinding).textFieldStyle(RoundedBorderTextFieldStyle()).frame(width: 100, height: 80, alignment: .center)
@@ -272,7 +293,7 @@ struct SphericTextDemo: View {
                         }, label: {
                             Text("Rotate")
                         })
-                        Slider(value: $rotateDeg, in:  -360.0...360.0)
+                        Slider(value: $rotateDeg, in:  0.0...360.0)
                         Text("\(rotateDeg, specifier: "%.2f")").foregroundColor(.white)
                         Spacer(minLength: 20)
                     }
