@@ -17,9 +17,9 @@ public enum Default {
         case Max = 1.0
     }
     
-    public static var degreeRange: ClosedRange<Double> = Degree.Min.rawValue...Degree.Max.rawValue
+    public static let degreeRange: ClosedRange<Double> = Degree.Min.rawValue...Degree.Max.rawValue
     
-    public static var valueRange: ClosedRange<Double> = Value.Min.rawValue...Value.Max.rawValue
+    public static let valueRange: ClosedRange<Double> = Value.Min.rawValue...Value.Max.rawValue
 }
 
 public struct KnobGestureRecord {

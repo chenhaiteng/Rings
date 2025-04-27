@@ -100,7 +100,7 @@ extension HandAiguille {
 }
 
 public enum HandFactory {
-    public static func makeAppleWatchStyleHand<T: BinaryFloatingPoint>(size: CGSize = CGSize(width: 4.0, height: 60.0), timeProvider: Binding<T>, unit: TimeUnit = .second) -> some View {
+    @MainActor public static func makeAppleWatchStyleHand<T: BinaryFloatingPoint>(size: CGSize = CGSize(width: 4.0, height: 60.0), timeProvider: Binding<T>, unit: TimeUnit = .second) -> some View {
         HandAiguille(size: size, offset: 1.5, time: timeProvider, unit: unit) {
             VStack(spacing: 0) {
                 Capsule().stroke().frame(width: size.width)

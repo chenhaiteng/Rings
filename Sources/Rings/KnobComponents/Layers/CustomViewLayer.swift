@@ -9,7 +9,8 @@ import SwiftUI
 import Common
 import SwiftClamping
 
-struct CustomViewLayer<V: View>: AngularLayer {
+@MainActor
+struct CustomViewLayer<V: View>: @preconcurrency AngularLayer {
     private var content: () -> V
     public var isFixed: Bool = false
     public var offset: CGPoint = .zero

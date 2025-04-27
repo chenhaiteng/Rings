@@ -13,7 +13,7 @@
 import SwiftUI
 
 struct ViewSizeKey : PreferenceKey {
-    static var defaultValue: [CGSize] = []
+    static let defaultValue: [CGSize] = []
     static func reduce(value: inout [CGSize], nextValue: () -> [CGSize]) {
         value.append(contentsOf: nextValue())
     }
