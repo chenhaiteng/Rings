@@ -84,7 +84,9 @@ public struct RingText : View, CompatibleForegroundProxy {
                 }
                 
             }.frame(width: geo.size.width, height: geo.size.height, alignment: .center).onPreferenceChange(ViewSizeKey.self, perform: { value in
-                sizes = value
+                Task { @MainActor in
+                    sizes = value
+                }
             })
         }
     }
