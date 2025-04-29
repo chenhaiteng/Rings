@@ -63,7 +63,9 @@ public struct GauageNeedleLayer<V> : @preconcurrency AngularLayer where V: View 
                 }.offset(x: (anchor.x - geoCenter.x) - contentSize.width/2.0, y: anchor.y - geo.height)
             }.onPreferenceChange(ViewSizeKey.self, perform: { value in
                 if let v = value.first {
-                    contentSize = v
+                    Task { @MainActor in
+                        contentSize = v
+                    }
                 }
             })
         }
